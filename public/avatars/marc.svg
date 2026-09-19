@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Marc">
+  <rect width="120" height="120" rx="60" fill="#e4efb2"/>
+  <path d="M14 120c5-27 21-40 46-40s41 13 46 40" fill="#486829"/>
+  <circle cx="60" cy="53" r="25" fill="#c9875f"/>
+  <path d="M34 51c0-23 11-37 28-37 21 0 27 13 27 34-8-6-17-8-28-8-9 0-18 4-27 11Z" fill="#3b2530"/>
+  <circle cx="51" cy="55" r="2.5" fill="#2a172e"/><circle cx="69" cy="55" r="2.5" fill="#2a172e"/>
+  <path d="M50 68c7 4 13 4 20 0" fill="none" stroke="#7b3e32" stroke-width="3" stroke-linecap="round"/>
+</svg>

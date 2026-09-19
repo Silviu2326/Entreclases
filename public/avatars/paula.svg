@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Paula">
+  <rect width="120" height="120" rx="60" fill="#f8d3bd"/>
+  <path d="M16 120c4-27 20-40 44-40s40 13 44 40" fill="#8d4c2d"/>
+  <circle cx="60" cy="52" r="25" fill="#d99570"/>
+  <path d="M32 57c-5-26 7-43 28-43 24 0 32 20 29 43l-9-12-5 13-8-17c-9 9-20 14-35 16Z" fill="#47253e"/>
+  <circle cx="51" cy="55" r="2.5" fill="#2a172e"/><circle cx="69" cy="55" r="2.5" fill="#2a172e"/>
+  <path d="M51 68c6 4 12 4 18 0" fill="none" stroke="#864232" stroke-width="3" stroke-linecap="round"/>
+</svg>

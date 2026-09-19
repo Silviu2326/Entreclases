@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Laia">
+  <rect width="120" height="120" rx="60" fill="#ece1f7"/>
+  <path d="M16 120c5-26 20-40 44-40s39 14 44 40" fill="#785294"/>
+  <circle cx="60" cy="53" r="25" fill="#d99976"/>
+  <path d="M32 59c-4-29 9-45 31-45 23 0 31 18 24 48-4-8-8-15-15-21-7 11-19 18-40 18Z" fill="#281c31"/>
+  <circle cx="51" cy="55" r="2.5" fill="#2a172e"/><circle cx="69" cy="55" r="2.5" fill="#2a172e"/>
+  <path d="M51 68c6 4 12 4 18 0" fill="none" stroke="#894634" stroke-width="3" stroke-linecap="round"/>
+</svg>

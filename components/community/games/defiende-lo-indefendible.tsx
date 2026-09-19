@@ -1,0 +1,12 @@
+"use client";
+import { Action } from "../controls";
+import { EmptyGame, GameFrame, Say, Thread, useGame, useWords } from "./shared";
+
+export default function DefiendeLoIndefendible() {
+  const g = useGame("debate"), t = useWords();
+  return <GameFrame game={g}><p>{t("Una afirmación absurda, dos posturas. Quien abre defiende; quien se une rebate. Tres turnos de hasta 600 caracteres por persona. Al terminar, el resto vota.", "Una afirmació absurda, dues postures. Qui obri defén; qui s'unix rebat. Tres torns de fins a 600 caràcters per persona. En acabar, la resta vota.")}</p><Say label={t("Propón algo indefendible", "Proposa una cosa indefensable")} maxLength={200} busy={g.busy} onSend={body => g.act("create", { body })}/>{!g.rooms.length && <EmptyGame/>}{g.rooms.map(r => {
+    const turns = r.moves.filter(m => m.kind === "say").length;
+    const myTurn = r.joined && r.count === 2 && turns < 6 && turns % 2 === (r.mine ? 0 : 1);
+    return <article className="ec-game-entry" key={r.id}><h4>{r.body}</h4><p>{r.owner_name} · {turns}/6 {t("turnos", "torns")}{r.joined ? ` · ${r.mine ? t("Defiendes", "Defens") : t("Rebates", "Rebats")}` : ""}</p>{!r.joined && r.count < 2 && <Action disabled={g.busy} onClick={() => void g.act("join", { id: r.id })}>{t("Acepto: voy a rebatir", "Accepte: vaig a rebatre")}</Action>}<Thread room={r}/>{myTurn && <Say label={t("Tu turno", "El teu torn")} busy={g.busy} onSend={body => g.act("say", { id: r.id, body })}/>}{r.joined && !myTurn && turns < 6 && <p role="status">{r.count < 2 ? t("Esperando rival…", "Esperant rival…") : t("Turno de tu rival…", "Torn del teu rival…")}</p>}{turns === 6 && <><p>{t("Debate terminado. El jurado decide.", "Debat acabat. El jurat decidix.")}</p><div className="ec-game-actions">{[t("La defensa", "La defensa"), t("La réplica", "La rèplica")].map((s, i) => <Action key={s} secondary disabled={g.busy || r.joined || r.my_choice !== null} onClick={() => void g.act("vote", { id: r.id, choice: i })}>{s} · {r.votes[i] || 0}{r.my_choice === i ? " ✓" : ""}</Action>)}</div></>}{g.demo && r.joined && turns < 6 && <Action secondary disabled={g.busy || myTurn} onClick={() => void g.act("simulate", { id: r.id })}>{t("Demo: turno del rival", "Demo: torn del rival")}</Action>}{r.mine && <Action secondary disabled={g.busy} onClick={() => void g.act("delete", { id: r.id })}>{t("Cerrar debate", "Tancar debat")}</Action>}</article>;
+  })}</GameFrame>;
+}

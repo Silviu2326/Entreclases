@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Aina">
+  <rect width="120" height="120" rx="60" fill="#ffe7a9"/>
+  <path d="M16 120c4-26 20-40 44-40s40 14 44 40" fill="#996c20"/>
+  <circle cx="60" cy="53" r="25" fill="#e1a27c"/>
+  <path d="M33 51c-2-26 10-39 29-39 22 0 31 17 27 42-7-12-18-20-31-21-8 8-16 13-25 18Z" fill="#7a442a"/>
+  <circle cx="51" cy="55" r="2.5" fill="#2a172e"/><circle cx="69" cy="55" r="2.5" fill="#2a172e"/>
+  <path d="M51 68c6 4 12 4 18 0" fill="none" stroke="#8a4633" stroke-width="3" stroke-linecap="round"/>
+</svg>

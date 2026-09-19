@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Nico">
+  <rect width="120" height="120" rx="60" fill="#cce9e4"/>
+  <path d="M15 120c4-27 20-40 45-40s41 13 45 40" fill="#296e60"/>
+  <circle cx="60" cy="53" r="25" fill="#d89a77"/>
+  <path d="M34 48c4-23 16-34 31-34 16 0 26 11 25 33-11-9-23-12-36-8l-19 9Z" fill="#252039"/>
+  <circle cx="51" cy="55" r="2.5" fill="#2a172e"/><circle cx="69" cy="55" r="2.5" fill="#2a172e"/>
+  <path d="M51 68c6 4 12 4 18 0" fill="none" stroke="#864431" stroke-width="3" stroke-linecap="round"/>
+</svg>

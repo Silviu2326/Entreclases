@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Avatar ilustrado de Álex">
+  <rect width="120" height="120" rx="60" fill="#dfe6ff"/>
+  <path d="M18 120c3-25 19-39 42-39s39 14 42 39" fill="#3152d8"/>
+  <circle cx="60" cy="52" r="25" fill="#f0b58e"/>
+  <path d="M34 52c0-24 12-36 29-36 18 0 28 14 25 34-7-7-15-11-26-11-10 0-18 5-28 13Z" fill="#2a172e"/>
+  <circle cx="51" cy="54" r="2.5" fill="#2a172e"/><circle cx="69" cy="54" r="2.5" fill="#2a172e"/>
+  <path d="M52 67c5 4 11 4 16 0" fill="none" stroke="#9a543d" stroke-width="3" stroke-linecap="round"/>
+</svg>
