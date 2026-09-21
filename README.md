@@ -22,7 +22,9 @@ Hasta la apertura, la web solo pide una cosa: el correo. No hay recorrido por la
 
 El formulario de la portada y el del roadmap guardan la dirección en `public.universe_waitlist` (migración `202609230020_waitlist.sql`). Admite correo universitario o personal, y avisa de que el día de la apertura sigue haciendo falta una cuenta universitaria o una invitación. La tabla solo concede `insert` de tres columnas a `anon`: nadie puede leer, editar ni borrar la lista desde el navegador, y se consulta con una clave de servidor.
 
-Basta con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y la migración aplicada; no requiere `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED`. Sin esa configuración el formulario no finge que guarda: ofrece escribir a `hola@entreclases.com`. El aviso por correo depende de un envío real todavía por configurar.
+Basta con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y la migración aplicada; no requiere `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED`. Sin esa configuración el formulario no finge que guarda: ofrece escribir a `hola@entreclases.com`.
+
+Quien se apunta recibe una bienvenida en el momento y siete correos más, uno por mañana a las 09:00 Europe/Madrid desde el día siguiente, en su idioma. Los textos están en `supabase/functions/waitlist-mailer/emails.es.ts` y `emails.va.ts`; el envío lo hace una Edge Function con Resend, porque la web es estática y la clave nunca puede salir del servidor. Cada correo lleva enlace de baja y cabeceras `List-Unsubscribe`. La secuencia se corta en la apertura para que nadie lea «faltan días para el 28» en octubre. [Puesta en marcha](docs/correos-lista-espera.md).
 
 ## Desarrollo
 
