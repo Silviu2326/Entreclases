@@ -45,7 +45,7 @@ export function SignupForm({ locale = "es" }: { locale?: Locale }) {
       </FieldGroup>
       {error ? <p id="email-error" className="form-error" role="alert">{tr(error)}</p> : null}
       <p className="form-notice">{tr("¿Ya tienes cuenta?")}{" "}<Link href={localHref(locale, "/login/")} className="signup-login-link">{tr("Entra por aquí.")}</Link></p>
-      <noscript><p className="form-notice"><a href={localHref(locale, "/registro/")}>{tr("Ir al registro de Entreclase")}</a></p></noscript>
+      <noscript><p className="form-notice"><a href={localHref(locale, "/registro/")}>{tr("Ir al registro de Entreclases")}</a></p></noscript>
     </form>
   );
 }

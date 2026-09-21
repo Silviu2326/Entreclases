@@ -29,7 +29,7 @@ export function ActivityMap({ selected, onSelect, counts, kind, onKindChange }: 
   const [mode, setMode] = useState<"all" | "active" | "quiet">("all");
   const filter: MapFilter = kind ?? mode;
   const [filterOpen, setFilterOpen] = useState(false);
-  onSelectRef.current = onSelect;
+  useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
   const visibleSpots = useMemo(() => spots.filter(spot => fits(spot, filter, counts)), [counts, filter]);
   const active = visibleSpots.filter(spot => (counts[spot.place] ?? 0) > 0).length;
   const filterLabel = kindLabels[filter][locale === "va" ? 1 : 0];

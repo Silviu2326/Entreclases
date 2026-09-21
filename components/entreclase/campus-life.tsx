@@ -39,7 +39,7 @@ function PlansBoard({ locale = "es" }: { locale?: Locale }) {
 function PeopleBoard({ locale = "es" }: { locale?: Locale }) {
   const tr = createTranslator(locale);
   return (
-    <div className="life-board people-board" aria-label={tr("Ejemplo de una conversación en Entreclase")}>
+    <div className="life-board people-board" aria-label={tr("Ejemplo de una conversación en Entreclases")}>
       <div className="life-board-heading"><MessageCircle aria-hidden="true" /><span>{tr("Una conversación cualquiera.")}</span></div>
       <div className="chat-example">
         <div className="chat-person"><span className="photo-avatar avatar-three" aria-hidden="true" /><div><strong>{tr("Nora")}</strong><p>{tr("Música, cine y café después de clase.")}</p></div></div>
@@ -97,7 +97,7 @@ export function CampusLife({ locale = "es" }: { locale?: Locale }) {
           <p>{tr("La universidad tiene más cosas que la asignatura que te está quitando el sueño. Algunas incluso merecen madrugar.")}</p>
         </div>
         <Tabs defaultValue="uni" className="life-tabs">
-          <TabsList variant="line" className="life-tabs-list" aria-label={tr("Qué encontrarás en Entreclase")}>
+          <TabsList variant="line" className="life-tabs-list" aria-label={tr("Qué encontrarás en Entreclases")}>
             {stories.map(({ id, label, icon: Icon }) => <TabsTrigger key={id} value={id}><Icon aria-hidden="true" />{tr(label)}</TabsTrigger>)}
           </TabsList>
           {stories.map(({ id, title, opener, body, bullets, link, board: Board }) => (

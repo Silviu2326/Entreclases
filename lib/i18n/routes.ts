@@ -1,7 +1,7 @@
 export type Locale = "es" | "va";
 export const routes = {
- es: { home: "/", register: "/registro/", login: "/login/", verify: "/verificar/", recovery: "/recuperar-contrasena/", reset: "/nueva-contrasena/", account: "/mi-cuenta/", app: "/app/", demo: "/demo/" },
- va: { home: "/va/", register: "/va/registre/", login: "/va/iniciar-sessio/", verify: "/va/verificar/", recovery: "/va/recuperar-contrasenya/", reset: "/va/nova-contrasenya/", account: "/va/el-meu-compte/", app: "/va/app/", demo: "/va/demo/" },
+ es: { privacy: "/privacidad/", terms: "/condiciones/", home: "/", register: "/registro/", login: "/login/", verify: "/verificar/", recovery: "/recuperar-contrasena/", reset: "/nueva-contrasena/", account: "/mi-cuenta/", app: "/app/", demo: "/demo/" },
+ va: { privacy: "/va/privacitat/", terms: "/va/condicions/", home: "/va/", register: "/va/registre/", login: "/va/iniciar-sessio/", verify: "/va/verificar/", recovery: "/va/recuperar-contrasenya/", reset: "/va/nova-contrasenya/", account: "/va/el-meu-compte/", app: "/va/app/", demo: "/va/demo/" },
 } as const;
 export type RouteName = keyof typeof routes.es;
 export function localPath(locale: Locale, name: RouteName) { return routes[locale][name]; }

@@ -4,13 +4,14 @@ import { LandingMotion } from "./landing-motion";
 import { UnicoinsSection } from "./unicoins-section";
 import { ValenciaLaunch } from "./valencia-launch";
 import Image from "next/image";
-import { ArrowUpRight, ArrowDownRight, LockKeyhole, Coins, CalendarDays, UsersRound, FileText } from "lucide-react";
+import { ArrowUpRight, LockKeyhole, CalendarDays, UsersRound, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CampusPreview } from "@/components/entreclase/campus-preview";
 import { SignupForm } from "@/components/entreclase/signup-form";
 import { CampusLife } from "@/components/entreclase/campus-life";
 import { UniversityAccess, LandingFaq, StoryEnding } from "@/components/entreclase/landing-sections";
 import { MobileNavigation } from "@/components/entreclase/mobile-navigation";
+import { LegalLinks } from "./legal-links";
 import { authConfigured } from "@/lib/auth/config";
 
 const features = [
@@ -27,7 +28,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
       <a className="skip-link" href="#contenido">{tr("Saltar al contenido")}</a>
       <header className="site-header">
         <nav className="header-inner" aria-label={tr("Navegación principal")}>
-          <a className="wordmark" href="#inicio" aria-label={tr("Entreclase, inicio")}>entreclase</a>
+          <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, inicio")}>entreclases</a>
           <div className="header-links">
             <a className="nav-link" href="#historia">{tr("La historia")}</a>
             <a className="nav-link" href="#campus">{tr("Tu campus")}</a>
@@ -50,15 +51,14 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
                 <span data-reveal="line" data-reveal-delay="70">{tr("A casi nadie.")}</span>{" "}
                 <span data-reveal="line" data-reveal-delay="140"><mark>{tr("Eso se puede arreglar.")}</mark></span>
               </h1>
-              <p className="hero-description" data-reveal="rise" data-reveal-delay="160">{tr("Entreclase convierte los pasillos, los apuntes y ese «¿te vienes?» en gente real con la que quedar.")}</p>
+              <p className="hero-description" data-reveal="rise" data-reveal-delay="160">{tr("Entreclases convierte los pasillos, los apuntes y ese «¿te vienes?» en gente real con la que quedar.")}</p>
               <p className="hero-brand" data-reveal="rise" data-reveal-delay="200">{tr("Planes pequeños. Historias que sí te pasan.")}</p>
               <Button asChild className="entreclase-button hero-button">
                 <a href={localHref(locale, "/registro/")}>{tr("Hacerme un sitio")}{" "}<ArrowUpRight data-icon="inline-end" /></a>
               </Button>
-              <a href="#unicoins" className="hero-coins-hook"><Coins aria-hidden="true"/>{tr("20 ClasiCoins de bienvenida. Las siguientes te las ganas participando.")}</a>
               <p className="access-note"><LockKeyhole aria-hidden="true" />{" "}{tr("Acceso con correo universitario o invitación personal.")}</p>
               <a className="hero-demo-link" href={localHref(locale, "/demo/")}>{tr("Dar una vuelta por dentro")}<ArrowUpRight aria-hidden="true" /></a>
-              <div className="hero-proof" data-reveal="rise" data-reveal-delay="280"><span className="hero-proof-dot" aria-hidden="true"/><span>{tr("Ahora mismo")}</span><strong>{tr("alguien está diciendo «vente»")}</strong></div>
+              <p className="access-note">{locale === "va" ? "Un compte universitari. Una invitació per a algú de fora." : "Una cuenta universitaria. Una invitación para alguien de fuera."}</p>
             </div>
             <div className="hero-visual">
               <div className="hero-photo-frame">
@@ -77,31 +77,11 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
                     <span className="photo-avatar avatar-one" /><span className="photo-avatar avatar-two" /><span className="photo-avatar avatar-three" />
                   </div>
                   <Button asChild className="entreclase-button event-button">
-                    <a href="#entrar" aria-label={tr("Entrar en Entreclase para encontrar planes")}>{tr("Ver el plan")}</a>
+                    <a href={localHref(locale, "/demo/?view=plans")} aria-label={locale === "va" ? "Veure plans de demostració" : "Ver planes de demostración"}>{locale === "va" ? "Veure exemple" : "Ver ejemplo"}</a>
                   </Button>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-        <ValenciaLaunch locale={locale} />
-        <section id="historia" className="story-section" aria-labelledby="story-title">
-          <div className="section-inner story-inner">
-            <h2 id="story-title" className="story-time" data-reveal="rise"><span>{tr("Viernes.")}</span><span>14:07.</span></h2>
-            <div className="story-copy" data-reveal="rise" data-reveal-delay="100">
-              <p>{tr("Sales de clase en Tarongers y abres Instagram.")}<br />{tr("Un desconocido en Bali. Otra boda.")}<br />{tr("Otro millonario de 22 años.")}</p>
-              <p>{tr("Mientras, a dos mesas, organizan")}<br className="desktop-break" />{" "}{tr("una tarde en la Malvarrosa.")}</p>
-              <p>{tr("Te enteras al día siguiente.")}<br />{tr("Por una story.")}</p>
-              <p className="story-punchline">{tr("Muy sociales, sí.")}</p>
-            </div>
-          </div>
-        </section>
-        <section className="manifesto-section" aria-labelledby="manifesto-title">
-          <div className="section-inner manifesto-inner">
-            <p className="eyebrow">{tr("LAS REDES SOCIALES")}</p>
-            <h2 data-reveal="rise" id="manifesto-title"><span>{tr("Tu feed está lleno.")}</span><span>{tr("Tu tarde, no.")}</span></h2>
-            <p>{tr("No queremos secuestrarte la tarde.")}<br />{tr("Queremos darte una razón para salir de ella.")}</p>
-            <ArrowDownRight className="manifesto-arrow" data-reveal="rise" data-reveal-delay="180" aria-hidden="true" strokeWidth={1.4} />
           </div>
         </section>
         <section id="campus" className="campus-section" aria-labelledby="campus-title">
@@ -117,6 +97,18 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </section>
+        <ValenciaLaunch locale={locale} />
+        <section id="historia" className="story-section" aria-labelledby="story-title">
+          <div className="section-inner story-inner">
+            <h2 id="story-title" className="story-time" data-reveal="rise"><span>{tr("Viernes.")}</span><span>14:07.</span></h2>
+            <div className="story-copy" data-reveal="rise" data-reveal-delay="100">
+              <p>{tr("Sales de clase en Tarongers y abres Instagram.")}<br />{tr("Un desconocido en Bali. Otra boda.")}<br />{tr("Otro millonario de 22 años.")}</p>
+              <p>{tr("Mientras, a dos mesas, organizan")}<br className="desktop-break" />{" "}{tr("una tarde en la Malvarrosa.")}</p>
+              <p>{tr("Te enteras al día siguiente.")}<br />{tr("Por una story.")}</p>
+              <p className="story-punchline">{tr("Muy sociales, sí.")}</p>
             </div>
           </div>
         </section>
@@ -136,9 +128,9 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
               </div>
             </div>
             <footer className="site-footer">
-              <a className="wordmark" href="#inicio" aria-label={tr("Entreclase, volver al inicio")}>entreclase</a>
+              <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, volver al inicio")}>entreclases</a>
               <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}><a href="#vida">{tr("La vida dentro")}</a><a href="#dudas">{tr("Dudas")}</a></nav>
-              <p>{tr("Nos vemos fuera.")}</p>
+              <LegalLinks locale={locale} /><p>{tr("Nos vemos fuera.")}</p>
             </footer>
           </div>
         </section>

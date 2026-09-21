@@ -21,6 +21,8 @@ export type CoinTransaction = {
 };
 export type CoinWallet = {
   balance: number;
+  first_thread_available?: boolean;
+  event_rewards_enabled?: boolean;
   transactions: CoinTransaction[];
   claimed_events: string[];
   claimed_threads: string[];
@@ -36,3 +38,5 @@ export function emptyWallet(): CoinWallet {
 export function rewardsToday(wallet: CoinWallet) {
   return wallet.day === coinDay() ? wallet.today : { events: 0, replies: 0 };
 }
+
+export function threadCost(wallet: CoinWallet) { return wallet.first_thread_available ? 0 : COIN_RULES.createThread; }

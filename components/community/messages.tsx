@@ -73,7 +73,7 @@ export function Messages(){
    <Feed key={board} compact forum search={search}/>
   </div>
   <aside className="u-charlas-dock" ref={dock} aria-label={c("privateMessages")}><PrivateChats query={search}/></aside>
-  <footer className="ch-footer"><span>{c("messages")}.<small>× Entreclase</small></span><p>{t("Dilo aquí. Y luego, en persona.","Dis-ho ací. I després, en persona.")}</p></footer>
+  <footer className="ch-footer"><span>{c("messages")}.<small>× Entreclases</small></span><p>{t("Dilo aquí. Y luego, en persona.","Dis-ho ací. I després, en persona.")}</p></footer>
  </div>;
 }
 

@@ -1,5 +1,5 @@
 /**
- * Shared contracts for the private Entreclase backoffice.
+ * Shared contracts for the private Entreclases backoffice.
  *
  * These types deliberately keep the moderation and editorial queues separate
  * from the public community models. A backoffice record can include an

@@ -11,7 +11,7 @@ function emptySuffix() { return ""; }
 export function LanguageSwitcher({ locale, route = "home" }: { locale: Locale; route?: RouteName }) {
  const tr = createTranslator(locale);
  const suffix = actionSuffix(useSyncExternalStore(subscribe,currentSuffix,emptySuffix),route);
- return <nav className="language-switcher" aria-label={tr("Idioma de Entreclase")}>
+ return <nav className="language-switcher" aria-label={tr("Idioma de Entreclases")}>
   <a href={localPath("es",route)+suffix} lang="es" hrefLang="es" aria-current={locale==="es" ? "page" : undefined}>Español</a>
   <span aria-hidden="true">/</span>
   <a href={localPath("va",route)+suffix} lang="ca-ES-valencia" hrefLang="ca-ES" aria-current={locale==="va" ? "page" : undefined}>Valencià</a>

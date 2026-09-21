@@ -9,7 +9,7 @@ import { useCommunity } from "./context";
 import { Action, Avatar, Empty, IconAction, Loading, Modal } from "./controls";
 
 /* Stickers are ours, not a catalogue's: the things people here actually say, set
-   in the same loud type as the rest of Entreclase. A sticker travels as a token
+   in the same loud type as the rest of Entreclases. A sticker travels as a token
    in the message body, so it needs no storage and no migration. */
 const STICKERS = [
   { id: "bajamos", es: "¿Bajamos?", va: "Baixem?", tone: "lime" },

@@ -1,7 +1,7 @@
 "use client";
 
 import { Coins, ArrowUpRight, CalendarDays, MessageCircle, ArrowDownLeft, ArrowUpRight as SpendIcon, Sparkles } from "lucide-react";
-import { COIN_RULES, rewardsToday, type CoinReason } from "@/lib/community/unicoins";
+import { COIN_RULES, threadCost, rewardsToday, type CoinReason } from "@/lib/community/unicoins";
 import { unicoinCopy } from "@/lib/i18n/unicoins";
 import { formatDate } from "@/lib/community/copy";
 import { useCommunity, matches } from "./context";
@@ -18,6 +18,7 @@ export function CoinBalance() {
 export function SpendNotice({ amount }: { amount: number }) {
   const { data, locale, go } = useCommunity();
   const t = unicoinCopy(locale), enough = data.wallet.balance >= amount;
+  if (amount === 0) return <p className="u-coin-terms">{locale === "va" ? "El teu primer fil és gratuït. Després, 5 ClasiCoins per fil." : "Tu primer hilo es gratis. Después, 5 ClasiCoins por hilo."}</p>;
   return <div className={`u-coin-spend ${enough ? "" : "short"}`}>
     <div><span>{t("cost")}: <CoinAmount amount={amount} /></span><span>{t("available")}: <strong>{data.wallet.balance}</strong></span></div>
     <p>{enough ? t("spendHelp") : t("insufficient")}</p>
@@ -31,6 +32,7 @@ export function RewardHint({ kind, resourceId, own, participated = false }: { ki
   const capped = kind === "event" ? today.events >= COIN_RULES.eventRewardsPerDay : today.replies >= COIN_RULES.threadRewardsPerDay;
   const eligible = !own && !claimed && !capped;
   const description = own ? t(kind === "event" ? "ownEvent" : "ownThread") : claimed ? t(kind === "event" ? "rewardUsed" : "replyUsed") : capped ? t("dailyFull") : t(kind === "event" ? "eventHelp" : "replyHelp");
+  if (kind === "event" && wallet.event_rewards_enabled === false) return null;
   return <div className={`u-coin-reward ${eligible ? "eligible" : ""}`}>
     {eligible && <CoinAmount amount={kind === "event" ? COIN_RULES.joinEvent : COIN_RULES.replyThread} signed />}
     <p>{description}</p><button type="button" onClick={() => go("unicoins")} aria-label={t("wallet")}><ArrowUpRight aria-hidden="true" /></button>
@@ -44,17 +46,17 @@ export function Unicoins() {
   return <div className="u-unicoins">
     <section className="u-wallet-intro">
       <div className="u-wallet-balance"><span>{t("balance")}</span><strong key={wallet.balance}><CoinAmount amount={wallet.balance} /></strong><span>ClasiCoins</span></div>
-      <div><p className="u-eyebrow">Entreclase · ClasiCoins</p><h2>{t("purpose")}</h2><p>{t("noMoney")}</p></div>
+      <div><p className="u-eyebrow">Entreclases · ClasiCoins</p><h2>{t("purpose")}</h2><p>{t("noMoney")}</p></div>
     </section>
     <div className="u-coin-welcome"><Sparkles aria-hidden="true" /><div><strong>{t("start")}</strong><p>{t("welcomeHelp")}</p></div></div>
     <section className="u-coin-rules" aria-label={t("how")}>
-      <div className="u-card u-coin-rule"><p className="u-eyebrow">{t("earn")}</p><h2>{t("joinEvent")}</h2><CoinAmount amount={COIN_RULES.joinEvent} signed /><p>{t("eventHelp")}</p><Action secondary onClick={() => go("plans")}>{c("findPlan")}<CalendarDays aria-hidden="true" /></Action></div>
+      <div className="u-card u-coin-rule"><p className="u-eyebrow">{t("earn")}</p><h2>{t("joinEvent")}</h2><CoinAmount amount={wallet.event_rewards_enabled === false ? 0 : COIN_RULES.joinEvent} signed /><p>{wallet.event_rewards_enabled === false ? (locale === "va" ? "Apuntar-te no acredita assistència i no dona monedes." : "Apuntarte no acredita asistencia y no da monedas.") : t("eventHelp")}</p><Action secondary onClick={() => go("plans")}>{c("findPlan")}<CalendarDays aria-hidden="true" /></Action></div>
       <div className="u-card u-coin-rule"><p className="u-eyebrow">{t("earn")}</p><h2>{t("replyThread")}</h2><CoinAmount amount={COIN_RULES.replyThread} signed /><p>{t("replyHelp")}</p><Action secondary onClick={() => go("home")}>{c("wall")}<MessageCircle aria-hidden="true" /></Action></div>
       <div className="u-card u-coin-rule spend"><p className="u-eyebrow">{t("spend")}</p><h2>{t("createEvent")}</h2><CoinAmount amount={-COIN_RULES.createEvent} signed /><p>{t("spendHelp")}</p></div>
-      <div className="u-card u-coin-rule spend"><p className="u-eyebrow">{t("spend")}</p><h2>{t("createThread")}</h2><CoinAmount amount={-COIN_RULES.createThread} signed /><p>{t("spendHelp")}</p></div>
+      <div className="u-card u-coin-rule spend"><p className="u-eyebrow">{t("spend")}</p><h2>{t("createThread")}</h2><CoinAmount amount={-threadCost(wallet)} signed /><p>{t("spendHelp")}</p></div>
     </section>
-    <section className="u-card u-coin-daily"><div><h2>{t("daily")}</h2><p>{t("dailyHelp")}</p></div><div className="u-coin-quota"><span>{t("eventsToday")}</span><strong>{today.events} / {COIN_RULES.eventRewardsPerDay}</strong><progress value={today.events} max={COIN_RULES.eventRewardsPerDay} aria-label={t("eventsToday")} /></div><div className="u-coin-quota"><span>{t("threadsToday")}</span><strong>{today.replies} / {COIN_RULES.threadRewardsPerDay}</strong><progress value={today.replies} max={COIN_RULES.threadRewardsPerDay} aria-label={t("threadsToday")} /></div></section>
-    <section className="u-coin-fair"><h2>{t("fair")}</h2><p>{t("fairHelp")}</p><p>{t("noRefund")}</p><strong>{t("free")}</strong></section>
+    <section className="u-card u-coin-daily"><div><h2>{t("daily")}</h2><p>{t("dailyHelp")}</p></div>{wallet.event_rewards_enabled !== false && <div className="u-coin-quota"><span>{t("eventsToday")}</span><strong>{today.events} / {COIN_RULES.eventRewardsPerDay}</strong><progress value={today.events} max={COIN_RULES.eventRewardsPerDay} aria-label={t("eventsToday")} /></div>}<div className="u-coin-quota"><span>{t("threadsToday")}</span><strong>{today.replies} / {COIN_RULES.threadRewardsPerDay}</strong><progress value={today.replies} max={COIN_RULES.threadRewardsPerDay} aria-label={t("threadsToday")} /></div></section>
+    <section className="u-coin-fair"><h2>{t("fair")}</h2><p>{wallet.event_rewards_enabled === false ? (locale === "va" ? "Les respostes a fils aliens tenen recompensa una sola vegada per fil, fins a tres al dia. Apuntar-te a plans no dona monedes." : "Las respuestas a hilos ajenos tienen recompensa una sola vez por hilo, hasta tres al día. Apuntarte a planes no da monedas.") : t("fairHelp")}</p><p>{t("noRefund")}</p><strong>{t("free")}</strong></section>
     <section className="u-card u-coin-history"><header><h2>{t("history")}</h2><p>{t("historyHelp")}</p></header>{transactions.length ? <ul>{transactions.map(tx => <li key={tx.id}><span className={`u-coin-direction ${tx.delta > 0 ? "in" : "out"}`}>{tx.delta > 0 ? <ArrowDownLeft aria-hidden="true" /> : <SpendIcon aria-hidden="true" />}</span><div><strong>{labels[tx.reason]}</strong>{tx.label && <p>{tx.label}</p>}<time dateTime={tx.created_at}>{formatDate(tx.created_at, locale)}</time></div><span className={tx.delta > 0 ? "positive" : "negative"}><CoinAmount amount={tx.delta} signed /></span></li>)}</ul> : <Empty title={query ? c("emptySearch") : t("noHistory")} />}</section>
     {demo && <p className="u-coin-demo-note">{t("accountPending")}</p>}
   </div>;

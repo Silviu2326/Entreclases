@@ -14,7 +14,7 @@ type Notice = { id: string; kind: NoticeKind; title: string; body: string; time:
 const iconFor: Record<NoticeKind, typeof Bell> = { plan: CalendarDays, reply: MessageCircle, project: Sparkles, invite: Users };
 
 export function MailboxPage() {
-  const { locale, go, c } = useCommunity();
+  const { locale, go, c, demo } = useCommunity();
   const [filter, setFilter] = useState<MailboxFilter>("all");
   const [selectedId, setSelectedId] = useState("plan");
   const [readIds, setReadIds] = useState<string[]>([]);
@@ -37,6 +37,7 @@ export function MailboxPage() {
   const markRead = (id: string) => setReadIds(current => current.includes(id) ? current : [...current, id]);
   const changeFilter = (value: MailboxFilter) => { setFilter(value); const next = notices.filter(notice => value === "all" || (value === "unread" ? !isRead(notice) : notice.kind === "invite")); if (next[0]) setSelectedId(next[0].id); };
 
+  if (!demo) return <section className="u-card"><h2>{locale==="va"?"Les teues converses":"Tus conversaciones"}</h2><p>{locale==="va"?"Consulta els teus missatges en Xarrades.":"Consulta tus mensajes en Charlas."}</p><button className="u-text-link" onClick={()=>go("messages")}>{c("messages")}<ArrowUpRight/></button></section>;
   return <div className="u-mailbox-page">
     <header className="u-mailbox-page-intro">
       <div>
@@ -65,7 +66,7 @@ export function MailboxPage() {
         <h3>{selected.title}</h3>
         <p>{selected.body}</p>
         <div className="u-mailbox-detail-meta"><span>{selected.time}</span><span>{locale === "va" ? "Només per a tu" : "Solo para ti"}</span></div>
-        <button className="u-button u-mailbox-open" type="button" onClick={() => go(selected.view)}>{locale === "va" ? "Obrir en Entreclase" : "Abrir en Entreclase"}<ArrowUpRight aria-hidden="true"/></button>
+        <button className="u-button u-mailbox-open" type="button" onClick={() => go(selected.view)}>{locale === "va" ? "Obrir en Entreclases" : "Abrir en Entreclases"}<ArrowUpRight aria-hidden="true"/></button>
       </article>
     </div>
     <p className="u-mailbox-footnote"><Sparkles aria-hidden="true"/> {locale === "va" ? "El teu buzó només reuneix activitat personal. Les converses privades continuen a Xarrades." : "Tu buzón solo reúne actividad personal. Las conversaciones privadas siguen en Charlas."}</p>

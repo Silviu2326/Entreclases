@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 // Compile only local pure TypeScript modules; no browser, network or auth SDK.
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-function load(relative){const filename=resolve(root,relative);const source=ts.transpileModule(readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;const module={exports:{}};new Function('require','module','exports',source)((path)=>{assert.ok(path.startsWith('.'));return load(resolve(dirname(filename),path)+'.ts');},module,module.exports);return module.exports;}
+function load(relative){const filename=resolve(root,relative);const source=ts.transpileModule(readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;const loadedModule={exports:{}};new Function('require','module','exports',source)((path)=>{assert.ok(path.startsWith('.'));return load(resolve(dirname(filename),path)+'.ts');},loadedModule,loadedModule.exports);return loadedModule.exports;}
 const {createDemoRepository,demoUserId}=load('lib/community/demo.ts');
 const {validatePdf}=load('lib/community/validation.ts');
 test('Demo changes stay in a repository instance; posts, likes and comments work without real accounts',async()=>{
@@ -27,14 +27,14 @@ test('PDF validation checks extension, MIME, size and file signature; demo downl
 
 test('Unicoins debit successful creations once and keep failed actions and deleted content out of the balance',async()=>{
  const repo=createDemoRepository('es');assert.equal((await repo.read()).wallet.balance,20);
- const action=crypto.randomUUID();await repo.publish('Primer hilo con monedas','post',null,action);await repo.publish('Primer hilo con monedas','post',null,action);assert.equal((await repo.read()).wallet.balance,15);
- await repo.comment(action,'Mi respuesta no me da monedas');assert.equal((await repo.read()).wallet.balance,15);
- await repo.removePost(action);assert.equal((await repo.read()).wallet.balance,15);
- await repo.publish('Segundo hilo','post',null);await repo.publish('Tercer hilo','post',null);await repo.publish('Cuarto hilo','post',null);
+ const action=crypto.randomUUID();await repo.publish('Primer hilo con monedas','post',null,action);await repo.publish('Primer hilo con monedas','post',null,action);assert.equal((await repo.read()).wallet.balance,20);
+ await repo.comment(action,'Mi respuesta no me da monedas');assert.equal((await repo.read()).wallet.balance,20);
+ await repo.removePost(action);assert.equal((await repo.read()).wallet.balance,20);
+ await repo.publish('Segundo hilo','post',null);await repo.publish('Tercer hilo','post',null);await repo.publish('Cuarto hilo','post',null);await repo.publish('Quinto hilo','post',null);
  const before=await repo.read();await assert.rejects(repo.publish('Sin saldo','post',null),e=>e.message==='UNICOINS_INSUFFICIENT');assert.equal((await repo.read()).posts.length,before.posts.length);assert.equal((await repo.read()).wallet.balance,0);
  await repo.comment('post-laia','Ahora sí, una respuesta para otra persona');assert.equal((await repo.read()).wallet.balance,2);await repo.comment('post-laia','Repetir no suma');assert.equal((await repo.read()).wallet.balance,2);repo.dispose();
 });
-test('Unicoins reward a first event signup without paying again for leaving and rejoining',async()=>{
- const repo=createDemoRepository('va');await repo.joinPlan('plan-coffee',true);assert.equal((await repo.read()).wallet.balance,23);await repo.joinPlan('plan-coffee',false);await repo.joinPlan('plan-coffee',true);assert.equal((await repo.read()).wallet.balance,23);
- await repo.joinPlan('plan-beach',true);await repo.joinPlan('plan-albufera',true);const w=(await repo.read()).wallet;assert.equal(w.balance,26);assert.equal(w.today.events,2);assert.ok(w.claimed_events.includes('plan-albufera'));repo.dispose();
+test('Event signup and repeated rejoining do not grant Unicoins',async()=>{
+ const repo=createDemoRepository('va');await repo.joinPlan('plan-coffee',true);assert.equal((await repo.read()).wallet.balance,20);await repo.joinPlan('plan-coffee',false);await repo.joinPlan('plan-coffee',true);assert.equal((await repo.read()).wallet.balance,20);
+ await repo.joinPlan('plan-beach',true);await repo.joinPlan('plan-albufera',true);const w=(await repo.read()).wallet;assert.equal(w.balance,20);assert.equal(w.today.events,0);assert.ok(!w.claimed_events.includes('plan-albufera'));repo.dispose();
 });

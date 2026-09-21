@@ -1,5 +1,6 @@
 
 import { createTranslator, localHref, type Locale } from "@/lib/i18n";
+import { LegalLinks } from "./legal-links";
 import { LaunchBar } from "./language-switcher";
 import type { RouteName } from "@/lib/i18n";
 import Image from "next/image";
@@ -14,8 +15,8 @@ export function AuthShell({ children, mode = "register", locale = "es", route = 
       <LaunchBar locale={locale} route={route} />
       <a className="skip-link" href="#acceso-entreclase">{tr("Saltar al formulario")}</a>
       <header className="auth-header">
-        <Link className="wordmark" href={localHref(locale, "/")} aria-label={tr("Entreclase, inicio")}>entreclase</Link>
-        <Link className="auth-home-link" href={localHref(locale, "/")}><ArrowLeft aria-hidden="true" /><span>{tr("Volver a Entreclase")}</span></Link>
+        <Link className="wordmark" href={localHref(locale, "/")} aria-label={tr("Entreclases, inicio")}>entreclases</Link>
+        <Link className="auth-home-link" href={localHref(locale, "/")}><ArrowLeft aria-hidden="true" /><span>{tr("Volver a Entreclases")}</span></Link>
       </header>
       <main className="auth-layout" id="acceso-entreclase">
         <aside className="auth-story" aria-label={tr("La gente de tu universidad")}>
@@ -26,9 +27,9 @@ export function AuthShell({ children, mode = "register", locale = "es", route = 
           </div>
           <figure className="auth-photo"><Image src="/images/campus-walk.webp" width={1440} height={960} sizes="(max-width: 850px) 1px, 48vw" alt={tr("Un grupo de estudiantes camina junto por el campus.")} /><figcaption>{tr("Al final había sitio.")}<ArrowUpRight aria-hidden="true" /></figcaption></figure>
         </aside>
-        <div className="auth-workspace"><div className="auth-form-wrap">{children}<noscript><style>{".auth-form { display: none; }"}</style><p className="auth-opening">{tr("Activa JavaScript para registrarte o iniciar sesión en Entreclase.")}</p></noscript></div><p className="auth-footnote"><LockKeyhole aria-hidden="true" />{tr("Correo universitario o invitación personal. Siempre con correo verificado.")}</p></div>
+        <div className="auth-workspace"><div className="auth-form-wrap">{children}<noscript><style>{".auth-form { display: none; }"}</style><p className="auth-opening">{tr("Activa JavaScript para registrarte o iniciar sesión en Entreclases.")}</p></noscript></div><p className="auth-footnote"><LockKeyhole aria-hidden="true" />{tr("Correo universitario o invitación personal. Siempre con correo verificado.")}</p></div>
       </main>
-      <footer className="auth-footer"><span>{tr("Entreclase. La red de tu universidad.")}</span><span>{tr("Nos vemos fuera.")}</span></footer>
+      <footer className="auth-footer"><LegalLinks locale={locale} /><span>{tr("Entreclases. La red de tu universidad.")}</span><span>{tr("Nos vemos fuera.")}</span></footer>
     </div>
   );
 }

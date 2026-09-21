@@ -53,9 +53,8 @@ test('Every catalogued game has a screen file and a Spanish and Valencian text',
   for (const file of screens.matchAll(/import\("\.\/([a-z-]+)"\)/g)) assert.ok(files.includes(file[1] + '.tsx'), `${file[1]}.tsx exists`);
 });
 
-test('Every game has an opening banner for Explorar in both languages, and entering the page rotates them', () => {
-  const { openings, currentOpening, rememberOpening } = load('lib/community/games/openings');
-  const visit = ids => { const shown = currentOpening(ids); assert.deepEqual(currentOpening(ids), shown, 'reading the turn twice does not skip a banner'); rememberOpening(shown.turn); rememberOpening(shown.turn); return shown.game; };
+test('Every game has an opening banner for Explorar in both languages, and the daily rotation is stable across visits', () => {
+  const { openings, openingOfDay } = load('lib/community/games/openings');
   for (const game of gameCatalog) {
     const opening = openings[game.id];
     assert.ok(opening, game.id + ' has an opening banner');
@@ -65,14 +64,14 @@ test('Every game has an opening banner for Explorar in both languages, and enter
     assert.ok(opening.card.options.length >= 2, game.id + ' offers a choice');
     assert.equal(opening.card.results.length, opening.card.options.length, game.id + ' answers every choice');
   }
-  const ids = enabledGames.map(game => game.id), store = new Map();
-  globalThis.window = { localStorage: { getItem: key => store.get(key) ?? null, setItem: (key, value) => store.set(key, value) } };
-  try {
-    const shown = ids.map(() => visit(ids));
-    assert.deepEqual(shown, ids, 'seven consecutive visits show the seven banners');
-    assert.equal(visit(ids), ids[0], 'then the rotation starts again');
-  } finally { delete globalThis.window; }
-  assert.ok(ids.includes(currentOpening(ids).game), 'without storage a banner is still chosen');
+  const ids = enabledGames.map(game => game.id);
+  const dates=ids.map((_,i)=>new Date(Date.UTC(2026,8,21+i,12)));
+  const shown=dates.map(date=>openingOfDay(ids,date));
+  assert.equal(new Set(shown).size,ids.length,'one complete cycle visits every game');
+  for(const date of dates) assert.equal(openingOfDay(ids,date),openingOfDay(ids,new Date(date.getTime()+3600000)),'revisits within the Madrid day keep the same game');
+  assert.equal(openingOfDay(ids,new Date('2026-09-21T21:59:00Z')),openingOfDay(ids,new Date('2026-09-21T00:00:00Z')));
+  assert.notEqual(openingOfDay(ids,new Date('2026-09-21T21:59:00Z')),openingOfDay(ids,new Date('2026-09-21T22:00:00Z')),'rotation happens at local midnight');
+
 });
 
 test('La cita empieza hablando keeps one 48-hour promise across its catalog and opening', () => {
