@@ -1,8 +1,8 @@
-# Backoffice de Entreclase
+# Backoffice de Entreclases
 
 ## Objetivo y alcance
 
-El backoffice será el espacio privado del equipo de Entreclase para gestionar la comunidad, resolver incidencias y decidir qué destacar. Debe ayudar a actuar con contexto, mantener un historial de las decisiones y proteger la privacidad de los usuarios.
+El backoffice será el espacio privado del equipo de Entreclases para gestionar la comunidad, resolver incidencias y decidir qué destacar. Debe ayudar a actuar con contexto, mantener un historial de las decisiones y proteger la privacidad de los usuarios.
 
 Este documento describe la propuesta de producto y el estado de la versión funcional del backoffice. La ruta `/backoffice/` usa la sesión autenticada y la RPC privada `universe_backoffice`; la ruta `/backoffice/?demo=1` mantiene datos ficticios para revisar el diseño sin tocar la base de datos.
 
@@ -15,7 +15,7 @@ El backoffice real se puede abrir en `/backoffice/` y en `/va/backoffice/`. La d
 - Entre líneas con propuestas que se pueden aceptar o rechazar en la sesión.
 - Personas, ClasiCoins y configuración como espacios preparados para la gestión diaria.
 - Juegos con estado activo o pausado para controlar qué experiencias aparecen en Explorar.
-- Búsqueda, navegación por secciones y diseño responsive con el lenguaje visual de Entreclase.
+- Búsqueda, navegación por secciones y diseño responsive con el lenguaje visual de Entreclases.
 
 Las acciones de la demo no afectan a usuarios reales. En la ruta real, las decisiones se validan en Supabase, se guardan en la base de datos y dejan un registro de auditoría.
 
@@ -184,7 +184,7 @@ Los cambios de reglas deben tener una fecha de entrada en vigor y no alterar sil
 
 ### Indicadores de utilidad
 
-El panel debe mostrar si Entreclase ayuda a participar y conocer gente:
+El panel debe mostrar si Entreclases ayuda a participar y conocer gente:
 
 - Personas que se apuntan a su primer plan.
 - Planes que consiguen participantes.
@@ -281,7 +281,7 @@ Antes de conectarlo habría que probar su precisión con ejemplos representativo
 
 ## Documentos relacionados
 
-- [Propuesta de Entreclase](entreclase-propuesta.md).
+- [Propuesta de Entreclases](entreclase-propuesta.md).
 - [Configuración de la comunidad](community-setup.md).
 - [Propuestas de revista](revista-propuestas.md).
 - [Voz editorial de Entre líneas](entre-lineas-voz-editorial.md).

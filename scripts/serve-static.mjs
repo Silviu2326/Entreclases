@@ -20,4 +20,4 @@ http.createServer(async (request, response) => {
     response.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
     response.end(request.method === "HEAD" ? undefined : body);
   }
-}).listen(port, "127.0.0.1", () => console.log("Entreclase: http://localhost:" + port));
+}).listen(port, "127.0.0.1", () => console.log("Entreclases: http://localhost:" + port));

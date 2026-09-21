@@ -108,7 +108,7 @@ La implementación conserva las páginas como componentes de servidor y pasa su 
 
 ## Aplicación de la comunidad
 
-El interior de Entreclase está en `/app/` y `/va/app/`. El login y la confirmación de correo redirigen a la aplicación. Incluye inicio con publicaciones, comentarios y reacciones; planes con inscripciones; grupos; apuntes descargables; gente; conversaciones privadas; y perfil editable. La primera entrada completa el perfil.
+El interior de Entreclases está en `/app/` y `/va/app/`. El login y la confirmación de correo redirigen a la aplicación. Incluye inicio con publicaciones, comentarios y reacciones; planes con inscripciones; grupos; apuntes descargables; gente; conversaciones privadas; y perfil editable. La primera entrada completa el perfil.
 
 La demo navegable sigue compilada en `/demo/` y `/va/demo/`, pero ya no se enlaza desde la landing ni desde el acceso: hasta la apertura, la web no enseña el producto por dentro. Todos sus perfiles son ficticios y los cambios solo duran esa visita.
 

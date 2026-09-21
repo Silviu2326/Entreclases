@@ -1,4 +1,4 @@
-# Correos de Entreclase con Resend
+# Correos de Entreclases con Resend
 
 ## Estado comprobado
 
@@ -15,17 +15,17 @@ La clave de Resend está configurada solo en el entorno local. No se ha configur
 
 | Campo | Valor |
 | --- | --- |
-| Sender name | `Entreclase` |
+| Sender name | `Entreclases` |
 | Sender email | La dirección elegida del dominio verificado |
 | Host | `smtp.resend.com` |
 | Port | `465` |
 | Username | `resend` |
 | Password | La API key de Resend |
 
-La clave se guarda en Supabase, nunca en variables `NEXT_PUBLIC_*`, código cliente, repositorio ni mensajes de chat. Si hay un hook **Send Email** activo, revisar su configuración: puede sustituir el transporte SMTP. El hook **Before User Created** de Entreclase controla las altas y debe mantenerse.
+La clave se guarda en Supabase, nunca en variables `NEXT_PUBLIC_*`, código cliente, repositorio ni mensajes de chat. Si hay un hook **Send Email** activo, revisar su configuración: puede sustituir el transporte SMTP. El hook **Before User Created** de Entreclases controla las altas y debe mantenerse.
 
 3. Desactivar el seguimiento de enlaces en Resend para que no reescriba los enlaces de autenticación. Mantener **Confirm email** activado. Revisar los límites de envío en Supabase y Resend antes de probar reenvíos.
-4. En **Email Templates**, copiar `supabase/email-templates/confirm-signup.html` en **Confirm signup** y `reset-password.html` en **Reset password**. Asuntos sugeridos: `Entreclase · Confirma tu correo / Confirma el teu correu` y `Entreclase · Recuperar el acceso / Recuperar l’accés`.
+4. En **Email Templates**, copiar `supabase/email-templates/confirm-signup.html` en **Confirm signup** y `reset-password.html` en **Reset password**. Asuntos sugeridos: `Entreclases · Confirma tu correo / Confirma el teu correu` y `Entreclases · Recuperar el acceso / Recuperar l’accés`.
 5. En **URL Configuration**, usar el origen real del sitio como Site URL y autorizar las siguientes rutas bajo ese mismo origen:
 
    - `/verificar/`
@@ -39,7 +39,7 @@ Para pruebas locales, autorizar también esas rutas bajo `http://localhost:3000`
 
 Con un buzón de prueba controlado por el propietario:
 
-1. Registrarse con un correo admitido por las reglas de Entreclase (universitario habilitado o invitación +1 válida). Confirmar que la petición no devuelve un error de Auth y que Resend registra el mensaje.
+1. Registrarse con un correo admitido por las reglas de Entreclases (universitario habilitado o invitación +1 válida). Confirmar que la petición no devuelve un error de Auth y que Resend registra el mensaje.
 2. Comprobar el evento de entrega en Resend y la recepción real en el buzón, incluida la carpeta de spam. Una respuesta correcta del formulario o un evento de envío no acredita por sí solo la recepción.
 3. Abrir el enlace, pulsar el botón de confirmación y comprobar que se obtiene acceso. Probar también el idioma valenciano y que el enlace ya consumido no vuelve a dar acceso.
 4. Con una cuenta de prueba pendiente, solicitar otro enlace tras el intervalo permitido.
@@ -55,7 +55,7 @@ Las invitaciones de grupos y de +1 actualmente generan enlaces para compartir ma
 - [SMTP personalizado de Supabase](https://supabase.com/docs/guides/auth/auth-smtp)
 - [Plantillas y seguimiento de enlaces](https://supabase.com/docs/guides/auth/auth-email-templates)
 
-## Configuración de Entreclase
+## Configuración de Entreclases
 
 Para `entreclases.com` se usará un remitente único para mantener una identidad reconocible y simplificar la verificación del dominio:
 
@@ -63,7 +63,7 @@ Para `entreclases.com` se usará un remitente único para mantener una identidad
 - Invitaciones +1: `invitaciones@entreclases.com`
 - Avisos: `avisos@entreclases.com`
 - Seguridad, confirmación y recuperación: `seguridad@entreclases.com`
-- Nombre visible: `Entreclase`
+- Nombre visible: `Entreclases`
 - Responder a: `hola@entreclases.com`
 - Cada flujo usa su dirección para que el propósito sea reconocible.
 - Recuperación y confirmación de cuenta: las gestiona Supabase Auth a través del SMTP de Resend.

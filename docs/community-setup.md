@@ -1,4 +1,4 @@
-# Entreclase: aplicación de la comunidad
+# Entreclases: aplicación de la comunidad
 
 La aplicación está implementada en Next.js, en `/app/` y `/va/app/`. Login y confirmación del correo llevan a ella. El primer acceso de una cuenta verificada pide completar el perfil. La configuración local de Supabase está comprobada, pero aún faltan las migraciones y la activación de dominios; el código de integración no activa por sí mismo cuentas reales.
 

@@ -6,7 +6,7 @@ Lee antes `00-conceptos-comunes.md`: destinatarios, identidad y avisos se define
 
 ## La idea
 
-Los planes normales de la aplicación se organizan con días de antelación. Hay hueco es lo contrario: cubre el rato muerto entre dos clases, la hora de comer sin compañía, la tarde de biblioteca que sería mejor con alguien. Es el único de los siete juegos que termina siempre con personas viéndose en persona, y por eso es el más importante para la idea de Entreclase.
+Los planes normales de la aplicación se organizan con días de antelación. Hay hueco es lo contrario: cubre el rato muerto entre dos clases, la hora de comer sin compañía, la tarde de biblioteca que sería mejor con alguien. Es el único de los siete juegos que termina siempre con personas viéndose en persona, y por eso es el más importante para la idea de Entreclases.
 
 El objeto del juego es **un hueco en el mapa con plazas y un reloj**.
 

@@ -1,4 +1,4 @@
-# Proyectos y revista de Entreclase
+# Proyectos y revista de Entreclases
 
 ## Qué incorpora esta versión
 

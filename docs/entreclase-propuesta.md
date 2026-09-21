@@ -1,16 +1,16 @@
-# Entreclase
+# Entreclases
 
 ## Qué es
 
-Entreclase es una red social universitaria pensada para que la vida del campus no se quede en ir a clase y volver a casa. Conecta a personas que comparten universidad, ciudad y momentos parecidos: una asignatura, un examen, una cafetería, una afición o simplemente las ganas de conocer a alguien.
+Entreclases es una red social universitaria pensada para que la vida del campus no se quede en ir a clase y volver a casa. Conecta a personas que comparten universidad, ciudad y momentos parecidos: una asignatura, un examen, una cafetería, una afición o simplemente las ganas de conocer a alguien.
 
-Su punto de partida es sencillo: muchas personas están rodeadas de estudiantes y, aun así, no encuentran una forma natural de empezar a hablar. Entreclase pone ese primer paso en un lugar claro y cercano.
+Su punto de partida es sencillo: muchas personas están rodeadas de estudiantes y, aun así, no encuentran una forma natural de empezar a hablar. Entreclases pone ese primer paso en un lugar claro y cercano.
 
 > Conoces a media uni. A casi nadie. Eso se puede arreglar.
 
 ## La propuesta
 
-Entreclase convierte lo que ocurre alrededor en oportunidades para participar. En vez de enseñar un escaparate infinito de vidas lejanas, ayuda a descubrir qué está pasando esta semana en tu campus y cómo sumarte.
+Entreclases convierte lo que ocurre alrededor en oportunidades para participar. En vez de enseñar un escaparate infinito de vidas lejanas, ayuda a descubrir qué está pasando esta semana en tu campus y cómo sumarte.
 
 Una pregunta puede acabar en una conversación. Una conversación puede acabar en un café. Un café puede convertirse en un grupo de amigos.
 
@@ -44,7 +44,7 @@ Es la puerta de entrada. Presenta una idea clara de la comunidad, una invitació
 
 ### Explorar
 
-Es el centro de Entreclase. Reúne en un mismo recorrido las cuatro formas de encontrarse:
+Es el centro de Entreclases. Reúne en un mismo recorrido las cuatro formas de encontrarse:
 
 - **Gente:** perfiles y personas con las que puede tener sentido hablar.
 - **Planes:** actividades concretas a las que apuntarse o que se pueden proponer.
@@ -80,7 +80,7 @@ Los grupos reúnen a personas que quieren coincidir más de una vez: quienes est
 
 ## Los juegos para empezar a hablar
 
-Entreclase incluye juegos breves que funcionan como excusas sociales. Cada uno tiene una personalidad diferente y se puede mantener o quitar por separado:
+Entreclases incluye juegos breves que funcionan como excusas sociales. Cada uno tiene una personalidad diferente y se puede mantener o quitar por separado:
 
 | Juego | Qué propone |
 | --- | --- |
@@ -96,9 +96,9 @@ No son juegos pensados para acumular puntos sin más. Su función es quitar la t
 
 ## Qué la hace diferente de Instagram o TikTok
 
-Instagram y TikTok están diseñados para descubrir contenido, seguir cuentas y consumir publicaciones a gran escala. Entreclase está diseñada para **coincidir**.
+Instagram y TikTok están diseñados para descubrir contenido, seguir cuentas y consumir publicaciones a gran escala. Entreclases está diseñada para **coincidir**.
 
-| Redes generalistas | Entreclase |
+| Redes generalistas | Entreclases |
 | --- | --- |
 | La mayoría de lo que aparece puede estar a cientos de kilómetros. | La comunidad comparte universidad, ciudad o campus. |
 | El éxito se mide por alcance, seguidores y visitas. | El valor está en una conversación, un grupo o un plan que ocurre. |
@@ -107,7 +107,7 @@ Instagram y TikTok están diseñados para descubrir contenido, seguir cuentas y 
 | El contacto suele empezar con un like o un mensaje frío. | Hay preguntas, juegos y planes que dan un motivo para acercarse. |
 | La experiencia premia publicar mucho. | Se puede participar sin publicar constantemente. |
 
-Entreclase no quiere ser otra pantalla que llenar. Quiere ser el lugar donde una persona encuentra una razón concreta para salir de la pantalla.
+Entreclases no quiere ser otra pantalla que llenar. Quiere ser el lugar donde una persona encuentra una razón concreta para salir de la pantalla.
 
 ## ClasiCoins
 
@@ -117,7 +117,7 @@ No son dinero, no se compran y no se pueden convertir en dinero. Funcionan como 
 
 ## Confianza, privacidad y cuidado
 
-Entreclase parte de una comunidad universitaria verificada, pero cada persona decide cuánto quiere compartir. Las conversaciones privadas no son públicas y los juegos anónimos ocultan el nombre en la experiencia visible.
+Entreclases parte de una comunidad universitaria verificada, pero cada persona decide cuánto quiere compartir. Las conversaciones privadas no son públicas y los juegos anónimos ocultan el nombre en la experiencia visible.
 
 La comunidad debe poder denunciar, bloquear y abandonar una interacción. En los espacios románticos se pide confirmar que se es mayor de edad y la identidad solo se muestra cuando existe permiso mutuo.
 
@@ -129,9 +129,9 @@ Clara llega nueva a València y entra con su correo universitario. En **Explorar
 
 Después juega a **Dos verdades y una trola** y alguien le escribe por privado porque también vive cerca. Intercambian dos mensajes y crean un plan para el sábado. Clara no ha tenido que publicar una vida perfecta ni aprender un menú complicado: ha encontrado un motivo para hablar y una forma sencilla de coincidir.
 
-## La personalidad de Entreclase
+## La personalidad de Entreclases
 
-Entreclase habla como alguien que conoce la universidad desde dentro: directo, cercano, con humor y sin prometer una vida perfecta.
+Entreclases habla como alguien que conoce la universidad desde dentro: directo, cercano, con humor y sin prometer una vida perfecta.
 
 Su idea se puede resumir así:
 

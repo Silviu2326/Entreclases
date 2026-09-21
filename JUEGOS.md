@@ -1,4 +1,4 @@
-# Los juegos de Entreclase
+# Los juegos de Entreclases
 
 Las siete experiencias se listan en **Explorar**, debajo del banner, y cada una tiene su propia página con dirección propia. Las tarjetas de Explorar son enlaces a esas páginas; también se puede enlazar a un juego desde fuera de la aplicación.
 

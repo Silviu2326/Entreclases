@@ -1,8 +1,8 @@
-# Activar las cuentas de Entreclase
+# Activar las cuentas de Entreclases
 
 Actualización del 20 de septiembre de 2026: el diagnóstico remoto ya confirma Auth por email, confirmación obligatoria, acceso del frontend activado y existencia de las tablas comprobadas. Para configurar Resend y verificar la entrega real, seguir [Correos con Resend](resend-setup.md). Las notas del 9 de septiembre que siguen describen el estado inicial.
 
-La configuración local apunta al proyecto `avngidebyxsliavjkfvp`. El 9 de septiembre de 2026 se comprobó que la URL y la clave pública funcionan, el acceso por email está habilitado y la confirmación de correo es obligatoria. Faltan las tablas de Entreclase en el proyecto remoto. No se han creado cuentas ni enviado correos reales.
+La configuración local apunta al proyecto `avngidebyxsliavjkfvp`. El 9 de septiembre de 2026 se comprobó que la URL y la clave pública funcionan, el acceso por email está habilitado y la confirmación de correo es obligatoria. Faltan las tablas de Entreclases en el proyecto remoto. No se han creado cuentas ni enviado correos reales.
 
 El interruptor `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED=false` mantiene el acceso en preparación mientras se instala la base de datos. Solo ponerlo en `true` después de completar los pasos de esta guía. La clave pública permite usar las API, pero no aplicar migraciones ni administrar Auth.
 
@@ -10,13 +10,13 @@ Para repetir el diagnóstico sin leer registros de usuarios: `npm run supabase:c
 
 ## Arquitectura de esta aplicación
 
-Entreclase usa la exportación estática de Next.js. El cliente compartido de `lib/auth/client.ts` conecta todos los formularios y la comunidad con `@supabase/supabase-js`; conserva PKCE, la persistencia y la renovación automática de sesiones. Los permisos se comprueban en PostgreSQL mediante las funciones y políticas RLS existentes.
+Entreclases usa la exportación estática de Next.js. El cliente compartido de `lib/auth/client.ts` conecta todos los formularios y la comunidad con `@supabase/supabase-js`; conserva PKCE, la persistencia y la renovación automática de sesiones. Los permisos se comprueban en PostgreSQL mediante las funciones y políticas RLS existentes.
 
 Se ha instalado también `@supabase/ssr`, como se solicitó. Sus helpers de servidor y Proxy requieren peticiones atendidas por un servidor Next.js y no son compatibles con `output: "export"`. No se añade un middleware que no vaya a ejecutarse ni se reemplaza la portada por el ejemplo de la tabla `todos`. Una futura migración a SSR debe cambiar el alojamiento, crear clientes por petición, validar la identidad y propagar las cookies renovadas.
 
 ## 1. Proyecto y control universitario
 
-Usar un proyecto de Supabase dedicado a Entreclase. Ejecutar, en ese orden, `supabase/migrations/202609090001_university_auth.sql` y `supabase/migrations/202609090002_valencia_launch.sql` en su SQL Editor. Para la aplicación interior, continuar con las migraciones `202609090003_community.sql`, `202609090004_community_storage.sql` y `202609090005_unicoins.sql`, descritas en [la guía de comunidad](community-setup.md). La migración crea una lista de dominios, un hook de registro, un trigger que también bloquea cambios a correos no admitidos y una función para leer únicamente la cuenta verificada del usuario actual.
+Usar un proyecto de Supabase dedicado a Entreclases. Ejecutar, en ese orden, `supabase/migrations/202609090001_university_auth.sql` y `supabase/migrations/202609090002_valencia_launch.sql` en su SQL Editor. Para la aplicación interior, continuar con las migraciones `202609090003_community.sql`, `202609090004_community_storage.sql` y `202609090005_unicoins.sql`, descritas en [la guía de comunidad](community-setup.md). La migración crea una lista de dominios, un hook de registro, un trigger que también bloquea cambios a correos no admitidos y una función para leer únicamente la cuenta verificada del usuario actual.
 
 La lista empieza sin dominios activos y bloquea todos los registros. Añadir solo dominios institucionales contrastados con la universidad. Coincidencia exacta: un dominio principal no aprueba automáticamente sus subdominios. No conceder acceso por acabar en “.edu” ni por metadatos del perfil.
 
@@ -48,7 +48,7 @@ Autorizar exactamente estos destinos:
 
 Copiar las plantillas de `supabase/email-templates/` en Confirm signup y Reset password. El enlace lleva el token en el fragmento y la página lo verifica después de pulsar un botón; así puede abrirse en otro dispositivo y los escáneres de enlaces no lo consumen al cargar la página. Los enlaces por defecto con PKCE también se admiten, pero deben abrirse en el navegador donde se solicitaron.
 
-El SDK gestiona las sesiones y su renovación. Las contraseñas se envían exclusivamente a Supabase; no se guardan en localStorage, sessionStorage ni logs de Entreclase. Los tokens de sesión usan el almacenamiento estándar del SDK. La función del servidor, no esos datos locales, concede acceso.
+El SDK gestiona las sesiones y su renovación. Las contraseñas se envían exclusivamente a Supabase; no se guardan en localStorage, sessionStorage ni logs de Entreclases. Los tokens de sesión usan el almacenamiento estándar del SDK. La función del servidor, no esos datos locales, concede acceso.
 
 ## 3. Configuración pública del frontend
 
@@ -74,7 +74,7 @@ Ejecutar `npm run test:auth` y `npm run build`. Antes de abrir cuentas reales, c
 
 Esta entrega tiene pruebas locales de validación y del control de acceso ejecutadas sobre PostgreSQL en memoria. No sustituye una comprobación con correos reales del proyecto conectado. No se realizó prueba de navegador en este entorno.
 
-El sitio sigue teniendo la audiencia privada configurada por su propietario. Crear cuentas de Entreclase no cambia esa audiencia; el acceso a estudiantes externos requiere configurar expresamente la publicación o compartir el sitio.
+El sitio sigue teniendo la audiencia privada configurada por su propietario. Crear cuentas de Entreclases no cambia esa audiencia; el acceso a estudiantes externos requiere configurar expresamente la publicación o compartir el sitio.
 
 ## Referencias de la integración
 
@@ -113,7 +113,7 @@ Para probar en este equipo, autorizar además estos destinos exactos de desarrol
 
 Si se accede usando `localhost` en vez de `127.0.0.1`, añadir los mismos cuatro destinos con ese host. Usar siempre el mismo origen durante la prueba de PKCE. Los destinos de producción deben corresponder al alojamiento real; no configurar `entreclase.com` antes de registrar y conectar ese dominio.
 
-Las plantillas incluyen español y valenciano y usan `.Data.locale`, que se guarda al registrarse. Una cuenta sin ese dato recibe español. Los correos de recuperación usan el idioma registrado en la cuenta; el enlace vuelve al idioma de la pantalla desde la que se pidió. Se puede usar un asunto bilingüe: `Entreclase · Confirma tu correo / Confirma el teu correu` y `Entreclase · Recuperar el acceso / Recuperar l’accés`.
+Las plantillas incluyen español y valenciano y usan `.Data.locale`, que se guarda al registrarse. Una cuenta sin ese dato recibe español. Los correos de recuperación usan el idioma registrado en la cuenta; el enlace vuelve al idioma de la pantalla desde la que se pidió. Se puede usar un asunto bilingüe: `Entreclases · Confirma tu correo / Confirma el teu correu` y `Entreclases · Recuperar el acceso / Recuperar l’accés`.
 
 El selector conserva exclusivamente los parámetros de una acción de correo pendiente al cambiar entre las rutas de verificación o de nueva contraseña. El fragmento no se envía al servidor. Se retira de la URL al pulsar el botón de confirmación, antes de consumir el enlace; no se copian tokens de sesión ni destinos externos. La variante PKCE usa la consulta y requiere el navegador de origen.
 

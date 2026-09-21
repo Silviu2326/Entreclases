@@ -1,10 +1,10 @@
--- Entreclase: instalación inicial en un proyecto Supabase dedicado.
+-- Entreclases: instalación inicial en un proyecto Supabase dedicado.
 -- Generado desde supabase/migrations; no editar ni ejecutar sobre una instalación existente.
 -- Instala tablas, funciones y permisos. No crea usuarios ni activa dominios.
 begin;
 do $$ begin
   if to_regclass('public.universe_university_domains') is not null then
-    raise exception 'Entreclase ya tiene migraciones aplicadas. Ejecuta solo las pendientes, en orden.';
+    raise exception 'Entreclases ya tiene migraciones aplicadas. Ejecuta solo las pendientes, en orden.';
   end if;
 end $$;
 

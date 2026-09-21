@@ -1,6 +1,6 @@
 # La voz de Entre líneas
 
-Entre líneas cuenta lo que hace la gente de Entreclase y ayuda al lector a encontrar dónde participar. Su primera edición presenta la plataforma. Las siguientes deben dar protagonismo a la comunidad.
+Entre líneas cuenta lo que hace la gente de Entreclases y ayuda al lector a encontrar dónde participar. Su primera edición presenta la plataforma. Las siguientes deben dar protagonismo a la comunidad.
 
 ## La idea que une la revista
 
@@ -48,7 +48,7 @@ Portada: **¿Esta silla está libre?**
 
 | Pieza | Situación | Qué explica |
 | --- | --- | --- |
-| Le has pedido apuntes. Tres veces. | Reconocer a alguien sin saber su nombre | Por qué existe Entreclase y cómo entrar |
+| Le has pedido apuntes. Tres veces. | Reconocer a alguien sin saber su nombre | Por qué existe Entreclases y cómo entrar |
 | Tienes veinte minutos entre clases. | Un rato libre y el móvil en la mano | Inicio, Explorar, Charlas y perfil |
 | El jueves sí existe. | Una quedada que nunca tiene fecha | Planes y continuidad en grupos |
 | Tu idea ya tiene carpeta. Le falta equipo. | Una idea que necesita otra habilidad | Proyectos y colaboración con condiciones claras |

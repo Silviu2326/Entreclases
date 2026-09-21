@@ -13,7 +13,7 @@ La estantería del perfil permite añadir series, películas, juegos y música. 
 - **Spotify**: álbumes. Configura opcionalmente `NEXT_PUBLIC_SPOTIFY_ACCESS_TOKEN`; el token se utiliza solo para buscar y debe renovarse fuera de la aplicación.
 - **MusicBrainz**: álbumes y artistas. No necesita clave y funciona como respaldo de Spotify. Respeta su límite de una petición por segundo.
 
-Cuando falta una credencial o un proveedor no responde, el selector muestra la lista local de Entreclase. Así el perfil continúa funcionando en la demo y durante una caída temporal.
+Cuando falta una credencial o un proveedor no responde, el selector muestra la lista local de Entreclases. Así el perfil continúa funcionando en la demo y durante una caída temporal.
 
 ## Configuración
 
@@ -21,6 +21,6 @@ Cuando falta una credencial o un proveedor no responde, el selector muestra la l
 2. Añade las credenciales de los proveedores que tengas aprobadas.
 3. Reinicia el servidor de desarrollo para que Next.js lea las variables.
 
-TMDB exige atribución en la aplicación. TVMaze, IGDB, Spotify y MusicBrainz tienen condiciones propias de uso y límites de llamadas; la pantalla de créditos de Entreclase debe conservar la atribución de los proveedores antes de publicar el producto.
+TMDB exige atribución en la aplicación. TVMaze, IGDB, Spotify y MusicBrainz tienen condiciones propias de uso y límites de llamadas; la pantalla de créditos de Entreclases debe conservar la atribución de los proveedores antes de publicar el producto.
 
 La aplicación está exportada como sitio estático. Por eso las búsquedas que requieren credenciales usan variables públicas y de corta duración. Para producción conviene mover IGDB y Spotify a un proxy del servidor que mantenga sus secretos fuera del navegador; el modelo de `Taste` y el selector no necesitan cambiar.

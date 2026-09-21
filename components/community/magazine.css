@@ -1,4 +1,4 @@
-/* Entre líneas — an editorial surface within Entreclase.
+/* Entre líneas — an editorial surface within Entreclases.
    Paper, ink, red folios, open columns and generous reading measures. */
 .u-workspace:has(.mz-magazine) { background:#f7f3e9; }
 .u-page:has(.mz-magazine) { max-width:1480px; padding-top:28px; }
