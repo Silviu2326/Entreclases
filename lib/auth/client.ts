@@ -1,7 +1,18 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { authConfiguration, authConfigured } from "./config";
+import { authConfiguration, authConfigured, supabaseConfigured } from "./config";
 
 let client: SupabaseClient | undefined;
+let publicClient: SupabaseClient | undefined;
+
+// The prelaunch list only needs a reachable project: it runs before Auth is
+// enabled and never opens a session, so it keeps its own client.
+export function getPublicClient() {
+  if (!supabaseConfigured || typeof window === "undefined") throw { code: "not_configured" };
+  publicClient ??= createClient(authConfiguration.url, authConfiguration.key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+  return publicClient;
+}
 
 export function getAuthClient() {
   if (!authConfigured || typeof window === "undefined") throw { code: "not_configured" };

@@ -14,6 +14,7 @@ const links = [
   { href: "#unicoins", label: "ClasiCoins" },
   { href: "#acceso", label: "Quién puede entrar" },
   { href: "#dudas", label: "Las dudas" },
+  { href: "/roadmap/", label: "Roadmap" },
   { href: "/registro/", label: "Crear mi cuenta" },
 ];
 
@@ -36,7 +37,7 @@ export function MobileNavigation({ locale = "es" }: { locale?: Locale }) {
         {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
       </Button>
       <div id="mobile-page-links" className="mobile-page-links" hidden={!open}>
-        {links.map((item) => { const link = item.href === "/registro/" && phase !== "open" ? {href:"#lanzamiento", label:"El lanzamiento"} : item; return <a key={link.href} href={localHref(locale, link.href)} onClick={() => setOpen(false)}>{tr(link.label)}</a>; })}
+        {links.map((item) => { const link = item.href === "/registro/" && phase !== "open" ? {href:"#entrar", label:"Dejar mi correo"} : item; return <a key={link.href} href={localHref(locale, link.href)} onClick={() => setOpen(false)}>{tr(link.label)}</a>; })}
       </div>
     </div>
   );

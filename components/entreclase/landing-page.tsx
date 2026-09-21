@@ -1,4 +1,5 @@
-import { createTranslator, localHref, type Locale } from "@/lib/i18n";
+import Link from "next/link";
+import { createTranslator, localPath, type Locale } from "@/lib/i18n";
 import { LaunchBar } from "./language-switcher";
 import { LandingMotion } from "./landing-motion";
 import { UnicoinsSection } from "./unicoins-section";
@@ -34,8 +35,9 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             <a className="nav-link" href="#campus">{tr("Tu campus")}</a>
             <a className="nav-link" href="#unicoins">ClasiCoins</a>
             <a className="nav-link" href="#dudas">{tr("Dudas")}</a>
+            <Link className="nav-link" href={localPath(locale, "roadmap")}>{locale === "va" ? "Full de ruta" : "Roadmap"}</Link>
             <Button asChild className="entreclase-button nav-button">
-              <LaunchAction locale={locale} compact/>
+              <LaunchAction locale={locale} compact target="#entrar"/>
             </Button>
             <MobileNavigation locale={locale} />
           </div>
@@ -55,7 +57,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
               <p className="hero-description" data-reveal="rise" data-reveal-delay="160">{tr("Entreclases convierte los pasillos, los apuntes y ese «¿te vienes?» en gente real con la que quedar.")}</p>
               <p className="hero-brand" data-reveal="rise" data-reveal-delay="200">{tr("Planes pequeños. Historias que sí te pasan.")}</p>
               <Button asChild className="entreclase-button hero-button">
-                <LaunchAction locale={locale}/>
+                <LaunchAction locale={locale} target="#entrar"/>
               </Button>
               <p className="access-note"><LockKeyhole aria-hidden="true" />{" "}{tr("Acceso con correo universitario o invitación personal.")}</p>
               <p className="access-note">{locale === "va" ? "Un compte universitari. Una invitació per a algú de fora." : "Una cuenta universitaria. Una invitación para alguien de fuera."}</p>
@@ -77,7 +79,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
                     <span className="photo-avatar avatar-one" /><span className="photo-avatar avatar-two" /><span className="photo-avatar avatar-three" />
                   </div>
                   <Button asChild className="entreclase-button event-button">
-                    <a href={localHref(locale, "/demo/?view=plans")} aria-label={locale === "va" ? "Veure plans de demostració" : "Ver planes de demostración"}>{locale === "va" ? "Veure exemple" : "Ver ejemplo"}</a>
+                    <a href="#entrar" aria-label={locale === "va" ? "Deixar el meu correu" : "Dejar mi correo"}>{locale === "va" ? "Vull entrar" : "Quiero entrar"}</a>
                   </Button>
                 </div>
               </div>
@@ -122,13 +124,13 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             <div className="signup-main" data-reveal="rise">
               <h2 id="signup-title">{tr("Aquí tu correo")}<br />{tr("sí sirve para algo.")}</h2>
               <div className="signup-content">
-                <p>{tr("Entra con correo universitario o una invitación")}<br className="desktop-break" />{" "}{tr("personal. Confirma tu correo y empieza por decir hola.")}</p>
+                <p>{locale === "va" ? "Deixa el teu correu, universitari o no, i t’avisem el dia que obrim. El 28 de setembre s’entra amb correu d’una universitat de València o amb una invitació personal." : "Deja tu correo, universitario o no, y te avisamos el día que abrimos. El 28 de septiembre se entra con correo de una universidad de Valencia o con una invitación personal."}</p>
                 <SignupForm locale={locale} />
               </div>
             </div>
             <footer className="site-footer">
               <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, volver al inicio")}>entreclases</a>
-              <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}><a href="#vida">{tr("La vida dentro")}</a><a href="#dudas">{tr("Dudas")}</a></nav>
+              <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}><a href="#vida">{tr("La vida dentro")}</a><a href="#dudas">{tr("Dudas")}</a><Link href={localPath(locale, "roadmap")}>{locale === "va" ? "Full de ruta" : "Roadmap"}</Link></nav>
               <LegalLinks locale={locale} /><p>{tr("Nos vemos fuera.")}</p>
             </footer>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { createTranslator, localHref, type Locale } from "@/lib/i18n";
+import { createTranslator, localPath, type Locale } from "@/lib/i18n";
 
 import { useState, type ComponentProps } from "react";
 import { Eye, EyeOff, LoaderCircle, ArrowUpRight, Info } from "lucide-react";
@@ -13,7 +13,7 @@ import { authConfigured } from "@/lib/auth/config";
 export function OpeningNotice({ locale = "es" }: { locale?: Locale }) {
  const tr=createTranslator(locale);
   if (authConfigured) return null;
-  return <div className="auth-opening"><Info aria-hidden="true" /><p>{tr("Estamos preparando la apertura. Puedes ver cómo será el acceso; todavía no se crean cuentas.")} <Link className="auth-demo-link" href={localHref(locale,"/demo/")}>{tr("Dar una vuelta por dentro")}</Link></p></div>;
+  return <div className="auth-opening"><Info aria-hidden="true" /><p>{tr("Estamos preparando la apertura. Puedes ver cómo será el acceso; todavía no se crean cuentas.")} <Link className="auth-demo-link" href={localPath(locale,"roadmap")}>{tr("Ver el roadmap")}</Link></p></div>;
 }
 
 export function AuthField({ locale = "es", label, error, hint, ...props }: ComponentProps<typeof Input> & { locale?: Locale; label: string; error?: string; hint?: string }) {

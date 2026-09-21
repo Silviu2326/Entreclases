@@ -1,6 +1,6 @@
 import { Coins, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { localPath, type Locale } from "@/lib/i18n/routes";
+import type { Locale } from "@/lib/i18n/routes";
 import { unicoinCopy } from "@/lib/i18n/unicoins";
 import { COIN_RULES } from "@/lib/community/unicoins";
 import { authConfigured } from "@/lib/auth/config";
@@ -25,8 +25,8 @@ export function UnicoinsSection({ locale }: { locale: Locale }) {
             <div className="spend"><dt>{t("createThread")}<small>{va ? "El primer és gratuït." : "El primero es gratuito."}</small></dt><dd>−{COIN_RULES.createThread}<span className="sr-only"> ClasiCoins</span></dd></div>
           </dl>
           <p className="landing-coins-free">{t("free")}</p>
-          <Button asChild className="entreclase-button landing-coins-button"><a href={localPath(locale,"demo")+"?view=unicoins"}>{va ? "Provar les ClasiCoins" : "Probar las ClasiCoins"}<ArrowUpRight aria-hidden="true" /></a></Button>
-          {!authConfigured && <p className="landing-coins-pending">{va ? "L’accés real s’està preparant. Pots provar el sistema en la demo." : "El acceso real se está preparando. Puedes probar el sistema en la demo."}</p>}
+          <Button asChild className="entreclase-button landing-coins-button"><a href="#entrar">{va ? "Vull les meues primeres ClasiCoins" : "Quiero mis primeras ClasiCoins"}<ArrowUpRight aria-hidden="true" /></a></Button>
+          {!authConfigured && <p className="landing-coins-pending">{va ? "Les 20 de benvinguda t’esperen el dia de l’obertura." : "Las 20 de bienvenida te esperan el día de la apertura."}</p>}
         </div>
       </div>
       <details className="landing-coins-details"><summary>{va ? "I per què hi ha límits?" : "¿Y por qué hay límites?"}</summary><p>{va ? "Una recompensa per fil alié, fins a tres al dia. Respondre’t a tu mateix o repetir respostes no dona més monedes." : "Una recompensa por hilo ajeno, hasta tres al día. Responderte a ti mismo o repetir respuestas no da más monedas."}</p><p>{t("dailyHelp")}</p><p>{t("noRefund")}</p></details>

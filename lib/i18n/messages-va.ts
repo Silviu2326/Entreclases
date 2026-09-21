@@ -1,5 +1,10 @@
 // Original Valencian copy. Spanish source strings are the stable lookup keys.
 export const valencianMessages: Record<string, string> = {
+  "Roadmap": "Full de ruta",
+  "Dejar mi correo": "Deixar el meu correu",
+  "Ver el roadmap": "Veure el full de ruta",
+  "El registro aún no está abierto. Déjanos tu correo y te avisamos en cuanto abra.": "El registre encara no està obert. Deixa’ns el teu correu i t’avisem quan òbriga.",
+  "Tu +1 todavía no está activado. Escríbenos y lo revisamos.": "El teu +1 encara no està activat. Escriu-nos i ho revisem.",
   "Este correo no pertenece a una universidad con acceso abierto. Si tienes una invitación, abre su enlace.": "Este correu no pertany a una universitat amb accés obert. Si tens una invitació, obri l’enllaç.",
   "Tu universidad todavía no tiene acceso abierto.": "La teua universitat encara no té accés obert.",
   "Usa tu correo universitario o abre el enlace de tu invitación para entrar con el personal.": "Usa el correu universitari o obri l’enllaç de la invitació per a entrar amb el personal.",

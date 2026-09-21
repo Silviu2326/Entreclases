@@ -8,6 +8,10 @@ const personalDomains = new Set([
 
 export function normalizeEmail(value: string) { return value.trim().toLowerCase(); }
 
+// The prelaunch list accepts any address; this only decides whether the form
+// warns that the opening day still asks for a university account.
+export function isPersonalDomain(value: string) { return personalDomains.has(normalizeEmail(value).split("@")[1] ?? ""); }
+
 export function emailError(value: string, universityOnly = false): string {
   const email = normalizeEmail(value);
   if (!email) return "Escribe tu correo.";
@@ -27,7 +31,7 @@ export function passwordError(value: string): string {
 export function authErrorMessage(error: unknown): string {
   const message = typeof error === "object" && error !== null && "message" in error ? String(error.message) : "";
   const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
-  if (message.includes("UNIVERSE_REGISTRATION_NOT_OPEN")) return "El registro aún no está abierto. Puedes probar la demo mientras preparamos la apertura.";
+  if (message.includes("UNIVERSE_REGISTRATION_NOT_OPEN")) return "El registro aún no está abierto. Déjanos tu correo y te avisamos en cuanto abra.";
   if (message.includes("INVITE_INVALID")) return "La invitación no es válida para este correo, ha caducado o ya se ha usado. Pide a quien te invitó que la revise.";
   if (message.includes("UNIVERSE_UNIVERSITY_REQUIRED") || code === "23514")
     return "Este correo no pertenece a una universidad con acceso abierto. Si tienes una invitación, abre su enlace.";

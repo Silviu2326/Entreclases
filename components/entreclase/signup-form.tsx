@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LaunchCampaign } from "./launch-campaign";
+import { WaitlistForm } from "./waitlist-form";
 import { useLaunch } from "@/lib/launch/use-launch";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -32,7 +32,7 @@ export function SignupForm({ locale = "es" }: { locale?: Locale }) {
     router.push(localHref(locale, "/registro/"));
   }
 
-  if (phase !== "open") return <><LaunchCampaign locale={locale} compact/><p className="form-notice">{tr("¿Ya tienes cuenta?")} <Link href={localHref(locale,"/login/")}>{tr("Entra por aquí.")}</Link></p></>;
+  if (phase !== "open") return <><WaitlistForm locale={locale} source="landing"/><p className="form-notice">{tr("¿Ya tienes cuenta?")} <Link href={localHref(locale,"/login/")}>{tr("Entra por aquí.")}</Link></p></>;
 
   return (
     <form method="post" className="signup-form" onSubmit={submit} noValidate>

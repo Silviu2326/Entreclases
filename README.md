@@ -12,6 +12,18 @@ Las páginas legales están preparadas en ambos idiomas y se identifican como bo
 
 Cuenta atrás, calendario y control de nuevas altas: [configuración y apertura](docs/lanzamiento-28-septiembre.md). La fecha no abre el registro por sí sola; requiere activación del titular en web y servidor.
 
+Hasta la apertura, la web solo pide una cosa: el correo. No hay recorrido por la aplicación ni enlaces públicos a la demo; las rutas `/demo/` siguen compiladas y marcadas como no indexables, pero no se enlazan desde ninguna página pública.
+
+## Roadmap
+
+`/roadmap/` y `/va/full-de-ruta/` publican las tres fechas: apertura en Valencia el 28 de septiembre de 2026, sección de Proyectos el 12 de octubre (dos semanas después) y un anuncio el 26 de octubre, último lunes del mes. Los textos y las fechas están en `lib/launch/roadmap.ts`; la página está en `components/entreclase/roadmap-page.tsx` y es la única página, junto a la portada, que se declara indexable.
+
+## Lista de correo del prelanzamiento
+
+El formulario de la portada y el del roadmap guardan la dirección en `public.universe_waitlist` (migración `202609230020_waitlist.sql`). Admite correo universitario o personal, y avisa de que el día de la apertura sigue haciendo falta una cuenta universitaria o una invitación. La tabla solo concede `insert` de tres columnas a `anon`: nadie puede leer, editar ni borrar la lista desde el navegador, y se consulta con una clave de servidor.
+
+Basta con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y la migración aplicada; no requiere `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED`. Sin esa configuración el formulario no finge que guarda: ofrece escribir a `hola@entreclases.com`. El aviso por correo depende de un envío real todavía por configurar.
+
 ## Desarrollo
 
 - `npm ci`
@@ -52,7 +64,7 @@ El botón Entrar abre `/login/`. El registro está en `/registro/`, con nombre, 
 
 **La configuración real depende del entorno; este cambio no aplica migraciones al servidor.** Sin su URL y clave pública, no se crean cuentas ni se envían correos: los formularios muestran el estado de apertura pendiente. La integración llama al proveedor real cuando se configura; no simula sesiones ni almacena contraseñas. La migración exige un dominio aprobado exacto y un correo confirmado en servidor. La regla de lanzamiento exige además una región Valencia revisada en servidor. La segunda migración prepara el dominio de estudiantes de la UV, desactivado; faltan la revisión y activación de los dominios admitidos. Ver [guía de activación](docs/auth-setup.md) para aplicar la migración, configurar el correo y recompilar con las variables públicas.
 
-Las publicaciones, personas, cifras, conversaciones y planes de las vistas previas son ejemplos. Las vistas previas de la landing y la nueva demo interactiva usan contenido de ejemplo. El bloque de acceso, las preguntas frecuentes y el formulario explican que la apertura está en preparación.
+Las publicaciones, personas, cifras, conversaciones y planes de las vistas previas son ejemplos. El bloque de acceso, las preguntas frecuentes y el formulario explican que la apertura está en preparación y que ahora solo se recoge el correo.
 
 ## Diseño
 
@@ -98,7 +110,7 @@ La implementación conserva las páginas como componentes de servidor y pasa su 
 
 El interior de Entreclase está en `/app/` y `/va/app/`. El login y la confirmación de correo redirigen a la aplicación. Incluye inicio con publicaciones, comentarios y reacciones; planes con inscripciones; grupos; apuntes descargables; gente; conversaciones privadas; y perfil editable. La primera entrada completa el perfil.
 
-La demo navegable está en `/demo/` y `/va/demo/`, también enlazada desde la landing y el acceso. Todos sus perfiles son ficticios y los cambios solo duran esa visita. La activación del backend de Supabase sigue pendiente: la demo no crea cuentas ni conserva mensajes para otras personas.
+La demo navegable sigue compilada en `/demo/` y `/va/demo/`, pero ya no se enlaza desde la landing ni desde el acceso: hasta la apertura, la web no enseña el producto por dentro. Todos sus perfiles son ficticios y los cambios solo duran esa visita.
 
 El código está en `components/community/` y `lib/community/`, con estilos adaptables en `app/community.css`. Las migraciones de comunidad y Storage preparan datos reales protegidos por RLS. Ver [activación y alcance de la comunidad](docs/community-setup.md).
 

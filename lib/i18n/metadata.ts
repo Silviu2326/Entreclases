@@ -11,7 +11,8 @@ export function pageMetadata(locale: Locale, route: RouteName = "home"): Metadat
  return { metadataBase: new URL(siteOrigin), title, description, applicationName: "Entreclases", icons: { icon: "/brand/entreclase-mark.png" },
    alternates: { canonical: localPath(locale,route), languages: { es: routesFor("es",route), "ca-ES": routesFor("va",route), "x-default": routesFor("es",route) } },
    openGraph: { title, description, locale: locale === "va" ? "ca_ES" : "es_ES", alternateLocale: locale === "va" ? "es_ES" : "ca_ES", type: "website", images: [{ url: "/images/campus.webp", width: 1448, height: 1086, alt: "Entreclases · Tu universidad, tu gente" }], url: localPath(locale,route) },
-   ...(route === "home" ? {} : { robots: { index: false, follow: false }, referrer: "no-referrer" as const }),
+   // The landing and the roadmap are the public pages; everything else stays out of search.
+   ...(route === "home" || route === "roadmap" ? {} : { robots: { index: false, follow: false }, referrer: "no-referrer" as const }),
  };
 }
 // A game page shares the app metadata but announces its own title and language alternates.
