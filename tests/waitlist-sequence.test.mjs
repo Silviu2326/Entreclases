@@ -9,6 +9,7 @@ await db.exec("create role anon;create role authenticated;create schema auth;cre
 await db.exec(await migration('202609220019_scheduled_launch.sql'));
 await db.exec(await migration('202609230020_waitlist.sql'));
 await db.exec(await migration('202609240021_waitlist_sequence.sql'));
+await db.exec(await migration('202609240022_waitlist_full_sequence.sql'));
 
 const OPENS = '2026-09-28T00:00:00+02:00';
 async function join(email, joined, locale = 'es') {
@@ -34,29 +35,25 @@ test('Joining schedules the welcome now and seven mornings at 09:00 in Madrid', 
  assert.equal(new Date('2026-09-22T09:00:00+02:00').getUTCDay(), 2);
 });
 
-test('Nobody is told to wait for a date that already passed', async () => {
- // Four days before the opening there is no room for seven mornings.
+test('The seven arrive whoever you are and whenever you joined', async () => {
+ // Days before the opening, and months after it, the sequence is the same one.
  const late = await join('nico@alumni.uv.es', '2026-09-25T10:00:00+02:00');
- assert.deepEqual((await steps(late.id)).map(row => row.step), [0, 1, 2, 3]);
- assert.equal((await steps(late.id)).at(-1).madrid, '2026-09-28 09:00');
+ assert.deepEqual((await steps(late.id)).map(row => row.step), [0, 1, 2, 3, 4, 5, 6, 7]);
+ assert.equal((await steps(late.id)).at(-1).madrid, '2026-10-02 09:00', 'nadie se queda a medias por la fecha de apertura');
 
- // Once the doors are open there is no sequence to promise: only the welcome,
- // and the sender is told it travels alone so the copy can say something else.
- await db.exec("update public.universe_signup_launch set opens_at='2026-09-01T00:00:00+02:00'");
  const after = await join('aina@alumni.uv.es', '2026-09-19T12:00:00+02:00');
- await db.exec(`update public.universe_signup_launch set opens_at='${OPENS}'`);
- assert.deepEqual((await steps(after.id)).map(row => row.step), [0]);
- const due = await db.query('select alone from public.universe_waitlist_due(50) where address=$1', ['aina@alumni.uv.es']);
- assert.equal(due.rows.length, 1);
- assert.equal(due.rows[0].alone, true);
+ assert.deepEqual((await steps(after.id)).map(row => row.step), [0, 1, 2, 3, 4, 5, 6, 7]);
+ const due = await db.query('select step from public.universe_waitlist_due(50) where address=$1', ['aina@alumni.uv.es']);
+ assert.ok(due.rows.length >= 1);
  // Claiming is not repeatable: a second sender, a second later, finds nothing
  // of hers. This is what stops the minute cron writing to her twice.
  const again = await db.query('select 1 from public.universe_waitlist_due(50) where address=$1', ['aina@alumni.uv.es']);
  assert.equal(again.rows.length, 0, 'ya reclamado: no se entrega dos veces');
  // A sender that died holding it gets it back once the lease runs out.
+ const held = (await db.query('select count(*)::int as n from public.universe_waitlist_emails where waitlist_id=$1 and claimed_at is not null', [after.id])).rows[0].n;
  await db.query("update public.universe_waitlist_emails set claimed_at = now() - interval '11 minutes' where waitlist_id=$1", [after.id]);
  const recovered = await db.query('select 1 from public.universe_waitlist_due(50) where address=$1', ['aina@alumni.uv.es']);
- assert.equal(recovered.rows.length, 1, 'una entrega huérfana vuelve a la cola');
+ assert.equal(recovered.rows.length, held, 'una entrega huérfana vuelve a la cola');
 });
 
 test('Summer time is handled by the calendar, not by adding hours', async () => {

@@ -9,6 +9,10 @@ export const COIN_RULES = {
   eventRewardsPerDay: 2,
   threadRewardsPerDay: 3,
 } as const;
+// Joining the list before the opening. PostgreSQL grants it inside the welcome
+// entry (migration 023); the landing only announces the number.
+export const EARLY_COINS = 30;
+export const WELCOME_COINS = COIN_RULES.welcome;
 export type CoinReason = "welcome" | "create_event" | "create_thread" | "join_event" | "reply_thread";
 export type CoinTransaction = {
   id: string;

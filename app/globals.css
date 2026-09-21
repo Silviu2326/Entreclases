@@ -755,3 +755,39 @@ html[lang="ca-ES-valencia"] .story-time { font-size: clamp(80px, 10.3vw, 165px);
 .roadmap-access{display:flex;gap:9px;align-items:flex-start;margin-top:22px;font-size:14px;line-height:1.5;color:#d1d2d8}.roadmap-access svg{width:17px;height:17px;flex-shrink:0;margin-top:2px}.roadmap-calendar{margin-top:14px;font-size:14px;font-weight:600}.roadmap-calendar a{display:inline-flex;align-items:center;gap:7px;min-height:44px}.roadmap-calendar svg{width:17px;height:17px}
 .roadmap-honesty{margin-top:52px;border-top:1px solid #d6cfbe;padding-top:26px}.roadmap-honesty h2{font-size:19px;font-weight:700;letter-spacing:-.02em}.roadmap-honesty p{font-size:15px;line-height:1.6;margin-top:12px;max-width:60ch}.roadmap-footer{margin-top:44px}
 @media(max-width:700px){.roadmap-page{padding:22px 18px 64px}.roadmap-header{margin-bottom:34px}.roadmap-countdown{gap:9px;margin-top:28px}.roadmap-list{margin-top:42px}.roadmap-milestone{gap:15px;padding-bottom:28px}.roadmap-marker>span{width:38px;height:38px;font-size:14px}}
+
+/* Prelaunch landing: one ask, above the fold, and nothing else competing. */
+.prelaunch-nav-button{display:inline-flex;align-items:center;height:48px;padding-inline:24px;background:var(--foreground);color:var(--background);border-radius:5px;font-weight:600;font-size:16px}
+.prelaunch-hero{padding:clamp(40px,6vw,86px) 22px clamp(36px,5vw,72px)}.prelaunch-hero-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(30px,4vw,62px);align-items:center}
+/* Without this the headline min-content width eats the photo column. */
+.prelaunch-copy{min-width:0}
+.prelaunch-copy .eyebrow{margin-bottom:20px}
+/* The column is narrower than the finished landing and the lime line cannot
+   wrap, so the headline is sized to fit it rather than the viewport. */
+.prelaunch-copy .hero-title{font-size:clamp(38px,4.35vw,74px);margin-bottom:26px}
+.prelaunch-lead{font-size:clamp(17px,1.6vw,22px);line-height:1.5;letter-spacing:-.02em;margin-top:14px;max-width:44ch}.prelaunch-lead+.prelaunch-lead{font-weight:650}
+.prelaunch-copy .waitlist-form{margin-top:26px;max-width:520px}.prelaunch-copy .access-note{margin-top:20px}
+/* .form-notice was written for the dark section; on cream it has to be read. */
+.prelaunch-copy .form-notice{color:#5d5464}.prelaunch-copy .form-notice a{color:var(--foreground)}
+/* The frame is sized from its parent, so the column needs a shape of its own. */
+.prelaunch-visual{position:relative;min-width:0;aspect-ratio:4/3}
+@media(max-width:860px){.prelaunch-hero-inner{grid-template-columns:1fr;gap:30px}.prelaunch-visual{order:-1;aspect-ratio:16/11}}
+/* On a phone the lime line is the widest thing on the page and cannot wrap. */
+@media(max-width:700px){.prelaunch-copy .hero-title{font-size:clamp(28px,8.8vw,56px);line-height:.94;letter-spacing:-.067em}}
+
+.prelaunch-coins{background:var(--foreground);color:var(--background);padding:clamp(44px,6vw,86px) 22px}
+.prelaunch-coins-inner{max-width:760px}.prelaunch-coins .eyebrow{display:flex;align-items:center;gap:9px;color:var(--highlight);margin-bottom:22px}.prelaunch-coins .eyebrow svg{width:19px;height:19px}
+.prelaunch-coins h2{font-size:clamp(32px,4.2vw,58px);font-weight:800;letter-spacing:-.055em;line-height:1.04}.prelaunch-coins h2 em{font-style:normal;color:var(--highlight)}
+.prelaunch-coins p{font-size:clamp(16px,1.4vw,19px);line-height:1.55;margin-top:20px;max-width:52ch}
+.prelaunch-coins-tease strong{color:var(--highlight)}
+.prelaunch-coins-rule{font-size:15px!important;color:#cfc9d4}
+
+.prelaunch-tease{padding:clamp(44px,6vw,90px) 22px}.prelaunch-tease h2{font-size:clamp(28px,3.4vw,44px);font-weight:780;letter-spacing:-.045em;line-height:1.08}
+.prelaunch-tease-list{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:18px;max-width:58ch}
+.prelaunch-tease-list li{position:relative;padding-left:30px;font-size:clamp(16px,1.4vw,19px);line-height:1.5}
+.prelaunch-tease-list li::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--primary)}
+.prelaunch-tease-note{margin-top:30px;font-size:16px;line-height:1.6;max-width:54ch;color:#5d5464}
+.prelaunch-dates-link{display:inline-block;margin-top:22px;font-weight:650;text-decoration:underline;text-underline-offset:5px}
+.prelaunch-signup .signup-main h2{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.prelaunch-signup-icon{width:clamp(28px,3vw,42px);height:clamp(28px,3vw,42px);color:var(--highlight)}
+@media(max-width:700px){.prelaunch-coins-inner,.prelaunch-tease{padding-inline:0}.prelaunch-tease-list{gap:15px}}

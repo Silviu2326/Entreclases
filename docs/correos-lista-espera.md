@@ -2,6 +2,8 @@
 
 Quien deja su correo recibe una bienvenida en el momento y después siete correos, uno por mañana a las **09:00 Europe/Madrid**, empezando **al día siguiente**. Los textos están en español y valenciano y se eligen por el idioma con el que esa persona se apuntó.
 
+Los siete presentan la plataforma; no son una cuenta atrás. Son los mismos para todo el mundo, se apunte hoy o dentro de tres semanas, antes o después de la apertura. Por eso no llevan fechas que caduquen: las fechas viven en `/roadmap/` y una prueba comprueba que ningún correo las repite.
+
 La web es una exportación estática y no tiene servidor: todo el envío vive en Supabase. La clave de Resend nunca sale de ahí y nunca viaja al navegador.
 
 ## Las piezas
@@ -9,14 +11,14 @@ La web es una exportación estática y no tiene servidor: todo el envío vive en
 | Pieza | Dónde | Qué hace |
 | --- | --- | --- |
 | `universe_waitlist_emails` | migración `202609240021` | La cola: qué correo le toca a quién y cuándo. Nadie puede leerla sin clave de servidor. |
-| `universe_waitlist_schedule()` | misma migración | Al apuntarse alguien, programa la bienvenida y hasta siete mañanas. |
+| `universe_waitlist_schedule()` | migración `202609240022` | Al apuntarse alguien, programa la bienvenida y las siete mañanas. |
 | `universe_waitlist_due()` | misma migración | Reclama lo vencido con un arriendo de diez minutos, para que dos ejecuciones no escriban dos veces a la misma persona. |
 | `supabase/functions/waitlist-mailer/` | Edge Function | Vacía la cola llamando a Resend y atiende el enlace de baja. |
 | `emails.es.ts` y `emails.va.ts` | misma carpeta | Los ocho textos de cada idioma. Cambiarlos no toca la base de datos. |
 
 ## Puesta en marcha
 
-1. **Aplica la migración** `202609240021_waitlist_sequence.sql` en el SQL Editor. Añade columnas a `universe_waitlist`, que ya tiene filas: no las borra ni las reprograma. Las personas apuntadas antes de aplicarla no reciben la secuencia; si quieres incluirlas, al final de este documento está el SQL.
+1. **Aplica las migraciones** `202609240021_waitlist_sequence.sql`, `202609240022_waitlist_full_sequence.sql` y `202609240023_early_coins.sql`, en ese orden, en el SQL Editor. La 022 completa la secuencia de quien ya estuviera apuntado; la 023 es la que hace real el saldo extra que promete la portada. Añade columnas a `universe_waitlist`, que ya tiene filas: no las borra ni las reprograma. Las personas apuntadas antes de aplicarla no reciben la secuencia; si quieres incluirlas, al final de este documento está el SQL.
 
 2. **Guarda los secretos de la función** (Project Settings → Edge Functions → Secrets, o por consola):
 
@@ -71,8 +73,8 @@ El enlace apunta al dominio de la función. Si lo prefieres en `entreclases.com`
 ## Lo que hay que saber antes de encenderlo
 
 - **Aceptar direcciones es prometer que escribirás.** La bienvenida dice «te voy a escribir siete mañanas». Si el cron no está programado, esa frase es mentira. Enciende los dos a la vez.
-- **La secuencia se corta en la apertura.** Nadie recibe «faltan días para el 28» en octubre: `universe_waitlist_schedule()` deja de programar mañanas que caigan más de doce horas después de `opens_at`. Quien se apunte con la puerta ya abierta recibe solo una bienvenida distinta, que le dice que entre directamente.
-- **No hay correo del día de la apertura para todos.** La secuencia es personal, así que quien se apuntó el día 25 no llega al séptimo. El aviso del 28 por la mañana a toda la lista es un envío aparte que todavía no está montado.
+- **No hay correo del día de la apertura para todos.** La secuencia es personal y cada uno la recorre desde su propia alta. El aviso del 28 por la mañana a toda la lista es un envío aparte que todavía no está montado.
+- **El saldo extra lo concede la base de datos, no el correo.** Quien se apuntó antes de `opens_at` recibe 30 ClasiCoins además de las 20 de bienvenida la primera vez que se le crea el monedero. Sin la migración 023 la portada promete algo que no ocurre.
 - **El tratamiento sigue sin estar en la política de privacidad.** Punto 9 de `docs/legal/PENDIENTES-TITULAR.md`.
 
 ## Incluir a quien se apuntó antes de la migración

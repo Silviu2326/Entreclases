@@ -1,2 +1,4 @@
 import { LandingPage } from "@/components/entreclase/landing-page";
-export default function Home() { return <LandingPage locale="va" />; }
+import { PrelaunchPage } from "@/components/entreclase/prelaunch-page";
+import { landingMode } from "@/lib/launch/landing-mode";
+export default function Home() { return landingMode === "full" ? <LandingPage locale="va" /> : <PrelaunchPage locale="va" />; }

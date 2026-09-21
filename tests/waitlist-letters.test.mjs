@@ -13,30 +13,36 @@ const TOKEN = '11111111-2222-4333-8444-555555555555';
 test('Every step has a letter in both languages, signed and long enough to be a letter', () => {
  for (const language of ['es', 'va']) {
   for (let step = 0; step <= 7; step++) {
-   const letter = letterFor(language, step, false);
+   const letter = letterFor(language, step);
    assert.ok(letter, `${language} paso ${step}`);
    assert.ok(letter.subject.length > 8 && letter.subject.length <= 60, `asunto de ${language}/${step}: ${letter.subject.length} caracteres`);
    assert.ok(letter.body.trimEnd().endsWith('Silviu') || letter.body.includes('\nSilviu\n'), `${language}/${step} va firmado`);
    assert.ok(letter.body.length > 400, `${language}/${step} tiene cuerpo`);
   }
-  assert.equal(letterFor(language, 8, false), null, 'no hay un octavo paso');
-  // The welcome knows whether a sequence follows it.
-  const alone = letterFor(language, 0, true), accompanied = letterFor(language, 0, false);
-  assert.notEqual(alone.subject, accompanied.subject);
-  assert.ok(/siete|set/.test(accompanied.body), 'la bienvenida normal anuncia los siete');
-  assert.ok(!/siete matins|siete mañanas|set matins/.test(alone.body), 'la bienvenida tardía no promete lo que no habrá');
+  assert.equal(letterFor(language, 8), null, 'no hay un octavo paso');
+  // The welcome promises the seven and the coins, and that promise is true
+  // for everyone: the sequence no longer depends on the calendar.
+  const welcome = letterFor(language, 0);
+  assert.ok(/siete|set/.test(welcome.body), 'la bienvenida anuncia los siete');
+  assert.match(welcome.body, /50/, 'y el saldo de quien se apunta antes');
+  assert.match(welcome.body, /ClasiCoins/);
  }
 });
 
 test('Both languages tell the same story, in their own words', () => {
- const es = letterFor('es', 7, false), va = letterFor('va', 7, false);
+ const es = letterFor('es', 7), va = letterFor('va', 7);
  assert.notEqual(es.body, va.body);
- for (const letter of [es, va]) assert.match(letter.body, /28/);
- assert.match(letterFor('va', 3, false).body, /Túria|Malva-rosa/, 'los topónimos van en valenciano');
- assert.match(letterFor('es', 3, false).body, /Turia|Malvarrosa/);
+ // No letter hangs on a date that will have passed by the time somebody reads
+ // it: these introduce the platform, they are not a countdown.
+ for (const language of ['es', 'va']) for (let step = 0; step <= 7; step++) {
+  const { subject, body } = letterFor(language, step);
+  assert.ok(!/28 de sep|28 de set|12 de oct|12 d.oct|26 de oct|26 d.oct/.test(body + subject), `${language}/${step} sin fechas que caduquen`);
+ }
+ assert.match(letterFor('va', 3).body, /Túria|Malva-rosa/, 'los topónimos van en valenciano');
+ assert.match(letterFor('es', 3).body, /Turia|Malvarrosa/);
  // No leftover placeholder reaches an inbox.
  for (const language of ['es', 'va']) for (let step = 0; step <= 7; step++) {
-  const mail = render(letterFor(language, step, false), language, ORIGIN, AWAY, TOKEN);
+  const mail = render(letterFor(language, step), language, ORIGIN, AWAY, TOKEN);
   assert.ok(!mail.text.includes('{{'), `${language}/${step} sin marcadores sin sustituir`);
   assert.ok(!mail.html.includes('{{'));
  }
@@ -44,7 +50,7 @@ test('Both languages tell the same story, in their own words', () => {
 
 test('Every message carries a working way out and escapes what it prints', () => {
  for (const language of ['es', 'va']) {
-  const mail = render(letterFor(language, 1, false), language, ORIGIN, AWAY, TOKEN);
+  const mail = render(letterFor(language, 1), language, ORIGIN, AWAY, TOKEN);
   assert.equal(mail.away, `${AWAY}?baja=${TOKEN}&l=${language}`);
   assert.ok(mail.text.includes(mail.away), 'la versión de texto también lleva la baja');
   assert.ok(mail.html.includes(`href="${mail.away.replace(/&/g, '&amp;')}"`), 'el enlace va escapado en el HTML');
@@ -59,6 +65,6 @@ test('Every message carries a working way out and escapes what it prints', () =>
 });
 
 test('The site link points at the reader own language', () => {
- assert.match(render(letterFor('es', 0, true), 'es', ORIGIN, AWAY, TOKEN).text, new RegExp(ORIGIN + '/\\n'));
- assert.match(render(letterFor('va', 0, true), 'va', ORIGIN, AWAY, TOKEN).text, new RegExp(ORIGIN + '/va/'));
+ assert.match(render(letterFor('es', 7), 'es', ORIGIN, AWAY, TOKEN).text, new RegExp(ORIGIN + '/\\n'));
+ assert.match(render(letterFor('va', 7), 'va', ORIGIN, AWAY, TOKEN).text, new RegExp(ORIGIN + '/va/'));
 });

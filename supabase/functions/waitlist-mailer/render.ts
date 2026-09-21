@@ -1,15 +1,13 @@
 import type { Language, Letter } from "./types.ts";
-import { letters as es, welcomeOpen as esOpen } from "./emails.es.ts";
-import { letters as va, welcomeOpen as vaOpen } from "./emails.va.ts";
+import { letters as es } from "./emails.es.ts";
+import { letters as va } from "./emails.va.ts";
 
 const sequences: Record<Language, Letter[]> = { es, va };
-const openings: Record<Language, Letter> = { es: esOpen, va: vaOpen };
 const paths: Record<Language, string> = { es: "/", va: "/va/" };
 
-export function letterFor(language: Language, step: number, alone: boolean): Letter | null {
- // Somebody who joins once the doors are open has no sequence ahead: saying
- // «seven mornings» to them would be a promise nothing is going to keep.
- if (step === 0 && alone) return openings[language];
+// The seven mornings introduce the platform, so they do not depend on the
+// calendar: whoever joins reads the same ones, today or months from now.
+export function letterFor(language: Language, step: number): Letter | null {
  return sequences[language][step] ?? null;
 }
 

@@ -1,26 +1,5 @@
 import type { Letter } from "./types.ts";
 
-// Step 0 is the welcome. When somebody joins after the doors are open there is
-// no sequence left to promise, so the welcome has a second version.
-export const welcomeOpen: Letter = {
- subject: "Ya está abierto. No esperes a nadie.",
- body: `Hola.
-
-Te acabas de apuntar a la lista de Entreclases.
-
-Te lo digo rápido porque llegas tarde, y en este caso llegar tarde es una buena noticia: Entreclases ya está abierto.
-
-No hay nada que esperar. Entra con el correo de tu universidad y crea tu cuenta.
-
-{{site}}
-
-Si el correo con el que te has apuntado no es el de tu uni, pídele una invitación a alguien que ya esté dentro. Cada cuenta verificada puede traer a una persona.
-
-Nos vemos dentro.
-
-Silviu`,
-};
-
 export const letters: Letter[] = [
  {
   subject: "Ya estás dentro. Ahora la parte incómoda.",
@@ -28,11 +7,15 @@ export const letters: Letter[] = [
 
 Te acabas de apuntar a Entreclases.
 
-Antes de nada, una aclaración: no te he metido en una newsletter. Te he metido en una lista de gente que quiere entrar el 28 de septiembre.
+Antes de nada, una aclaración: no te he metido en una newsletter. Te he metido en una lista de gente que quiere entrar.
 
 Te voy a escribir siete mañanas seguidas, a las nueve.
 
 Siete. No setenta.
+
+Y una cosa más, por estar aquí antes que nadie: el día que entres no empiezas con las 20 ClasiCoins de todo el mundo. Empiezas con 50.
+
+Todavía no te voy a decir para qué sirven.
 
 Si te parece mucho, abajo del todo tienes el enlace para darte de baja. Un clic. Sin preguntas, sin encuesta de salida, sin «¿estás seguro?».
 
@@ -42,7 +25,7 @@ Mañana a las nueve te cuento por qué monté esto. Tiene que ver con una mesa d
 
 Silviu
 
-P.D. Si el correo con el que te has apuntado no es el de tu universidad, ten a mano el bueno para el día 28. Ese día solo pasan las cuentas universitarias de Valencia y quien traiga una invitación de alguien de dentro.`,
+P.D. Si el correo con el que te has apuntado no es el de tu universidad, ten a mano el bueno. Solo pasan las cuentas universitarias de Valencia y quien traiga una invitación de alguien de dentro.`,
  },
  {
   subject: "Conozco a media uni. Y a casi nadie.",
@@ -64,7 +47,7 @@ Y mi plan del sábado era ninguno.
 
 Eso es lo que quiero arreglar. No con más contenido. Con un sitio donde lo normal sea cerrar el móvil y quedar con alguien.
 
-Se llama Entreclases. Abre el 28 de septiembre en Valencia.
+Se llama Entreclases. Empieza en las universidades de Valencia.
 
 Mañana a las nueve: por qué esto no es otra red social, aunque lo parezca.
 
@@ -167,12 +150,12 @@ Mañana: lo que viene después del 28.
 Silviu`,
  },
  {
-  subject: "El 12 de octubre abro Proyectos",
+  subject: "Lo que no te he contado todavía",
   body: `Tengo una idea fija.
 
 En tu misma facultad hay alguien que programa, alguien que diseña y alguien que sabe vender. Y no se van a conocer nunca, porque comen en cafeterías distintas y nadie les ha presentado.
 
-El 12 de octubre, dos semanas después de abrir, sale Proyectos.
+Dos semanas después de abrir sale Proyectos.
 
 Funciona así: publicas tu idea, dices qué puestos necesitas y, muy importante, qué pones tú. Alguien de otra carrera lo ve y te manda una solicitud privada. Tú aceptas o no.
 
@@ -180,17 +163,15 @@ Hay hitos, una conversación de equipo y, al terminar, un resultado con los cré
 
 No es un tablón de «busco programador gratis para mi idea millonaria». Tienes que decir qué aportas tú.
 
-Y hay una tercera fecha, el 26 de octubre, de la que todavía no puedo hablar.
+Y hay una tercera fecha de la que todavía no puedo hablar. Está en la portada, por si quieres verla.
 
 Mañana el último de la serie. Te cuento exactamente qué hacer el día que entres.
 
 Silviu`,
  },
  {
-  subject: "El 28. Esto es lo que haces.",
+  subject: "Esto es lo que haces el primer día",
   body: `Último correo de la serie. Gracias por llegar hasta aquí, de verdad.
-
-El 28 de septiembre a las 00:00 abren las cuentas.
 
 Esto es lo que haces el día que entres, por orden:
 
@@ -198,13 +179,13 @@ Uno. Entra con el correo de tu universidad. No el de Gmail. El de la uni.
 
 Dos. Confirma el correo. Te llega un enlace, lo pulsas, ya está.
 
-Tres. Completa el perfil. Ahí se te dan las 20 ClasiCoins.
+Tres. Completa el perfil. Ahí aparecen tus ClasiCoins, y si estabas en la lista antes de que abriéramos son 50 en vez de 20.
 
 Cuatro, y este es el que importa de verdad: apúntate al plan de otra persona el primer día. No montes el tuyo todavía. Apúntate al de alguien.
 
 Es mucho más fácil decir «voy» que decir «venid». Empieza por lo fácil.
 
-Y si el correo con el que te apuntaste a esta lista no es universitario, pídele la invitación a alguien que vaya a entrar. Cada cuenta verificada puede traer a una persona.
+Y si el correo con el que te apuntaste a esta lista no es universitario, pídele la invitación a alguien de dentro. Cada cuenta verificada puede traer a una persona.
 
 {{site}}
 

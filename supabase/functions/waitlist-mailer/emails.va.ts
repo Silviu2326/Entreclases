@@ -1,23 +1,5 @@
 import type { Letter } from "./types.ts";
 
-export const welcomeOpen: Letter = {
- subject: "Ja està obert. No esperes ningú.",
- body: `Hola.
-
-Acabes d’apuntar-te a la llista d’Entreclases.
-
-T’ho dic ràpid perquè arribes tard, i en este cas arribar tard és una bona notícia: Entreclases ja està obert.
-
-No hi ha res a esperar. Entra amb el correu de la teua universitat i crea el compte.
-
-{{site}}
-
-Si el correu amb què t’has apuntat no és el de la teua uni, demana-li una invitació a algú que ja estiga dins. Cada compte verificat pot portar una persona.
-
-Ens veiem dins.
-
-Silviu`,
-};
 
 export const letters: Letter[] = [
  {
@@ -26,11 +8,15 @@ export const letters: Letter[] = [
 
 Acabes d’apuntar-te a Entreclases.
 
-Abans de res, una aclaració: no t’he ficat en una newsletter. T’he ficat en una llista de gent que vol entrar el 28 de setembre.
+Abans de res, una aclaració: no t’he ficat en una newsletter. T’he ficat en una llista de gent que vol entrar.
 
 T’escriuré set matins seguits, a les nou.
 
 Set. No setanta.
+
+I una cosa més, per estar ací abans que ningú: el dia que entres no comences amb les 20 ClasiCoins de tothom. Comences amb 50.
+
+Encara no et diré per a què servixen.
 
 Si et pareix massa, baix del tot tens l’enllaç per a donar-te de baixa. Un clic. Sense preguntes, sense enquesta d’eixida, sense «segur?».
 
@@ -40,7 +26,7 @@ Demà a les nou et conte per què vaig muntar això. Té a vore amb una taula de
 
 Silviu
 
-P.D. Si el correu amb què t’has apuntat no és el de la teua universitat, tin a mà el bo per al dia 28. Eixe dia només passen els comptes universitaris de València i qui porte una invitació d’algú de dins.`,
+P.D. Si el correu amb què t’has apuntat no és el de la teua universitat, tin a mà el bo. Només passen els comptes universitaris de València i qui porte una invitació d’algú de dins.`,
  },
  {
   subject: "Conec mitja uni. I quasi ningú.",
@@ -62,7 +48,7 @@ I el meu pla del dissabte era cap.
 
 Això és el que vull arreglar. No amb més contingut. Amb un lloc on el normal siga tancar el mòbil i quedar amb algú.
 
-Es diu Entreclases. Obri el 28 de setembre a València.
+Es diu Entreclases. Comença a les universitats de València.
 
 Demà a les nou: per què això no és una altra xarxa social, encara que ho parega.
 
@@ -165,12 +151,12 @@ Demà: el que ve després del 28.
 Silviu`,
  },
  {
-  subject: "El 12 d’octubre òbric Projectes",
+  subject: "El que encara no t’he contat",
   body: `Tinc una idea fixa.
 
 A la teua mateixa facultat hi ha algú que programa, algú que dissenya i algú que sap vendre. I no es coneixeran mai, perquè mengen en cafeteries distintes i ningú els ha presentat.
 
-El 12 d’octubre, dos setmanes després d’obrir, ix Projectes.
+Dos setmanes després d’obrir ix Projectes.
 
 Funciona així: publiques la teua idea, dius quins llocs necessites i, molt important, què hi poses tu. Algú d’una altra carrera ho veu i t’envia una sol·licitud privada. Tu acceptes o no.
 
@@ -178,17 +164,15 @@ Hi ha fites, una conversa d’equip i, en acabar, un resultat amb els crèdits d
 
 No és un tauler de «busque programador gratis per a la meua idea milionària». Has de dir què aportes tu.
 
-I hi ha una tercera data, el 26 d’octubre, de la qual encara no puc parlar.
+I hi ha una tercera data de la qual encara no puc parlar. Està a la portada, per si la vols vore.
 
 Demà l’últim de la sèrie. Et conte exactament què fer el dia que entres.
 
 Silviu`,
  },
  {
-  subject: "El 28. Això és el que fas.",
+  subject: "Això és el que fas el primer dia",
   body: `Últim correu de la sèrie. Gràcies per arribar fins ací, de veritat.
-
-El 28 de setembre a les 00:00 obrin els comptes.
 
 Això és el que fas el dia que entres, per ordre:
 
@@ -196,13 +180,13 @@ U. Entra amb el correu de la teua universitat. No el de Gmail. El de la uni.
 
 Dos. Confirma el correu. T’arriba un enllaç, el polses, ja està.
 
-Tres. Completa el perfil. Ahí se’t donen les 20 ClasiCoins.
+Tres. Completa el perfil. Ahí apareixen les teues ClasiCoins, i si estaves en la llista abans que obrírem són 50 en lloc de 20.
 
 Quatre, i este és el que importa de veritat: apunta’t al pla d’una altra persona el primer dia. No muntes el teu encara. Apunta’t al d’algú.
 
 És molt més fàcil dir «hi vaig» que dir «veniu». Comença pel fàcil.
 
-I si el correu amb què t’has apuntat a esta llista no és universitari, demana-li la invitació a algú que vaja a entrar. Cada compte verificat pot portar una persona.
+I si el correu amb què t’has apuntat a esta llista no és universitari, demana-li la invitació a algú de dins. Cada compte verificat pot portar una persona.
 
 {{site}}
 

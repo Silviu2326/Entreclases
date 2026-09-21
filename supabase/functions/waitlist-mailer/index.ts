@@ -14,10 +14,10 @@ const RESEND = env("RESEND_API_KEY");
 
 const db = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
 
-type Due = { queue_id: number; address: string; language: Language; step: number; token: string; alone: boolean };
+type Due = { queue_id: number; address: string; language: Language; step: number; token: string };
 
 async function send(due: Due, unsubscribeBase: string) {
- const letter = letterFor(due.language, due.step, due.alone);
+ const letter = letterFor(due.language, due.step);
  if (!letter) return "sin carta para este paso";
  const mail = render(letter, due.language, ORIGIN, unsubscribeBase, due.token);
  const response = await fetch("https://api.resend.com/emails", {

@@ -12,7 +12,11 @@ Las páginas legales están preparadas en ambos idiomas y se identifican como bo
 
 Cuenta atrás, calendario y control de nuevas altas: [configuración y apertura](docs/lanzamiento-28-septiembre.md). La fecha no abre el registro por sí sola; requiere activación del titular en web y servidor.
 
-Hasta la apertura, la web solo pide una cosa: el correo. No hay recorrido por la aplicación ni enlaces públicos a la demo; las rutas `/demo/` siguen compiladas y marcadas como no indexables, pero no se enlazan desde ninguna página pública.
+Hasta la apertura, la portada es `components/entreclase/prelaunch-page.tsx`: pide el correo y enseña lo mínimo, porque saber qué es Entreclases es el motivo para estar en la lista. No hay recorrido por la aplicación ni enlaces públicos a la demo; las rutas `/demo/` siguen compiladas y no indexables, pero no se enlazan desde ninguna página pública.
+
+La portada terminada sigue intacta en `landing-page.tsx` y vuelve sola al compilar con `NEXT_PUBLIC_LAUNCH_OPEN=true`. `NEXT_PUBLIC_LANDING_MODE=full` o `=prelaunch` fuerza una u otra para revisarlas (`lib/launch/landing-mode.ts`).
+
+Quien se apunta antes de la apertura empieza con 50 ClasiCoins en lugar de 20. La portada anuncia el número pero no para qué sirven. El saldo lo concede PostgreSQL al crear el monedero comprobando la dirección contra la lista (migración `202609240023`), no el navegador.
 
 ## Roadmap
 
@@ -24,7 +28,7 @@ El formulario de la portada y el del roadmap guardan la dirección en `public.un
 
 Basta con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` y la migración aplicada; no requiere `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED`. Sin esa configuración el formulario no finge que guarda: ofrece escribir a `hola@entreclases.com`.
 
-Quien se apunta recibe una bienvenida en el momento y siete correos más, uno por mañana a las 09:00 Europe/Madrid desde el día siguiente, en su idioma. Los textos están en `supabase/functions/waitlist-mailer/emails.es.ts` y `emails.va.ts`; el envío lo hace una Edge Function con Resend, porque la web es estática y la clave nunca puede salir del servidor. Cada correo lleva enlace de baja y cabeceras `List-Unsubscribe`. La secuencia se corta en la apertura para que nadie lea «faltan días para el 28» en octubre. [Puesta en marcha](docs/correos-lista-espera.md).
+Quien se apunta recibe una bienvenida en el momento y siete correos más, uno por mañana a las 09:00 Europe/Madrid desde el día siguiente, en su idioma. Los siete presentan la plataforma y no dependen del calendario: son los mismos te apuntes hoy o dentro de tres semanas. Los textos están en `supabase/functions/waitlist-mailer/emails.es.ts` y `emails.va.ts`; el envío lo hace una Edge Function con Resend, porque la web es estática y la clave nunca puede salir del servidor. Cada correo lleva enlace de baja y cabeceras `List-Unsubscribe`. [Puesta en marcha](docs/correos-lista-espera.md).
 
 ## Desarrollo
 
