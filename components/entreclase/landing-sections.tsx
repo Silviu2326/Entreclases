@@ -3,7 +3,7 @@ import { createTranslator, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { ArrowDownRight, ArrowUpRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { authConfigured } from "@/lib/auth/config";
+import { LaunchFaqAnswer } from "./launch-campaign";
 
 const accessSteps = [
   { title: "Correo universitario o invitación.", body: "Usa el correo de tu uni o abre tu enlace personal de invitación." },
@@ -23,7 +23,7 @@ export function UniversityAccess({ locale = "es" }: { locale?: Locale }) {
           <p>{tr("Un campus. Una etapa. La posibilidad de cruzaros al salir de clase.")}</p>
         </div>
         <div className="access-process" data-reveal="rise" data-reveal-delay="100">
-          <p className="access-process-intro">{authConfigured ? tr("Así entras en tu campus.") : tr("Así será el acceso cuando abramos.")}</p>
+          <p className="access-process-intro">{tr("Así entras en tu campus.")}</p>
           <ol>{accessSteps.map((step, index) => <li key={step.title}><span className="step-number">0{index + 1}</span><div><h3>{tr(step.title)}</h3><p>{tr(step.body)}</p></div></li>)}</ol>
           <p className="access-process-note">{locale === "va" ? "Cada compte universitari verificat pot convidar una persona de fora de la universitat després de completar el perfil i participar." : "Cada cuenta universitaria verificada puede invitar a una persona de fuera de la universidad después de completar el perfil y participar."}<br /><strong>{locale === "va" ? "Les persones convidades confirmen el correu i no poden convidar-ne més." : "Las personas invitadas confirman su correo y no pueden invitar a más personas."}</strong></p>
         </div>
@@ -67,7 +67,7 @@ const questions = [
   },
   {
     question: "¿Puedo entrar ya?",
-    answer: authConfigured ? "Puedes crear tu cuenta con un correo universitario admitido, confirmarlo y entrar a tu campus. Lo siguiente lo decides tú: un plan, un grupo o un hola." : "Ya puedes recorrer la demo y probar el muro, los planes y los grupos con perfiles de ejemplo. Las cuentas reales siguen en preparación. Cuando abramos, necesitarás verificar tu correo universitario.",
+    answer: "",
   },
 ];
 
@@ -80,7 +80,7 @@ export function LandingFaq({ locale = "es" }: { locale?: Locale }) {
         <div className="faq-list">{questions.map((item, index) => (
           <details key={item.question} name="entreclase-questions" open={index === 0} className="faq-item" data-reveal="rise">
             <summary><span>{tr(item.question)}</span><Plus aria-hidden="true" /></summary>
-            <p>{tr(item.answer)}</p>
+            <p>{item.question === "¿Puedo entrar ya?" ? <LaunchFaqAnswer locale={locale}/> : tr(item.answer)}</p>
           </details>
         ))}</div>
       </div>

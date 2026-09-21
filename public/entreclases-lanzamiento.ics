@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Entreclases//Lanzamiento//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:lanzamiento-20260928@entreclases.com
+DTSTAMP:20260921T000000Z
+DTSTART:20260927T220000Z
+DTEND:20260927T221500Z
+SUMMARY:Entreclases - lanzamiento en Valencia
+DESCRIPTION:Apertura prevista de Entreclases. Consulta el estado en
+  https://www.entreclases.com/. Registro sujeto a apertura confirmada.
+URL:https://www.entreclases.com/
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

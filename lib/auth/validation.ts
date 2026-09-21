@@ -27,6 +27,7 @@ export function passwordError(value: string): string {
 export function authErrorMessage(error: unknown): string {
   const message = typeof error === "object" && error !== null && "message" in error ? String(error.message) : "";
   const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+  if (message.includes("UNIVERSE_REGISTRATION_NOT_OPEN")) return "El registro aún no está abierto. Puedes probar la demo mientras preparamos la apertura.";
   if (message.includes("INVITE_INVALID")) return "La invitación no es válida para este correo, ha caducado o ya se ha usado. Pide a quien te invitó que la revise.";
   if (message.includes("UNIVERSE_UNIVERSITY_REQUIRED") || code === "23514")
     return "Este correo no pertenece a una universidad con acceso abierto. Si tienes una invitación, abre su enlace.";

@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 const root = path.resolve("out");
 const port = Number(process.env.PORT || 3000);
-const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8" };
+const mime = { ".ics": "text/calendar; charset=utf-8", ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8" };
 await stat(path.join(root, "index.html")).catch(() => { throw new Error("Run npm run build before npm start."); });
 http.createServer(async (request, response) => {
   if (request.method !== "GET" && request.method !== "HEAD") { response.writeHead(405); response.end(); return; }

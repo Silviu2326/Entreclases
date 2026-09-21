@@ -393,4 +393,6 @@ export const valencianMessages: Record<string, string> = {
   "Queremos darte una razón para salir de ella.": "Volem donar-te un motiu per a eixir-ne.",
   "¿Las ClasiCoins son otra forma de cobrarme?": "Les ClasiCoins són una altra manera de cobrar-me?",
   "No. Son un incentivo para participar. No se compran, no se venden ni se cambian por dinero. Empiezas con 20 al completar tu perfil verificado. Crear un evento usa 10; el primer hilo es gratis y los siguientes usan 5. Puedes ganar 2 por tu primera respuesta en otro hilo. Apuntarte a un evento no da monedas. Hay límites para premiar la participación, no repetir clics.": "No. Són un incentiu per a participar. No es compren, no es venen ni es canvien per diners. Comences amb 20 en completar el perfil verificat. Crear un esdeveniment n’usa 10; el primer fil és gratis i els següents n’usen 5. Pots guanyar-ne 2 per la primera resposta en un altre fil. Apuntar-te a un esdeveniment no dona monedes. Hi ha límits per a premiar la participació, no repetir clics.",
+  "El registro aún no está abierto. Puedes probar la demo mientras preparamos la apertura.": "El registre encara no està obert. Pots provar la demo mentre preparem l’obertura.",
+  "El lanzamiento": "El llançament",
 };

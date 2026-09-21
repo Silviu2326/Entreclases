@@ -1,5 +1,7 @@
 "use client";
 import { useSyncExternalStore } from "react";
+import { launchDate } from "@/lib/launch/config";
+import { useLaunch } from "@/lib/launch/use-launch";
 import { actionSuffix } from "@/lib/auth/action-language";
 import { createTranslator, localPath, type Locale, type RouteName } from "@/lib/i18n";
 function subscribe(change: () => void) {
@@ -18,6 +20,6 @@ export function LanguageSwitcher({ locale, route = "home" }: { locale: Locale; r
  </nav>;
 }
 export function LaunchBar({locale,route="home"}:{locale:Locale;route?:RouteName}) {
- const tr=createTranslator(locale);
- return <div className="launch-bar"><div><a href={localPath(locale,"home")+"#valencia"}>{tr("Primero, Valencia.")}</a><LanguageSwitcher locale={locale} route={route}/></div></div>;
+ const {phase}=useLaunch();
+ return <div className="launch-bar"><div><a href={localPath(locale,"home")+"#lanzamiento"}>{phase === "open" ? (locale === "va" ? "Ja hem obert · València" : "Ya hemos abierto · Valencia") : phase === "pending" ? (locale === "va" ? "Preparant l’obertura · València" : "Preparando la apertura · Valencia") : `${launchDate(locale)} · ${locale === "va" ? "Comencem a València" : "Empezamos en Valencia"}`}</a><LanguageSwitcher locale={locale} route={route}/></div></div>;
 }

@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { AuthError, AuthField, OpeningNotice, PasswordField, SubmitButton } from "./auth-controls";
 import { getAuthClient, getUniversityMember } from "@/lib/auth/client";
 import { authErrorMessage, emailError, normalizeEmail, passwordError } from "@/lib/auth/validation";
+import { LaunchCampaign } from "./launch-campaign";
+import { useLaunch } from "@/lib/launch/use-launch";
 import { LegalLinks } from "./legal-links";
 import { registrationLegalIssues, registrationLegalMetadata } from "@/lib/legal/registration";
 import { MINIMUM_AGE } from "@/lib/legal/config";
@@ -20,6 +22,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
   const tr=createTranslator(locale);
   const router = useRouter();
   const registering = mode === "register";
+  const { phase: launchPhase } = useLaunch();
   const recovering = mode === "recovery";
   const [email, setEmail] = useState("");
   const [issues, setIssues] = useState<Record<string, string>>({});
@@ -54,7 +57,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (working.current) return;
+    if (working.current || (registering && launchPhase !== "open" && !invitation.demo)) return;
     const form = event.currentTarget;
     const values = new FormData(form);
     const normalized = normalizeEmail(email);
@@ -107,6 +110,8 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
     } catch (cause) { setError(authErrorMessage(cause)); }
     finally { working.current = false; setPending(false); }
   }
+
+  if (registering && launchPhase !== "open" && !invitation.demo) return <><h1>{launchPhase === "pending" ? (locale === "va" ? "Preparant l’obertura." : "Preparando la apertura.") : (locale === "va" ? "Ens veiem el 28." : "Nos vemos el 28.")}</h1><LaunchCampaign locale={locale} compact/><p className="auth-switch"><Link href={localHref(locale,"/login/")}>{locale === "va" ? "Ja tens compte? Inicia sessió." : "¿Ya tienes cuenta? Inicia sesión."}</Link></p></>;
 
   return (
     <>

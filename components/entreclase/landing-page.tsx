@@ -4,7 +4,7 @@ import { LandingMotion } from "./landing-motion";
 import { UnicoinsSection } from "./unicoins-section";
 import { ValenciaLaunch } from "./valencia-launch";
 import Image from "next/image";
-import { ArrowUpRight, LockKeyhole, CalendarDays, UsersRound, FileText } from "lucide-react";
+import { LockKeyhole, CalendarDays, UsersRound, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CampusPreview } from "@/components/entreclase/campus-preview";
 import { SignupForm } from "@/components/entreclase/signup-form";
@@ -12,7 +12,7 @@ import { CampusLife } from "@/components/entreclase/campus-life";
 import { UniversityAccess, LandingFaq, StoryEnding } from "@/components/entreclase/landing-sections";
 import { MobileNavigation } from "@/components/entreclase/mobile-navigation";
 import { LegalLinks } from "./legal-links";
-import { authConfigured } from "@/lib/auth/config";
+import { LaunchCampaign, LaunchAction } from "./launch-campaign";
 
 const features = [
   { icon: CalendarDays, title: "Un plan para esta tarde.", text: "Del café en Benimaclet al paseo por el Turia." },
@@ -35,13 +35,14 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             <a className="nav-link" href="#unicoins">ClasiCoins</a>
             <a className="nav-link" href="#dudas">{tr("Dudas")}</a>
             <Button asChild className="entreclase-button nav-button">
-              <a href={localHref(locale, "/login/")}>{tr("Entrar")}{" "}<ArrowUpRight data-icon="inline-end" /></a>
+              <LaunchAction locale={locale} compact/>
             </Button>
             <MobileNavigation locale={locale} />
           </div>
         </nav>
       </header>
       <main id="contenido">
+        <LaunchCampaign locale={locale}/>
         <section id="inicio" className="hero" aria-labelledby="hero-title">
           <div className="hero-inner">
             <div className="hero-copy">
@@ -54,10 +55,9 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
               <p className="hero-description" data-reveal="rise" data-reveal-delay="160">{tr("Entreclases convierte los pasillos, los apuntes y ese «¿te vienes?» en gente real con la que quedar.")}</p>
               <p className="hero-brand" data-reveal="rise" data-reveal-delay="200">{tr("Planes pequeños. Historias que sí te pasan.")}</p>
               <Button asChild className="entreclase-button hero-button">
-                <a href={localHref(locale, "/registro/")}>{tr("Hacerme un sitio")}{" "}<ArrowUpRight data-icon="inline-end" /></a>
+                <LaunchAction locale={locale}/>
               </Button>
               <p className="access-note"><LockKeyhole aria-hidden="true" />{" "}{tr("Acceso con correo universitario o invitación personal.")}</p>
-              <a className="hero-demo-link" href={localHref(locale, "/demo/")}>{tr("Dar una vuelta por dentro")}<ArrowUpRight aria-hidden="true" /></a>
               <p className="access-note">{locale === "va" ? "Un compte universitari. Una invitació per a algú de fora." : "Una cuenta universitaria. Una invitación para alguien de fuera."}</p>
             </div>
             <div className="hero-visual">
@@ -122,7 +122,6 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             <div className="signup-main" data-reveal="rise">
               <h2 id="signup-title">{tr("Aquí tu correo")}<br />{tr("sí sirve para algo.")}</h2>
               <div className="signup-content">
-                {!authConfigured ? <p className="signup-availability">{tr("Estamos preparando la apertura.")}</p> : null}
                 <p>{tr("Entra con correo universitario o una invitación")}<br className="desktop-break" />{" "}{tr("personal. Confirma tu correo y empieza por decir hola.")}</p>
                 <SignupForm locale={locale} />
               </div>

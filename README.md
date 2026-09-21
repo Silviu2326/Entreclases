@@ -8,6 +8,10 @@ La preparación del lanzamiento y los pasos pendientes de producción están en 
 
 Las páginas legales están preparadas en ambos idiomas y se identifican como borrador hasta completar y validar los datos. Consulta [datos y decisiones pendientes del titular](docs/legal/PENDIENTES-TITULAR.md) y [procedimientos operativos](docs/legal/OPERACIONES.md).
 
+## Prelanzamiento del 28 de septiembre
+
+Cuenta atrás, calendario y control de nuevas altas: [configuración y apertura](docs/lanzamiento-28-septiembre.md). La fecha no abre el registro por sí sola; requiere activación del titular en web y servidor.
+
 ## Desarrollo
 
 - `npm ci`
