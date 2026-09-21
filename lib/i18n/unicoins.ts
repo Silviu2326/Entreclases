@@ -4,7 +4,7 @@ const messages = {
   title: ["La moneda que se gana estando.", "La moneda que es guanya participant."],
   subtitle: ["Participa. Gana ClasiCoins. Monta lo siguiente.", "Participa. Guanya ClasiCoins. Munta el que vinga després."],
   purpose: ["Las ClasiCoins existen para incentivar la participación, no para sacar dinero a los estudiantes.", "Les ClasiCoins existixen per a incentivar la participació, no per a traure diners als estudiants."],
-  noMoney: ["No se compran, no se venden y no se cambian por dinero. Solo sirven dentro de Entreclase.", "No es compren, no es venen i no es canvien per diners. Només servixen dins d’Entreclase."],
+  noMoney: ["No se compran, no se venden y no se cambian por dinero. Solo sirven dentro de Entreclases.", "No es compren, no es venen i no es canvien per diners. Només servixen dins d’Entreclases."],
   balance: ["Tu saldo", "El teu saldo"],
   wallet: ["Ver mis ClasiCoins", "Vore les meues ClasiCoins"],
   welcome: ["Bienvenida al campus", "Benvinguda al campus"],

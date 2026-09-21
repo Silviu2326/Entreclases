@@ -4,6 +4,7 @@ import { createTranslator, localHref, type Locale } from "@/lib/i18n";
 
 import { useRef, useState, type KeyboardEvent } from "react";
 import { Menu, X } from "lucide-react";
+import { useLaunch } from "@/lib/launch/use-launch";
 import { Button } from "@/components/ui/button";
 
 const links = [
@@ -18,6 +19,7 @@ const links = [
 
 export function MobileNavigation({ locale = "es" }: { locale?: Locale }) {
   const tr = createTranslator(locale);
+  const { phase } = useLaunch();
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   function keyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -34,7 +36,7 @@ export function MobileNavigation({ locale = "es" }: { locale?: Locale }) {
         {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
       </Button>
       <div id="mobile-page-links" className="mobile-page-links" hidden={!open}>
-        {links.map((link) => <a key={link.href} href={localHref(locale, link.href)} onClick={() => setOpen(false)}>{tr(link.label)}</a>)}
+        {links.map((item) => { const link = item.href === "/registro/" && phase !== "open" ? {href:"#lanzamiento", label:"El lanzamiento"} : item; return <a key={link.href} href={localHref(locale, link.href)} onClick={() => setOpen(false)}>{tr(link.label)}</a>; })}
       </div>
     </div>
   );

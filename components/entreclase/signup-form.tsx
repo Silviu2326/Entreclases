@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LaunchCampaign } from "./launch-campaign";
+import { useLaunch } from "@/lib/launch/use-launch";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { emailError, normalizeEmail } from "@/lib/auth/validation";
@@ -14,12 +16,14 @@ import { emailError, normalizeEmail } from "@/lib/auth/validation";
 export function SignupForm({ locale = "es" }: { locale?: Locale }) {
   const tr = createTranslator(locale);
   const router = useRouter();
+  const { phase } = useLaunch();
   const inputRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (phase !== "open") return;
     const value = normalizeEmail(email);
     const nextError = emailError(value, true);
     setError(nextError);
@@ -27,6 +31,8 @@ export function SignupForm({ locale = "es" }: { locale?: Locale }) {
     try { sessionStorage.setItem("entreclase.signup.email", value); } catch { /* Optional form draft. */ }
     router.push(localHref(locale, "/registro/"));
   }
+
+  if (phase !== "open") return <><LaunchCampaign locale={locale} compact/><p className="form-notice">{tr("¿Ya tienes cuenta?")} <Link href={localHref(locale,"/login/")}>{tr("Entra por aquí.")}</Link></p></>;
 
   return (
     <form method="post" className="signup-form" onSubmit={submit} noValidate>
@@ -45,7 +51,7 @@ export function SignupForm({ locale = "es" }: { locale?: Locale }) {
       </FieldGroup>
       {error ? <p id="email-error" className="form-error" role="alert">{tr(error)}</p> : null}
       <p className="form-notice">{tr("¿Ya tienes cuenta?")}{" "}<Link href={localHref(locale, "/login/")} className="signup-login-link">{tr("Entra por aquí.")}</Link></p>
-      <noscript><p className="form-notice"><a href={localHref(locale, "/registro/")}>{tr("Ir al registro de Entreclase")}</a></p></noscript>
+      <noscript><p className="form-notice"><a href={localHref(locale, "/registro/")}>{tr("Ir al registro de Entreclases")}</a></p></noscript>
     </form>
   );
 }

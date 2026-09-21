@@ -27,9 +27,9 @@ export function CampusPreview({ locale = "es" }: { locale?: Locale }) {
   const tr = createTranslator(locale);
   const [liked, setLiked] = useState(false);
   return (
-    <figure className="campus-preview" data-reveal="card" aria-label={tr("Vista previa de Entreclase. Las personas y publicaciones son ejemplos.")}>
+    <figure className="campus-preview" data-reveal="card" aria-label={tr("Vista previa de Entreclases. Las personas y publicaciones son ejemplos.")}>
       <div className="preview-sidebar" aria-hidden="true">
-        <span className="wordmark preview-wordmark">entreclase</span>
+        <span className="wordmark preview-wordmark">entreclases</span>
         <div className="preview-nav">
           <span className="preview-nav-active"><House />{tr("Inicio")}</span>
           <span><CalendarDays />{tr("Planes")}</span>
@@ -92,7 +92,7 @@ export function CampusPreview({ locale = "es" }: { locale?: Locale }) {
           </TabsContent>
         </Tabs>
       </div>
-      <figcaption className="sr-only">{tr("Ejemplo interactivo de la futura app. Cambia entre publicaciones, planes y grupos.")}</figcaption>
+      <figcaption className="sr-only">{tr("Demo interactiva con contenido de ejemplo. Cambia entre publicaciones, planes y grupos.")}</figcaption>
     </figure>
   );
 }

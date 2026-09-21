@@ -1681,3 +1681,23 @@ button.u-pick-option.active:hover { color:#fffefa; opacity:.92; }
 .u-activity-game { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:12px; font-size:12px; color:var(--u-muted); }
 .u-activity-game .u-text-link { font-size:12px; }
 .u-activity-game .u-text-link svg { width:14px; height:14px; }
+
+/* Launch: content first, quiet surfaces, full navigation in the mobile drawer. */
+.u-page-home .u-home-top { background:transparent; border:0; border-bottom:1px solid var(--u-line,#dedbd5); border-radius:0; box-shadow:none; padding:8px 0 24px; }
+.u-page-home .u-home-top::before,.u-page-home .u-home-top::after,.u-page-home .u-home-pills>*::after { display:none; }
+.u-page-home .u-home-top-copy,.u-page-home .u-home-pills { animation:none; }
+.u-page-home .u-home-top-copy p:not(.u-eyebrow) { font-size:14px; color:#625d64; margin-top:10px; }
+.u-page-home .u-home-pills { justify-content:flex-start; flex-wrap:wrap; gap:16px; }
+.u-page-home .u-home-pills .u-action { box-shadow:none; }
+.u-home-upcoming .u-activity-list { display:block; }
+.u-home-upcoming .u-activity-row { border:0; border-bottom:1px solid #dedbd5; border-radius:0; box-shadow:none; background:transparent; padding:20px 0; }
+.u-home-group-links { display:flex; flex-wrap:wrap; gap:14px 24px; padding:18px 0; border-bottom:1px solid #dedbd5; }
+.u-home-discovery { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:24px 0; border-block:1px solid #dedbd5; }
+.u-home-discovery h2 { font-size:25px; margin:8px 0; }
+.u-home-discovery p { font-size:14px; }
+.u-home-map>button { margin:20px 0; }
+.u-sidebar { overflow-y:auto; }
+.u-bottom-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+@media(max-width:600px){.u-home-discovery{align-items:flex-start;flex-direction:column}.u-home-section-heading{flex-wrap:wrap;gap:12px}.u-home-upcoming .u-activity-foot{flex-wrap:wrap;gap:12px}.u-home-pills .u-text-link{min-height:44px}.u-bottom-nav button{min-width:0}.u-bottom-nav span{font-size:10px}}
+
+.u-legal-footer{margin:36px 0 12px;padding-top:20px;border-top:1px solid #e2dce3}.u-legal-footer .legal-links{font-size:12px;gap:8px 16px}

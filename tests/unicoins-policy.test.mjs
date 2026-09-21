@@ -88,3 +88,31 @@ test('A client cannot mint, edit, delete, transfer or inspect another wallet, in
 test('Revoked university membership loses both the wallet RPC and row access',async()=>{
  await q("update public.universe_university_domains set enabled=false where domain='coins.example.test'");await asUser(0,async()=>{await assert.rejects(q('select public.universe_coin_wallet()'),/UNIVERSE_UNIVERSITY_REQUIRED/);assert.equal((await q('select * from public.universe_coin_wallets')).rows.length,0);assert.equal((await q('select * from public.universe_coin_ledger')).rows.length,0);});
 });
+
+
+test('Launch upgrade preserves balances, grants one free first thread and stops signup rewards',async()=>{
+ await q("update public.universe_university_domains set enabled=true where domain='coins.example.test'");
+ const before=(await wallet(2)).balance;
+ await db.exec(await readFile(new URL('../supabase/migrations/202609220018_participation_incentives.sql',import.meta.url),'utf8'));
+ assert.equal((await wallet(2)).balance,before,'historical balances stay intact');
+ const fresh='00000000-0000-4000-8000-000000000099';
+ await q("insert into auth.users(id,email,email_confirmed_at) values($1,'fresh@coins.example.test',now())",[fresh]);
+ await q("select set_config('request.jwt.claim.sub',$1,false)",[fresh]);
+ await db.exec('set role authenticated');
+ try {
+  await q("insert into public.universe_profiles(user_id,name,campus,degree,year) values($1,'Nueva persona','Tarongers','Economía',2)",[fresh]);
+  const getWallet=async()=>(await q('select public.universe_coin_wallet() as w')).rows[0].w;
+  assert.equal((await getWallet()).first_thread_available,true);
+  const id=(await q("insert into public.universe_posts(author_id,body,kind) values($1,'Primer hilo gratis','post') returning id",[fresh])).rows[0].id;
+  assert.equal((await getWallet()).balance,20);
+  assert.equal((await getWallet()).first_thread_available,false);
+  await q('delete from public.universe_posts where id=$1',[id]);
+  await assert.rejects(q("insert into public.universe_posts(id,author_id,body,kind) values($1,$2,'Reutilizar primer hilo','post')",[id,fresh]),/UNICOINS_REQUEST_USED/);
+  await q("insert into public.universe_posts(author_id,body,kind) values($1,'Segundo hilo con coste','post')",[fresh]);
+  assert.equal((await getWallet()).balance,15);
+  await q('select public.universe_set_plan_attendance($1,true)',[legacyPlan]);
+  assert.equal((await getWallet()).balance,15,'joining grants no coins');
+  assert.equal((await getWallet()).event_rewards_enabled,false);
+  await assert.rejects(q('delete from public.universe_free_threads'),/permission denied/);
+ } finally { await db.exec('reset role'); }
+});

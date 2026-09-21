@@ -140,7 +140,7 @@ function TastePicker({ kind, chosen, onClose, onSave }: { kind: TasteKind; chose
 
 type TasteFilter = "all" | "cover" | "recent" | "classic" | `source:${TasteSource}`;
 
-const sourceLabel = (source: TasteSource) => ({ tmdb: "TMDB", omdb: "OMDb", tvmaze: "TVMaze", wikidata: "Wikidata", igdb: "IGDB", rawg: "RAWG", spotify: "Spotify", musicbrainz: "MusicBrainz", local: "Entreclase" }[source]);
+const sourceLabel = (source: TasteSource) => ({ tmdb: "TMDB", omdb: "OMDb", tvmaze: "TVMaze", wikidata: "Wikidata", igdb: "IGDB", rawg: "RAWG", spotify: "Spotify", musicbrainz: "MusicBrainz", local: "Entreclases" }[source]);
 const tasteYear = (taste: Taste) => taste.s && /^\d{4}$/.test(taste.s) ? Number(taste.s) : undefined;
 const matchesTasteFilter = (taste: Taste, filter: TasteFilter) => {
   if (filter === "all") return true;

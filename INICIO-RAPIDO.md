@@ -1,4 +1,4 @@
-# Entreclase · Proyecto web completo · Versión 8
+# Entreclases · Proyecto web
 
 Esta copia incluye la landing animada, el registro y login, la aplicación web de la comunidad y ClasiCoins, en español y valenciano. La primera etapa está centrada en las universidades de Valencia.
 
@@ -24,7 +24,7 @@ La landing y la demo funcionan sin configurar Supabase. Los perfiles y contenido
 
 ## Cuentas reales y datos persistentes
 
-La URL y la clave pública de Supabase están configuradas y comprobadas en local. Falta aplicar `supabase/setup.sql`, revisar Auth y activar `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED=true`. Sin esa configuración no se crean cuentas ni se envían correos, y no hay saldos persistentes entre usuarios.
+Configura la URL y la clave pública de Supabase, revisa Auth y activa `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED=true` cuando la base de datos esté preparada. En instalaciones nuevas usa `supabase/setup.sql`; en una existente aplica únicamente las migraciones pendientes. Consulta primero [la guía de lanzamiento](docs/lanzamiento.md). Sin esa configuración no se crean cuentas ni se envían correos, y no hay saldos persistentes entre usuarios.
 
 Sigue, por orden:
 
@@ -32,7 +32,7 @@ Sigue, por orden:
 2. `docs/community-setup.md`: tablas, permisos y almacenamiento de la comunidad.
 3. `docs/unicoins.md`: reglas, límites y activación de ClasiCoins.
 
-Las cinco migraciones SQL están incluidas en `supabase/migrations/`. El archivo `.env.example` contiene los nombres de las variables necesarias, sin credenciales. Crea tu propio `.env.local` para la configuración local.
+Las migraciones SQL están incluidas en `supabase/migrations/`. El archivo `.env.example` contiene los nombres de las variables necesarias, sin credenciales. Crea tu propio `.env.local` para la configuración local.
 
 ## Compilar y comprobar
 

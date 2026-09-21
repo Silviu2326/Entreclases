@@ -14,7 +14,7 @@ await db.exec(`
  grant usage on schema auth to authenticated;
  alter default privileges in schema public grant all on tables to authenticated;
 `);
-for (const name of ['202609090001_university_auth','202609090002_valencia_launch','202609090003_community','202609200014_plus_one']) {
+for (const name of ['202609090001_university_auth','202609090002_valencia_launch','202609090003_community','202609200014_plus_one','202609220017_launch_regions']) {
  await db.exec(await readFile(new URL('../supabase/migrations/'+name+'.sql',import.meta.url),'utf8'));
 }
 await db.exec("insert into public.universe_university_domains values('campus.example.test','Universidad de prueba',true,'valencia')");
@@ -122,3 +122,14 @@ test('Invitation tokens stay in fragments and survive language switches without 
  assert.equal(actionSuffix('#plus-one=bad','register'),'');
 });
 
+
+ test('Madrid stays closed, metadata cannot open it, and only the operator can enable a region',async()=>{
+ await q("insert into public.universe_university_domains values ('madrid.example.test','Campus Madrid',true,'madrid')");
+ const event=JSON.stringify({user:{email:'test@madrid.example.test',user_metadata:{launch_region:'valencia'}}});
+ assert.equal((await q('select public.universe_before_user_created($1::jsonb) as result',[event])).rows[0].result.error.http_code,403);
+ await db.exec('set role authenticated');
+ try { await assert.rejects(q("update public.universe_launch_regions set enabled=true where slug='madrid'"),/permission denied/); } finally { await db.exec('reset role'); }
+ await q("update public.universe_launch_regions set enabled=true where slug='madrid'");
+ assert.deepEqual((await q('select public.universe_before_user_created($1::jsonb) as result',[event])).rows[0].result,{});
+ await q("update public.universe_launch_regions set enabled=false where slug='madrid'");
+ });

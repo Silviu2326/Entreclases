@@ -14,7 +14,7 @@ export function emailError(value: string, universityOnly = false): string {
   if (email.length > 254 || !/^[a-z0-9.!#$%&'*+\-/=?^_`{|}~]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i.test(email))
     return "Revisa el correo. Parece que falta algo.";
   if (universityOnly && personalDomains.has(email.split("@")[1]))
-    return "Ese es el personal. Aquí necesitas el de tu universidad.";
+    return "Usa tu correo universitario o abre el enlace de tu invitación para entrar con el personal.";
   return "";
 }
 
@@ -27,9 +27,10 @@ export function passwordError(value: string): string {
 export function authErrorMessage(error: unknown): string {
   const message = typeof error === "object" && error !== null && "message" in error ? String(error.message) : "";
   const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+  if (message.includes("UNIVERSE_REGISTRATION_NOT_OPEN")) return "El registro aún no está abierto. Puedes probar la demo mientras preparamos la apertura.";
   if (message.includes("INVITE_INVALID")) return "La invitación no es válida para este correo, ha caducado o ya se ha usado. Pide a quien te invitó que la revise.";
   if (message.includes("UNIVERSE_UNIVERSITY_REQUIRED") || code === "23514")
-    return "Empezamos en Valencia. Este correo aún no pertenece a una universidad admitida de Valencia.";
+    return "Este correo no pertenece a una universidad con acceso abierto. Si tienes una invitación, abre su enlace.";
   const messages: Record<string, string> = {
     invalid_credentials: "El correo o la contraseña no coinciden. Revisa ambos.",
     email_not_confirmed: "Primero confirma tu correo. Puedes pedir otro enlace abajo.",
@@ -41,7 +42,7 @@ export function authErrorMessage(error: unknown): string {
     bad_code_verifier: "Abre el enlace en el navegador donde lo pediste, o solicita otro.",
     flow_state_not_found: "El enlace ya no es válido. Pide uno nuevo desde aquí.",
     not_configured: "Las cuentas todavía no están activas. Vuelve cuando abramos el acceso.",
-    university_required: "Este correo aún no tiene acceso a una universidad admitida de Valencia.",
+    university_required: "Tu universidad todavía no tiene acceso abierto.",
     signup_disabled: "El registro todavía no está abierto. Vuelve un poco más adelante.",
     email_address_not_authorized: "Todavía no podemos enviar correos a esta dirección. El acceso sigue en preparación.",
     hook_payload_over_size_limit: "No hemos podido comprobar tu universidad. Inténtalo más tarde.",

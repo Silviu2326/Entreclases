@@ -25,6 +25,6 @@ test('Email tokens cannot be repurposed or replaced by arbitrary URLs', () => {
 test('Provider errors never expose raw server or credential details', () => {
   assert.match(authErrorMessage({code:'invalid_credentials'}), /no coinciden/);
   assert.match(authErrorMessage({code:'not_configured'}), /todavía no/);
-  assert.match(authErrorMessage({message:'UNIVERSE_UNIVERSITY_REQUIRED'}), /universidad admitida/);
+  assert.match(authErrorMessage({message:'UNIVERSE_UNIVERSITY_REQUIRED'}), /universidad con acceso abierto/);
   assert.ok(!authErrorMessage({message:'private database password=secret'}).includes('secret'));
 });

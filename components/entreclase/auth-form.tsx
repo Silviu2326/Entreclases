@@ -11,12 +11,18 @@ import { Button } from "@/components/ui/button";
 import { AuthError, AuthField, OpeningNotice, PasswordField, SubmitButton } from "./auth-controls";
 import { getAuthClient, getUniversityMember } from "@/lib/auth/client";
 import { authErrorMessage, emailError, normalizeEmail, passwordError } from "@/lib/auth/validation";
+import { LaunchCampaign } from "./launch-campaign";
+import { useLaunch } from "@/lib/launch/use-launch";
+import { LegalLinks } from "./legal-links";
+import { registrationLegalIssues, registrationLegalMetadata } from "@/lib/legal/registration";
+import { MINIMUM_AGE } from "@/lib/legal/config";
 import { readInvitation } from "@/lib/auth/invitations";
 
 export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "register" | "login" | "recovery" }) {
   const tr=createTranslator(locale);
   const router = useRouter();
   const registering = mode === "register";
+  const { phase: launchPhase } = useLaunch();
   const recovering = mode === "recovery";
   const [email, setEmail] = useState("");
   const [issues, setIssues] = useState<Record<string, string>>({});
@@ -51,7 +57,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (working.current) return;
+    if (working.current || (registering && launchPhase !== "open" && !invitation.demo)) return;
     const form = event.currentTarget;
     const values = new FormData(form);
     const normalized = normalizeEmail(email);
@@ -61,6 +67,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
     const nextIssues: Record<string, string> = { email: emailError(normalized, registering && !invitation.token) };
     if (registering && (name.length < 2 || name.length > 60)) nextIssues.name = "Dinos cómo te llamas. Entre 2 y 60 caracteres.";
     if (!recovering) nextIssues.password = registering ? passwordError(password) : password ? "" : "Escribe tu contraseña.";
+    if (registering) Object.assign(nextIssues, registrationLegalIssues(values, locale));
     setIssues(nextIssues); setError("");
     const firstIssue = Object.keys(nextIssues).find((key) => nextIssues[key]);
     if (firstIssue) { (form.elements.namedItem(firstIssue) as HTMLInputElement | null)?.focus(); return; }
@@ -69,7 +76,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
       if (registering && invitation.demo) { setSent(true); setEmail(normalized); return; }
       const client = getAuthClient();
       if (registering) {
-        const { data, error: signupError } = await client.auth.signUp({ email: normalized, password, options: { data: { full_name: name, locale, ...(invitation.token ? { plus_one_token: invitation.token } : {}) }, emailRedirectTo: `${window.location.origin}${localHref(locale, "/verificar/")}` } });
+        const { data, error: signupError } = await client.auth.signUp({ email: normalized, password, options: { data: { full_name: name, locale, ...registrationLegalMetadata(), ...(invitation.token ? { plus_one_token: invitation.token } : {}) }, emailRedirectTo: `${window.location.origin}${localHref(locale, "/verificar/")}` } });
         if (signupError) throw signupError;
         // Keep verification mandatory even if the provider was misconfigured.
         if (data.session) { await client.auth.signOut({ scope: "local" }); throw { code: "signup_disabled" }; }
@@ -104,6 +111,8 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
     finally { working.current = false; setPending(false); }
   }
 
+  if (registering && launchPhase !== "open" && !invitation.demo) return <><h1>{launchPhase === "pending" ? (locale === "va" ? "Preparant l’obertura." : "Preparando la apertura.") : (locale === "va" ? "Ens veiem el 28." : "Nos vemos el 28.")}</h1><LaunchCampaign locale={locale} compact/><p className="auth-switch"><Link href={localHref(locale,"/login/")}>{locale === "va" ? "Ja tens compte? Inicia sessió." : "¿Ya tienes cuenta? Inicia sesión."}</Link></p></>;
+
   return (
     <>
       {registering && invitation.token && <div className="auth-invitation"><span>+1</span><div><strong>{locale === "va" ? "Algú t’ha guardat lloc." : "Alguien te ha guardado sitio."}</strong><p>{invitation.demo ? (locale === "va" ? "Prova del registre: no s’envien correus ni es creen comptes." : "Prueba del registro: no se envían correos ni se crean cuentas.") : (locale === "va" ? "Usa el correu al qual està reservada la invitació. No necessites correu universitari." : "Usa el correo al que está reservada la invitación. No necesitas correo universitario.")}</p></div></div>}
@@ -120,8 +129,14 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
           <AuthField id="email" name="email" label={registering && !invitation.token ? tr("Correo universitario") : (locale === "va" ? "El teu correu" : "Tu correo")} type="email" inputMode="email" autoComplete={registering || recovering ? "email" : "username"} autoCapitalize="none" spellCheck={false} maxLength={254} placeholder={registering && !invitation.token ? tr("tu.nombre@tu-universidad.es") : "nombre@ejemplo.com"} required value={email} onChange={(event) => { setEmail(event.target.value); setIssues((value) => ({ ...value, email: "" })); }} error={issues.email} hint={registering && !invitation.token ? (locale === "va" ? "Tens una invitació? Obri l’enllaç que t’han passat per a usar el correu personal." : "¿Tienes una invitación? Abre el enlace que te han pasado para usar tu correo personal.") : undefined} locale={locale} />
           {!recovering ? <PasswordField autoComplete={registering ? "new-password" : "current-password"} placeholder={registering ? tr("Una buena frase funciona") : tr("Tu contraseña")} required error={issues.password} hint={registering ? tr("Al menos 12 caracteres. Puedes usar espacios.") : undefined} locale={locale} /> : null}
           {!registering && !recovering ? <Link className="auth-forgot" href={localHref(locale, "/recuperar-contrasena/")}>{tr("Se me ha olvidado la contraseña")}</Link> : null}
+          {registering && <div className="auth-legal-notice">
+            <label className="auth-legal-check"><input type="checkbox" name="termsAccepted" required aria-invalid={!!issues.termsAccepted} aria-describedby={issues.termsAccepted ? "terms-issue" : undefined}/><span>{locale === "va" ? "He llegit i accepte les " : "He leído y acepto las "}<Link href={localHref(locale,"/condiciones/")} target="_blank" rel="noopener">{locale === "va" ? "condicions d’ús" : "condiciones de uso"}</Link>.</span></label>
+            {issues.termsAccepted && <p className="auth-legal-error" id="terms-issue" role="alert">{issues.termsAccepted}</p>}
+            <label className="auth-legal-check"><input type="checkbox" name="adultDeclared" required aria-invalid={!!issues.adultDeclared} aria-describedby={issues.adultDeclared ? "age-issue" : undefined}/><span>{locale === "va" ? "Declare que tinc " : "Declaro que tengo "}{MINIMUM_AGE}{locale === "va" ? " anys o més." : " años o más."}</span></label>
+            {issues.adultDeclared && <p className="auth-legal-error" id="age-issue" role="alert">{issues.adultDeclared}</p>}
+            <p>{locale === "va" ? "Abans de crear el compte, consulta les condicions i com s’utilitzen les dades." : "Antes de crear tu cuenta, consulta las condiciones y cómo se utilizan tus datos."}</p><LegalLinks locale={locale}/></div>}
           <AuthError message={error} locale={locale} />
-          <SubmitButton pending={pending || !invitationReady || invitation.invalid} locale={locale}>{registering ? tr("Encontrar mi gente") : recovering ? tr("Recuperar mi acceso") : tr("Entrar en Entreclase")}</SubmitButton>
+          <SubmitButton pending={pending || !invitationReady || invitation.invalid} locale={locale}>{registering ? tr("Encontrar mi gente") : recovering ? tr("Recuperar mi acceso") : tr("Entrar en Entreclases")}</SubmitButton>
         </form>
         <p className="auth-switch">{registering ? <>{tr("¿Ya tienes cuenta?")}{" "}<Link href={localHref(locale, "/login/")}>{tr("Entra por aquí.")}</Link></> : recovering ? <Link href={localHref(locale, "/login/")}>{tr("Ya me acuerdo. Volver a entrar.")}</Link> : <>{tr("¿Acabas de llegar?")}{" "}<Link href={localHref(locale, "/registro/")}>{tr("Hazte un sitio.")}</Link></>}</p>
         {!registering && !recovering ? <p className="auth-resend-link"><Link href={localHref(locale, "/verificar/")}>{tr("¿No te llegó el correo de verificación?")}</Link></p> : null}

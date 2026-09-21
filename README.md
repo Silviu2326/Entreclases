@@ -1,8 +1,16 @@
-# Entreclase
+# Entreclases
 
-La marca visible, los componentes y las plantillas de correo usan **Entreclase**. Se conservan los identificadores `universe_*`, los códigos `UNIVERSE_*`, el bucket `universe-notes` y las migraciones históricas para mantener la compatibilidad con Supabase. La URL del sitio existente también se conserva hasta conectar un dominio propio; `entreclase.com` no está registrado ni configurado por este proyecto. ClasiCoins mantiene las mismas reglas de participación.
+Comunidad universitaria y acceso por invitación, en español y valenciano, con Next.js, React y Supabase. Dominio canónico: https://www.entreclases.com. Los identificadores internos `universe_*` se conservan por compatibilidad.
 
-Landing y acceso de Entreclase para las universidades de Valencia, en **español y valenciano**, construidos con **Next.js 16, App Router, React 19 y TypeScript** a partir del diseño aprobado.
+La preparación del lanzamiento y los pasos pendientes de producción están en [la guía de lanzamiento](docs/lanzamiento.md). Madrid queda cerrado por defecto.
+
+## Documentación legal
+
+Las páginas legales están preparadas en ambos idiomas y se identifican como borrador hasta completar y validar los datos. Consulta [datos y decisiones pendientes del titular](docs/legal/PENDIENTES-TITULAR.md) y [procedimientos operativos](docs/legal/OPERACIONES.md).
+
+## Prelanzamiento del 28 de septiembre
+
+Cuenta atrás, calendario y control de nuevas altas: [configuración y apertura](docs/lanzamiento-28-septiembre.md). La fecha no abre el registro por sí sola; requiere activación del titular en web y servidor.
 
 ## Desarrollo
 
@@ -17,7 +25,7 @@ No necesita variables de entorno para mostrar la landing. Mantiene las dependenc
 
 ## Contenido
 
-Las diez secciones mantienen el tono directo y el diseño del concepto: presentación, lanzamiento en Valencia, historia del viernes, crítica a las redes sociales, vista previa del campus, vida universitaria, acceso exclusivo, preguntas frecuentes, cierre de la historia y entrada por correo universitario. La historia empieza a las 14:07, mirando vidas ajenas, y termina a las 14:08, encontrando sitio en un plan del campus.
+La portada prioriza la explicación del producto, una vista previa del campus, el lanzamiento en Valencia y el acceso universitario o por invitación personal. La historia empieza a las 14:07, mirando vidas ajenas, y termina a las 14:08, encontrando sitio en un plan del campus.
 
 La sección de vida universitaria ofrece tres pestañas: apuntes y estudio, lugares y planes, y conocer gente. Se explica el acceso con correo universitario y se responden ocho dudas con acordeones nativos. El menú móvil permite recorrer las secciones, se cierra al elegir un enlace y admite la tecla Escape. El diseño es responsive y respeta las preferencias de movimiento reducido.
 
@@ -38,11 +46,11 @@ La sección de vida universitaria ofrece tres pestañas: apuntes y estudio, luga
 
 ## Estado del registro
 
-Esta entrega incluye la **landing y los flujos de acceso**, no la comunidad completa.
+Incluye landing, autenticación, comunidad, planes, grupos, apuntes, mensajes, proyectos y ClasiCoins.
 
 El botón Entrar abre `/login/`. El registro está en `/registro/`, con nombre, correo universitario y contraseña. La entrada de correo de la landing lo lleva al registro mediante un borrador temporal en el navegador; no envía la dirección en la URL. Hay pantallas de verificación, reenvío, recuperación, nueva contraseña y cuenta con cierre de sesión.
 
-**Supabase está configurado en local; faltan las migraciones y la activación del acceso.** Sin su URL y clave pública, no se crean cuentas ni se envían correos: los formularios muestran el estado de apertura pendiente. La integración llama al proveedor real cuando se configura; no simula sesiones ni almacena contraseñas. La migración exige un dominio aprobado exacto y un correo confirmado en servidor. La regla de lanzamiento exige además una región Valencia revisada en servidor. La segunda migración prepara el dominio de estudiantes de la UV, desactivado; faltan la revisión y activación de los dominios admitidos. Ver [guía de activación](docs/auth-setup.md) para aplicar la migración, configurar el correo y recompilar con las variables públicas.
+**La configuración real depende del entorno; este cambio no aplica migraciones al servidor.** Sin su URL y clave pública, no se crean cuentas ni se envían correos: los formularios muestran el estado de apertura pendiente. La integración llama al proveedor real cuando se configura; no simula sesiones ni almacena contraseñas. La migración exige un dominio aprobado exacto y un correo confirmado en servidor. La regla de lanzamiento exige además una región Valencia revisada en servidor. La segunda migración prepara el dominio de estudiantes de la UV, desactivado; faltan la revisión y activación de los dominios admitidos. Ver [guía de activación](docs/auth-setup.md) para aplicar la migración, configurar el correo y recompilar con las variables públicas.
 
 Las publicaciones, personas, cifras, conversaciones y planes de las vistas previas son ejemplos. Las vistas previas de la landing y la nueva demo interactiva usan contenido de ejemplo. El bloque de acceso, las preguntas frecuentes y el formulario explican que la apertura está en preparación.
 
