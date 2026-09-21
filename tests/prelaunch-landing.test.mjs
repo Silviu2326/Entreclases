@@ -37,12 +37,24 @@ test('It promises the coins it can actually grant', () => {
  }
 });
 
-test('It keeps the product to itself: no feature tour, no screens, no prices', () => {
+test('It shows four things and keeps the rest for the inside', () => {
  const forbidden = [/ClasiCoins de bienvenida/, /Probar las ClasiCoins/, /pestañas/, /Crear mi cuenta/, /preguntas frecuentes/i];
  for (const [locale, html] of pages) {
   for (const pattern of forbidden) assert.ok(!pattern.test(html), `${locale} no enseña ${pattern}`);
+  assert.equal(html.split('prelaunch-inside-grid').length - 1, 1);
+  assert.equal([...html.matchAll(/<h3>/g)].length, 4, 'cuatro funcionalidades, ni una más');
   // The dates page is the one place that says more, and it is one click away.
   assert.match(html, new RegExp(`href="${routes[locale].roadmap.replace(/\/$/, '')}/?"`));
+ }
+});
+
+test('One story, told once: the page does not repeat itself', () => {
+ for (const [locale, html] of pages) {
+  assert.equal([...html.matchAll(/14:07/g)].length, 1, `${locale}: una sola historia`);
+  assert.equal([...html.matchAll(/<h2/g)].length, 3, 'tres secciones después del titular');
+  // Saying who gets in belongs in one place, not in three.
+  assert.equal([...html.matchAll(/invitaci/gi)].length, 1);
+  assert.ok(html.length < 14000, `${locale}: la página cabe de un vistazo (${html.length})`);
  }
 });
 

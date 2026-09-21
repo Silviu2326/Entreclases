@@ -756,38 +756,48 @@ html[lang="ca-ES-valencia"] .story-time { font-size: clamp(80px, 10.3vw, 165px);
 .roadmap-honesty{margin-top:52px;border-top:1px solid #d6cfbe;padding-top:26px}.roadmap-honesty h2{font-size:19px;font-weight:700;letter-spacing:-.02em}.roadmap-honesty p{font-size:15px;line-height:1.6;margin-top:12px;max-width:60ch}.roadmap-footer{margin-top:44px}
 @media(max-width:700px){.roadmap-page{padding:22px 18px 64px}.roadmap-header{margin-bottom:34px}.roadmap-countdown{gap:9px;margin-top:28px}.roadmap-list{margin-top:42px}.roadmap-milestone{gap:15px;padding-bottom:28px}.roadmap-marker>span{width:38px;height:38px;font-size:14px}}
 
-/* Prelaunch landing: one ask, above the fold, and nothing else competing. */
+/* Prelaunch landing: one ask, one story, four things, and the form again. */
 .prelaunch-nav-button{display:inline-flex;align-items:center;height:48px;padding-inline:24px;background:var(--foreground);color:var(--background);border-radius:5px;font-weight:600;font-size:16px}
-.prelaunch-hero{padding:clamp(40px,6vw,86px) 22px clamp(36px,5vw,72px)}.prelaunch-hero-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(30px,4vw,62px);align-items:center}
+.prelaunch-hero{padding:clamp(38px,5vw,78px) 22px clamp(34px,4vw,64px)}.prelaunch-hero-inner{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(30px,4vw,62px);align-items:center}
 /* Without this the headline min-content width eats the photo column. */
 .prelaunch-copy{min-width:0}
-.prelaunch-copy .eyebrow{margin-bottom:20px}
+.prelaunch-copy .eyebrow{margin-bottom:18px}
 /* The column is narrower than the finished landing and the lime line cannot
    wrap, so the headline is sized to fit it rather than the viewport. */
-.prelaunch-copy .hero-title{font-size:clamp(38px,4.35vw,74px);margin-bottom:26px}
-.prelaunch-lead{font-size:clamp(17px,1.6vw,22px);line-height:1.5;letter-spacing:-.02em;margin-top:14px;max-width:44ch}.prelaunch-lead+.prelaunch-lead{font-weight:650}
-.prelaunch-copy .waitlist-form{margin-top:26px;max-width:520px}.prelaunch-copy .access-note{margin-top:20px}
+.prelaunch-copy .hero-title{font-size:clamp(38px,4.35vw,74px);margin-bottom:24px}
+.prelaunch-lead{font-size:clamp(17px,1.5vw,21px);line-height:1.5;letter-spacing:-.02em;max-width:46ch}
+.prelaunch-copy .waitlist-form{margin-top:26px;max-width:520px}
 /* .form-notice was written for the dark section; on cream it has to be read. */
 .prelaunch-copy .form-notice{color:#5d5464}.prelaunch-copy .form-notice a{color:var(--foreground)}
 /* The frame is sized from its parent, so the column needs a shape of its own. */
 .prelaunch-visual{position:relative;min-width:0;aspect-ratio:4/3}
-@media(max-width:860px){.prelaunch-hero-inner{grid-template-columns:1fr;gap:30px}.prelaunch-visual{order:-1;aspect-ratio:16/11}}
+@media(max-width:860px){.prelaunch-hero-inner{grid-template-columns:1fr;gap:28px}.prelaunch-visual{order:-1;aspect-ratio:16/11}}
 /* On a phone the lime line is the widest thing on the page and cannot wrap. */
 @media(max-width:700px){.prelaunch-copy .hero-title{font-size:clamp(28px,8.8vw,56px);line-height:.94;letter-spacing:-.067em}}
 
-.prelaunch-coins{background:var(--foreground);color:var(--background);padding:clamp(44px,6vw,86px) 22px}
-.prelaunch-coins-inner{max-width:760px}.prelaunch-coins .eyebrow{display:flex;align-items:center;gap:9px;color:var(--highlight);margin-bottom:22px}.prelaunch-coins .eyebrow svg{width:19px;height:19px}
-.prelaunch-coins h2{font-size:clamp(32px,4.2vw,58px);font-weight:800;letter-spacing:-.055em;line-height:1.04}.prelaunch-coins h2 em{font-style:normal;color:var(--highlight)}
-.prelaunch-coins p{font-size:clamp(16px,1.4vw,19px);line-height:1.55;margin-top:20px;max-width:52ch}
-.prelaunch-coins-tease strong{color:var(--highlight)}
-.prelaunch-coins-rule{font-size:15px!important;color:#cfc9d4}
+.prelaunch-story{border-block:1px solid #ded7c6;padding:clamp(30px,4vw,54px) 22px}
+.prelaunch-story-inner{max-width:1180px;margin:auto;display:flex;align-items:baseline;gap:clamp(20px,4vw,56px);flex-wrap:wrap}
+.prelaunch-story-time{font-size:clamp(30px,4.4vw,58px);font-weight:850;letter-spacing:-.06em;line-height:1;flex-shrink:0}.prelaunch-story-time span{display:block}
+.prelaunch-story p:not(.prelaunch-story-time){font-size:clamp(17px,1.6vw,22px);line-height:1.45;letter-spacing:-.02em}
+.prelaunch-story-punch{font-weight:750;color:var(--primary);margin-left:auto}
+@media(max-width:700px){.prelaunch-story-inner{gap:14px}.prelaunch-story-time{font-size:clamp(28px,9vw,46px)}.prelaunch-story-punch{margin-left:0}}
 
-.prelaunch-tease{padding:clamp(44px,6vw,90px) 22px}.prelaunch-tease h2{font-size:clamp(28px,3.4vw,44px);font-weight:780;letter-spacing:-.045em;line-height:1.08}
-.prelaunch-tease-list{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:18px;max-width:58ch}
-.prelaunch-tease-list li{position:relative;padding-left:30px;font-size:clamp(16px,1.4vw,19px);line-height:1.5}
-.prelaunch-tease-list li::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--primary)}
-.prelaunch-tease-note{margin-top:30px;font-size:16px;line-height:1.6;max-width:54ch;color:#5d5464}
-.prelaunch-dates-link{display:inline-block;margin-top:22px;font-weight:650;text-decoration:underline;text-underline-offset:5px}
-.prelaunch-signup .signup-main h2{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.prelaunch-signup-icon{width:clamp(28px,3vw,42px);height:clamp(28px,3vw,42px);color:var(--highlight)}
-@media(max-width:700px){.prelaunch-coins-inner,.prelaunch-tease{padding-inline:0}.prelaunch-tease-list{gap:15px}}
+.prelaunch-inside{padding:clamp(44px,5.5vw,84px) 22px}
+.prelaunch-inside h2{font-size:clamp(28px,3.4vw,46px);font-weight:800;letter-spacing:-.05em;line-height:1.05;margin-bottom:clamp(26px,3vw,44px)}
+.prelaunch-inside-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.4vw,34px)}
+.prelaunch-inside-grid li{border-top:2px solid var(--foreground);padding-top:18px}
+.prelaunch-inside-grid svg{width:26px;height:26px;color:var(--primary)}
+.prelaunch-inside-grid h3{font-size:clamp(18px,1.6vw,22px);font-weight:700;letter-spacing:-.03em;line-height:1.2;margin:14px 0 9px}
+.prelaunch-inside-grid p{font-size:15px;line-height:1.5;color:#5d5464}
+@media(max-width:900px){.prelaunch-inside-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.prelaunch-inside-grid{grid-template-columns:1fr;gap:18px}}
+
+/* The coins block and the closing form share a background, so the seam is a
+   hairline instead of a lake of empty ink. */
+.prelaunch-coins{background:var(--foreground);color:var(--background);padding:clamp(40px,5vw,76px) 22px clamp(32px,3.6vw,54px)}
+.prelaunch-coins-inner{max-width:720px}.prelaunch-coins .eyebrow{display:flex;align-items:center;gap:9px;color:var(--highlight);margin-bottom:20px}.prelaunch-coins .eyebrow svg{width:19px;height:19px}
+.prelaunch-coins h2{font-size:clamp(30px,4vw,54px);font-weight:800;letter-spacing:-.055em;line-height:1.04}.prelaunch-coins h2 em{font-style:normal;color:var(--highlight)}
+.prelaunch-coins p{font-size:clamp(16px,1.4vw,19px);line-height:1.55;margin-top:18px;max-width:52ch}
+.prelaunch-coins strong{color:var(--highlight)}
+.prelaunch-coins-rule{font-size:15px!important;color:#cfc9d4}
+.prelaunch-signup .signup-inner{padding-block:clamp(32px,3.6vw,54px);border-top:1px solid #ffffff1f}
