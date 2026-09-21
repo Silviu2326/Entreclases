@@ -106,3 +106,24 @@ test('Unsubscribing stops everything still owed, and the queue stays private', a
   } finally { await db.exec('reset role'); }
  }
 });
+
+test('The operator diagnostic reports every stage even where cron and net are missing', async () => {
+ // service_role exists on Supabase, not in this fixture: create it so stage 2 can be asked.
+ await db.exec('create role service_role');
+ await db.exec(await migration('202609240024_waitlist_service_grants.sql'));
+ const sql = (await read(new URL('../supabase/diagnostico-correos.sql', import.meta.url), 'utf8')).split('select * from pg_temp.diagnostico_correos()')[0];
+ await db.exec(sql);
+ const { rows } = await db.query('select * from pg_temp.diagnostico_correos() order by n');
+ assert.equal(rows.length, 10, 'diez etapas, ninguna se traga un error');
+ const by = Object.fromEntries(rows.map(r => [r.n, r]));
+ assert.equal(by[1].estado, 'SÍ'); assert.equal(by[2].estado, 'SÍ'); assert.equal(by[3].estado, 'SÍ'); assert.equal(by[4].estado, 'SÍ');
+ for (const n of [5, 6, 7, 8, 9]) assert.equal(by[n].estado, 'NO', `etapa ${n} sin extensiones`);
+ assert.match(by[7].detalle + by[9].detalle, /Sin pg_/);
+ // Nothing has really gone out in this fixture; once one welcome is reported
+ // sent the last stage flips, with the attempt count next to it.
+ assert.equal(by[10].estado, 'NO');
+ await db.query("update public.universe_waitlist_emails set sent_at = now() where step = 0 and waitlist_id = (select id from public.universe_waitlist where email = 'paula@alumni.uv.es')");
+ const after = (await db.query('select * from pg_temp.diagnostico_correos() where n = 10')).rows[0];
+ assert.equal(after.estado, 'SÍ');
+ assert.match(after.detalle, /intentos=/);
+});

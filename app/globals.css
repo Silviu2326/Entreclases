@@ -243,7 +243,8 @@ section[id] { scroll-margin-top: 20px; }
 .signup-button svg { width: 20px; height: 20px; }
 .signup-section a:focus-visible, .signup-section button:focus-visible { outline-color: var(--highlight); }
 .form-error, .form-notice { margin-top: 12px; font-size: 14px; line-height: 1.5; }
-.form-error { color: #ffc4ce; }
+.form-error { color: #a51e34; }
+.signup-section .form-error { color: #ffc4ce; }
 .form-notice { color: #d1d2d8; }
 .form-notice:empty { display: none; }
 .site-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #666669; padding-top: 20px; gap: 20px; }
@@ -740,7 +741,10 @@ html[lang="ca-ES-valencia"] .story-time { font-size: clamp(80px, 10.3vw, 165px);
 .waitlist-form{margin-top:18px}.waitlist-fields{display:flex;flex-direction:row;align-items:flex-start;gap:12px}.waitlist-fields .entreclase-input{flex:1 1 auto;min-width:0}.waitlist-button{flex:0 0 auto;height:60px;padding-inline:20px!important;font-size:clamp(14px,1.15vw,18px)}.waitlist-button svg{width:20px;height:20px}
 /* --primary is the same ink as the dark sections, so the one button on them gets the lime. */
 .signup-section .waitlist-button,.roadmap-signup .waitlist-button{background:var(--highlight);color:var(--foreground)}
-.signup-section .waitlist-button:hover,.roadmap-signup .waitlist-button:hover{background:#d2f229}.waitlist-form .form-notice a{text-decoration:underline;text-underline-offset:3px}.waitlist-warning{margin-top:12px;font-size:14px;line-height:1.5;color:var(--highlight)}.waitlist-done{display:flex;gap:14px;align-items:flex-start;margin-top:18px}.waitlist-done svg{width:26px;height:26px;flex-shrink:0;color:var(--highlight)}.waitlist-done strong{display:block;font-size:20px;letter-spacing:-.02em}.waitlist-done p{margin-top:7px;font-size:15px;line-height:1.5}.waitlist-done .waitlist-warning{font-size:14px}
+.signup-section .waitlist-button:hover,.roadmap-signup .waitlist-button:hover{background:#d2f229}.waitlist-form .form-notice a{text-decoration:underline;text-underline-offset:3px}/* Form states are written for cream first. Lime only reads on the two dark
+   sections, so those opt in below instead of the hero opting out. */
+.waitlist-warning{margin-top:12px;font-size:14px;line-height:1.5;font-weight:600;color:#5b5600}.waitlist-done{display:flex;gap:14px;align-items:flex-start;margin-top:18px}.waitlist-done svg{width:26px;height:26px;flex-shrink:0;color:var(--primary)}
+.signup-section .waitlist-warning,.roadmap-signup .waitlist-warning{color:var(--highlight);font-weight:500}.signup-section .waitlist-done svg,.roadmap-signup .waitlist-done svg{color:var(--highlight)}.roadmap-signup .form-error{color:#ffc4ce}.waitlist-done strong{display:block;font-size:20px;letter-spacing:-.02em}.waitlist-done p{margin-top:7px;font-size:15px;line-height:1.5}.waitlist-done .waitlist-warning{font-size:14px}
 @media(max-width:700px){.waitlist-fields{flex-direction:column;gap:10px}.waitlist-fields .entreclase-input{flex:0 0 auto;width:100%;height:56px}.waitlist-button{height:56px;width:100%;font-size:16px}}
 
 /* Roadmap: three dates, what happens on each, and the same single ask. */

@@ -18,7 +18,7 @@ La web es una exportación estática y no tiene servidor: todo el envío vive en
 
 ## Puesta en marcha
 
-1. **Aplica las migraciones** `202609240021_waitlist_sequence.sql`, `202609240022_waitlist_full_sequence.sql` y `202609240023_early_coins.sql`, en ese orden, en el SQL Editor. La 022 completa la secuencia de quien ya estuviera apuntado; la 023 es la que hace real el saldo extra que promete la portada. Añade columnas a `universe_waitlist`, que ya tiene filas: no las borra ni las reprograma. Las personas apuntadas antes de aplicarla no reciben la secuencia; si quieres incluirlas, al final de este documento está el SQL.
+1. **Aplica las migraciones** `202609240021_waitlist_sequence.sql`, `202609240022_waitlist_full_sequence.sql`, `202609240023_early_coins.sql` y `202609240024_waitlist_service_grants.sql`, en ese orden, en el SQL Editor. La 022 completa la secuencia de quien ya estuviera apuntado; la 023 es la que hace real el saldo extra que promete la portada. Añade columnas a `universe_waitlist`, que ya tiene filas: no las borra ni las reprograma. Las personas apuntadas antes de aplicarla no reciben la secuencia; si quieres incluirlas, al final de este documento está el SQL.
 
 2. **Guarda los secretos de la función** (Project Settings → Edge Functions → Secrets, o por consola):
 
@@ -48,9 +48,12 @@ La web es una exportación estática y no tiene servidor: todo el envío vive en
      select net.http_post(
        url := 'https://<ref>.supabase.co/functions/v1/waitlist-mailer',
        headers := '{"content-type":"application/json","x-waitlist-secret":"<el mismo secreto>"}'::jsonb,
-       body := '{}'::jsonb
+       body := '{}'::jsonb,
+       timeout_milliseconds := 60000
      );
    $$);
+
+   El tiempo de espera es de un minuto porque la función envía los correos uno a uno y responde al terminar; con los cinco segundos por defecto de `pg_net` un lote grande se cortaría a medias.
    ```
 
    Cada minuto, no cada nueve de la mañana: así la bienvenida sale casi al instante y las mañanas salen a su hora aunque un envío falle. Si la cola está vacía la función responde y no hace nada.
@@ -63,6 +66,17 @@ La web es una exportación estática y no tiene servidor: todo el envío vive en
    join public.universe_waitlist w on w.id = q.waitlist_id
    where w.email = 'tu@correo' order by step;
    ```
+
+## Si no llega
+
+`supabase/diagnostico-correos.sql` recorre las diez etapas, de la migración al envío, y marca la primera que falla con lo que hay que hacer. Pegarlo entero en el SQL Editor. Para llamar a la función a mano y ver su respuesta sin esperar al cron:
+
+```bash
+curl -s -X POST "https://<ref>.supabase.co/functions/v1/waitlist-mailer" \
+  -H "x-waitlist-secret: <el secreto>" -H "content-type: application/json" -d '{}'
+```
+
+Responde `{"sent":N,"failed":[...]}`; cada fallo lleva el motivo que devolvió Resend.
 
 ## La baja
 
