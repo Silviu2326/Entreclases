@@ -12,6 +12,8 @@ import { AuthError, AuthField, OpeningNotice, PasswordField, SubmitButton } from
 import { getAuthClient, getUniversityMember } from "@/lib/auth/client";
 import { authErrorMessage, emailError, normalizeEmail, passwordError } from "@/lib/auth/validation";
 import { LegalLinks } from "./legal-links";
+import { registrationLegalIssues, registrationLegalMetadata } from "@/lib/legal/registration";
+import { MINIMUM_AGE } from "@/lib/legal/config";
 import { readInvitation } from "@/lib/auth/invitations";
 
 export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "register" | "login" | "recovery" }) {
@@ -62,6 +64,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
     const nextIssues: Record<string, string> = { email: emailError(normalized, registering && !invitation.token) };
     if (registering && (name.length < 2 || name.length > 60)) nextIssues.name = "Dinos cómo te llamas. Entre 2 y 60 caracteres.";
     if (!recovering) nextIssues.password = registering ? passwordError(password) : password ? "" : "Escribe tu contraseña.";
+    if (registering) Object.assign(nextIssues, registrationLegalIssues(values, locale));
     setIssues(nextIssues); setError("");
     const firstIssue = Object.keys(nextIssues).find((key) => nextIssues[key]);
     if (firstIssue) { (form.elements.namedItem(firstIssue) as HTMLInputElement | null)?.focus(); return; }
@@ -70,7 +73,7 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
       if (registering && invitation.demo) { setSent(true); setEmail(normalized); return; }
       const client = getAuthClient();
       if (registering) {
-        const { data, error: signupError } = await client.auth.signUp({ email: normalized, password, options: { data: { full_name: name, locale, ...(invitation.token ? { plus_one_token: invitation.token } : {}) }, emailRedirectTo: `${window.location.origin}${localHref(locale, "/verificar/")}` } });
+        const { data, error: signupError } = await client.auth.signUp({ email: normalized, password, options: { data: { full_name: name, locale, ...registrationLegalMetadata(), ...(invitation.token ? { plus_one_token: invitation.token } : {}) }, emailRedirectTo: `${window.location.origin}${localHref(locale, "/verificar/")}` } });
         if (signupError) throw signupError;
         // Keep verification mandatory even if the provider was misconfigured.
         if (data.session) { await client.auth.signOut({ scope: "local" }); throw { code: "signup_disabled" }; }
@@ -121,7 +124,12 @@ export function AuthForm({ mode, locale = "es" }: { locale?: Locale; mode: "regi
           <AuthField id="email" name="email" label={registering && !invitation.token ? tr("Correo universitario") : (locale === "va" ? "El teu correu" : "Tu correo")} type="email" inputMode="email" autoComplete={registering || recovering ? "email" : "username"} autoCapitalize="none" spellCheck={false} maxLength={254} placeholder={registering && !invitation.token ? tr("tu.nombre@tu-universidad.es") : "nombre@ejemplo.com"} required value={email} onChange={(event) => { setEmail(event.target.value); setIssues((value) => ({ ...value, email: "" })); }} error={issues.email} hint={registering && !invitation.token ? (locale === "va" ? "Tens una invitació? Obri l’enllaç que t’han passat per a usar el correu personal." : "¿Tienes una invitación? Abre el enlace que te han pasado para usar tu correo personal.") : undefined} locale={locale} />
           {!recovering ? <PasswordField autoComplete={registering ? "new-password" : "current-password"} placeholder={registering ? tr("Una buena frase funciona") : tr("Tu contraseña")} required error={issues.password} hint={registering ? tr("Al menos 12 caracteres. Puedes usar espacios.") : undefined} locale={locale} /> : null}
           {!registering && !recovering ? <Link className="auth-forgot" href={localHref(locale, "/recuperar-contrasena/")}>{tr("Se me ha olvidado la contraseña")}</Link> : null}
-          {registering && <div className="auth-legal-notice"><p>{locale === "va" ? "Abans de crear el compte, consulta les condicions i com s’utilitzen les dades." : "Antes de crear tu cuenta, consulta las condiciones y cómo se utilizan tus datos."}</p><LegalLinks locale={locale}/></div>}
+          {registering && <div className="auth-legal-notice">
+            <label className="auth-legal-check"><input type="checkbox" name="termsAccepted" required aria-invalid={!!issues.termsAccepted} aria-describedby={issues.termsAccepted ? "terms-issue" : undefined}/><span>{locale === "va" ? "He llegit i accepte les " : "He leído y acepto las "}<Link href={localHref(locale,"/condiciones/")} target="_blank" rel="noopener">{locale === "va" ? "condicions d’ús" : "condiciones de uso"}</Link>.</span></label>
+            {issues.termsAccepted && <p className="auth-legal-error" id="terms-issue" role="alert">{issues.termsAccepted}</p>}
+            <label className="auth-legal-check"><input type="checkbox" name="adultDeclared" required aria-invalid={!!issues.adultDeclared} aria-describedby={issues.adultDeclared ? "age-issue" : undefined}/><span>{locale === "va" ? "Declare que tinc " : "Declaro que tengo "}{MINIMUM_AGE}{locale === "va" ? " anys o més." : " años o más."}</span></label>
+            {issues.adultDeclared && <p className="auth-legal-error" id="age-issue" role="alert">{issues.adultDeclared}</p>}
+            <p>{locale === "va" ? "Abans de crear el compte, consulta les condicions i com s’utilitzen les dades." : "Antes de crear tu cuenta, consulta las condiciones y cómo se utilizan tus datos."}</p><LegalLinks locale={locale}/></div>}
           <AuthError message={error} locale={locale} />
           <SubmitButton pending={pending || !invitationReady || invitation.invalid} locale={locale}>{registering ? tr("Encontrar mi gente") : recovering ? tr("Recuperar mi acceso") : tr("Entrar en Entreclases")}</SubmitButton>
         </form>

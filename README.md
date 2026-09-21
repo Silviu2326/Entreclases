@@ -4,6 +4,10 @@ Comunidad universitaria y acceso por invitación, en español y valenciano, con 
 
 La preparación del lanzamiento y los pasos pendientes de producción están en [la guía de lanzamiento](docs/lanzamiento.md). Madrid queda cerrado por defecto.
 
+## Documentación legal
+
+Las páginas legales están preparadas en ambos idiomas y se identifican como borrador hasta completar y validar los datos. Consulta [datos y decisiones pendientes del titular](docs/legal/PENDIENTES-TITULAR.md) y [procedimientos operativos](docs/legal/OPERACIONES.md).
+
 ## Desarrollo
 
 - `npm ci`

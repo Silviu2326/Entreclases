@@ -1,4 +1,6 @@
 import { LegalPage } from "@/components/entreclase/legal-page";
 import { pageMetadata } from "@/lib/i18n/metadata";
-export const metadata = {...pageMetadata("va","privacy"), title: "Privacitat — Entreclases"};
+import { legalTitles } from "@/lib/legal/config";
+const title = legalTitles.privacy[1] + " — Entreclases";
+export const metadata = { ...pageMetadata("va", "privacy"), title, openGraph: { ...pageMetadata("va", "privacy").openGraph, title } };
 export default function Page() { return <LegalPage locale="va" kind="privacy"/>; }

@@ -9,7 +9,7 @@
 - Primer hilo gratuito por cuenta sin hilos cobrados anteriormente. Los siguientes cuestan 5 ClasiCoins. Inscribirse en un plan ya no da monedas. Se conservan saldos e historiales.
 - Dominios de prueba separados de la instalación inicial y desactivados por la migración de lanzamiento.
 - Regiones de acceso controladas en servidor: Valencia abierta, Madrid cerrada. No se añade ni habilita ningún dominio universitario real.
-- Páginas de privacidad y condiciones en ambos idiomas, con contacto accesible. Su información legal está pendiente de completar.
+- Centro legal de siete documentos en ambos idiomas, con contacto accesible, solicitudes de datos y denuncias. Consulta `docs/legal/PENDIENTES-TITULAR.md` para completar y validar la versión definitiva.
 
 ## Actualizar una instalación existente
 

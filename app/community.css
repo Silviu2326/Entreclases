@@ -1699,3 +1699,5 @@ button.u-pick-option.active:hover { color:#fffefa; opacity:.92; }
 .u-sidebar { overflow-y:auto; }
 .u-bottom-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
 @media(max-width:600px){.u-home-discovery{align-items:flex-start;flex-direction:column}.u-home-section-heading{flex-wrap:wrap;gap:12px}.u-home-upcoming .u-activity-foot{flex-wrap:wrap;gap:12px}.u-home-pills .u-text-link{min-height:44px}.u-bottom-nav button{min-width:0}.u-bottom-nav span{font-size:10px}}
+
+.u-legal-footer{margin:36px 0 12px;padding-top:20px;border-top:1px solid #e2dce3}.u-legal-footer .legal-links{font-size:12px;gap:8px 16px}
