@@ -11,10 +11,10 @@ export function getAuthClient() {
   return client;
 }
 
-export type UniversityMember = { id: string; email: string; name: string; university: string };
+export type UniversityMember = { id: string; email: string; name: string; university: string; account_kind?: "university" | "guest" };
 
 // This RPC checks auth.uid(), the real auth.users.email_confirmed_at and the
-// exact approved domain in Postgres. Client state and user metadata grant no access.
+// approved domain or consumed invitation in Postgres. User metadata grants no access.
 export async function getUniversityMember(): Promise<UniversityMember> {
   const auth = getAuthClient();
   const { data, error } = await auth.rpc("universe_current_member");

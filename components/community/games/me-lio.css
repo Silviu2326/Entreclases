@@ -1,0 +1,51 @@
+/* ¿Me lío? — a deck of people, one at a time. Prefixed .g-crush, see games.css for the shared shell. */
+.g-crush { --g-accent:#c23b6b; --g-soft:#fbe3ec; display:grid; gap:18px; }
+
+.g-crush-onboarding { max-width:520px; }
+
+.g-crush-hide { display:grid; gap:8px; }
+.g-crush-hide-results { display:grid; gap:6px; }
+.g-crush-hide-results button { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:40px; padding:8px 12px; border:1px solid var(--g-line); border-radius:12px; background:var(--g-paper); text-align:left; font-size:12px; }
+.g-crush-hide-results button:hover { border-color:var(--g-accent); background:var(--g-soft); }
+.g-crush-hide-results button small { color:var(--g-muted); font-weight:400; }
+.g-crush-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.g-crush-chip { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:6px 8px 6px 12px; border-radius:999px; background:var(--g-soft); font-size:11px; font-weight:650; }
+.g-crush-chip button { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--g-paper); }
+.g-crush-chip button svg { width:12px; height:12px; }
+
+.g-crush-settings { display:grid; gap:14px; }
+
+.g-crush-search { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.g-crush-search .g-input { flex:1 1 220px; }
+.g-crush-search button[type="submit"] { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; border-radius:12px; background:var(--g-accent); color:#fff; }
+.g-crush-search button[type="submit"] svg { width:18px; height:18px; }
+
+.g-crush-card { display:grid; justify-items:center; gap:10px; text-align:center; }
+.g-crush-card h3 { font-size:19px; letter-spacing:-.03em; }
+.g-crush-line { max-width:38ch; color:var(--g-plum); font-size:13px; font-style:italic; line-height:1.5; }
+
+.g-crush-gestures { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; width:100%; margin-top:6px; }
+.g-crush-gesture { display:grid; justify-items:center; gap:6px; min-height:64px; padding:10px 6px; border:1px solid var(--g-line); border-radius:14px; background:var(--g-paper); color:inherit; font-size:11px; font-weight:650; }
+.g-crush-gesture svg { width:19px; height:19px; color:var(--g-accent); }
+.g-crush-gesture:hover:not(:disabled) { border-color:var(--g-accent); }
+.g-crush-gesture.on { border-color:var(--g-accent); background:var(--g-soft); }
+.g-crush-gesture:disabled { opacity:.6; }
+
+.g-crush-choices, .g-crush-matches { display:grid; gap:14px; }
+.g-crush-choices h3, .g-crush-matches h3 { font-size:14px; letter-spacing:-.02em; }
+.g-crush-choice { display:grid; gap:10px; padding-top:12px; border-top:1px solid var(--g-line); }
+.g-crush-choice:first-of-type { padding-top:0; border-top:none; }
+.g-crush-choice .g-crush-gestures { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.g-crush-match { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid var(--g-line); }
+.g-crush-match:first-of-type { padding-top:0; border-top:none; }
+
+.g-crush-celebrate { display:grid; justify-items:center; gap:12px; padding:30px 18px; border-radius:20px; background:var(--g-soft); text-align:center; }
+.g-crush-celebrate-spark { width:26px; height:26px; color:var(--g-accent); }
+.g-crush-celebrate h2 { font-size:22px; letter-spacing:-.03em; }
+.g-crush-celebrate-photos { display:flex; align-items:center; gap:-10px; }
+.g-crush-celebrate-photos > *:last-child { margin-left:-14px; }
+
+@media(max-width:520px) {
+  .g-crush-gestures { grid-template-columns:1fr; }
+  .g-crush-gesture { flex-direction:row; justify-content:flex-start; min-height:48px; }
+}

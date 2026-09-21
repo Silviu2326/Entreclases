@@ -26,7 +26,7 @@ export function AuthShell({ children, mode = "register", locale = "es", route = 
           </div>
           <figure className="auth-photo"><Image src="/images/campus-walk.webp" width={1440} height={960} sizes="(max-width: 850px) 1px, 48vw" alt={tr("Un grupo de estudiantes camina junto por el campus.")} /><figcaption>{tr("Al final había sitio.")}<ArrowUpRight aria-hidden="true" /></figcaption></figure>
         </aside>
-        <div className="auth-workspace"><div className="auth-form-wrap">{children}<noscript><style>{".auth-form { display: none; }"}</style><p className="auth-opening">{tr("Activa JavaScript para registrarte o iniciar sesión en Entreclase.")}</p></noscript></div><p className="auth-footnote"><LockKeyhole aria-hidden="true" />{tr("Universidades de Valencia. Correo verificado.")}</p></div>
+        <div className="auth-workspace"><div className="auth-form-wrap">{children}<noscript><style>{".auth-form { display: none; }"}</style><p className="auth-opening">{tr("Activa JavaScript para registrarte o iniciar sesión en Entreclase.")}</p></noscript></div><p className="auth-footnote"><LockKeyhole aria-hidden="true" />{tr("Correo universitario o invitación personal. Siempre con correo verificado.")}</p></div>
       </main>
       <footer className="auth-footer"><span>{tr("Entreclase. La red de tu universidad.")}</span><span>{tr("Nos vemos fuera.")}</span></footer>
     </div>

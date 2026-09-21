@@ -1,0 +1,59 @@
+/* Hay hueco: a spot on the map with seats and a clock. */
+.g-hangout { --g-accent:#1f8a5f; --g-soft:#e1f3ea; display:grid; gap:18px; }
+
+.g-hangout-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
+.g-hangout-card { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--g-line); border-radius:16px; background:var(--g-paper); }
+.g-hangout-card-icon { display:grid; place-items:center; width:38px; height:38px; flex-shrink:0; border-radius:12px; background:var(--g-soft); color:var(--g-accent); }
+.g-hangout-card-icon svg { width:19px; height:19px; }
+.g-hangout-card-body { display:grid; gap:4px; min-width:0; }
+.g-hangout-card-body strong { font-size:14px; letter-spacing:-.02em; }
+.g-hangout-card-body .g-muted { display:flex; align-items:center; gap:5px; }
+.g-hangout-card-body .g-muted svg { width:13px; height:13px; }
+.g-hangout-when { font-size:11px; font-weight:700; color:var(--g-accent); }
+.g-hangout-going { display:flex; align-items:center; gap:6px; margin-top:2px; }
+.g-hangout-going .u-avatar { margin-right:-8px; border:2px solid var(--g-paper); }
+.g-hangout-going small { margin-left:10px; color:var(--g-muted); font-size:11px; }
+
+/* The schematic campus plan: no map library, just a legible drawing. */
+.g-hangout-map { display:grid; gap:14px; }
+/* An inline svg sized only by its viewBox collapses to a sliver here, so the
+   plan gets an explicit height rather than an aspect ratio. */
+.g-hangout-map svg { display:block; width:100%; height:min(360px,58vw); border-radius:18px; background:#f4f8f5; }
+.g-hangout-ground { fill:#eef4f0; stroke:var(--g-line); stroke-width:.5; }
+.g-hangout-building { fill:#d9e6df; stroke:#b9cdc0; stroke-width:.6; }
+.g-hangout-lawn { fill:#cfe9d6; stroke:#aed3ba; stroke-width:.6; }
+.g-hangout-door { fill:#d9e6df; stroke:#b9cdc0; stroke-width:.6; }
+.g-hangout-map-label { font-size:3.6px; fill:var(--g-muted); text-anchor:middle; font-weight:600; }
+.g-hangout-pin { fill:var(--g-accent); stroke:var(--g-paper); stroke-width:1; opacity:.75; }
+.g-hangout-pin.on { opacity:1; }
+.g-hangout-map-legend { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.g-hangout-map-legend li { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--g-line); border-radius:12px; font-size:12px; }
+.g-hangout-map-legend li > span:nth-child(2) { flex:1 1 auto; min-width:0; }
+.g-hangout-map-dot { width:9px; height:9px; flex-shrink:0; border-radius:50%; background:var(--g-accent); opacity:.6; }
+.g-hangout-map-dot.on { opacity:1; }
+
+.g-hangout-create .g-input { margin-top:2px; }
+
+.g-hangout-seats { display:flex; flex-wrap:wrap; gap:14px; }
+.g-hangout-seat { display:grid; justify-items:center; gap:5px; width:56px; }
+.g-hangout-seat small { color:var(--g-muted); font-size:10px; text-align:center; line-height:1.2; }
+.g-hangout-avatar-wrap { position:relative; display:inline-flex; }
+.g-hangout-dot { position:absolute; right:-1px; bottom:-1px; width:12px; height:12px; border:2px solid var(--g-paper); border-radius:50%; background:#2fae66; }
+.empty-slot { display:grid; place-items:center; width:42px; height:42px; border:1.5px dashed var(--g-line); border-radius:50%; background:transparent; }
+.g-hangout-seat.empty small { opacity:.7; }
+
+.g-hangout-demo { display:grid; gap:10px; }
+
+.g-hangout-repeat-faces { display:flex; flex-wrap:wrap; gap:12px; }
+.g-hangout-repeat-face { display:grid; justify-items:center; gap:6px; width:110px; padding:14px 10px; border:1px solid var(--g-line); border-radius:16px; background:var(--g-paper); text-align:center; }
+.g-hangout-repeat-face span { font-size:12px; font-weight:650; }
+.g-hangout-repeat-face small { display:flex; align-items:center; gap:4px; color:var(--g-accent); font-size:10px; font-weight:700; }
+.g-hangout-repeat-face small svg { width:11px; height:11px; }
+.g-hangout-repeat-face.on { border-color:var(--g-accent); background:var(--g-soft); }
+
+@media(max-width:400px) {
+  .g-hangout-card { grid-template-columns:1fr; }
+  .g-hangout-card .u-button { width:100%; }
+  .g-hangout-seat { width:48px; }
+  .g-hangout-repeat-face { width:100%; }
+}

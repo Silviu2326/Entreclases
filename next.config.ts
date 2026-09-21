@@ -18,7 +18,22 @@ const nextConfig: NextConfig = {
   output: "export",
   turbopack: { root: process.cwd() },
   allowedDevOrigins: ["127.0.0.1"],
-  images: { unoptimized: true },
+  // Covers come from the public catalogues the picker searches. Only these hosts
+  // are ever used: lib/community/tastes.ts rebuilds every URL from a fixed base.
+  images: { unoptimized: true, remotePatterns: [
+    // Profile photos and banners come back as signed links from the project's
+    // own private storage bucket.
+    ...(authUrl ? [{ protocol: "https" as const, hostname: new URL(authUrl).hostname }] : []),
+    { protocol: "https", hostname: "image.tmdb.org" },
+    { protocol: "https", hostname: "media.rawg.io" },
+    { protocol: "https", hostname: "is1-ssl.mzstatic.com" },
+    { protocol: "https", hostname: "images.igdb.com" },
+    { protocol: "https", hostname: "coverartarchive.org" },
+    { protocol: "https", hostname: "i.scdn.co" },
+    { protocol: "https", hostname: "static.tvmaze.com" },
+    { protocol: "https", hostname: "commons.wikimedia.org" },
+    { protocol: "https", hostname: "m.media-amazon.com" },
+  ] },
   poweredByHeader: false,
   trailingSlash: true,
   experimental: { optimizePackageImports: ["lucide-react"] },

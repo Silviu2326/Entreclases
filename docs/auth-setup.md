@@ -1,5 +1,7 @@
 # Activar las cuentas de Entreclase
 
+Actualización del 20 de septiembre de 2026: el diagnóstico remoto ya confirma Auth por email, confirmación obligatoria, acceso del frontend activado y existencia de las tablas comprobadas. Para configurar Resend y verificar la entrega real, seguir [Correos con Resend](resend-setup.md). Las notas del 9 de septiembre que siguen describen el estado inicial.
+
 La configuración local apunta al proyecto `avngidebyxsliavjkfvp`. El 9 de septiembre de 2026 se comprobó que la URL y la clave pública funcionan, el acceso por email está habilitado y la confirmación de correo es obligatoria. Faltan las tablas de Entreclase en el proyecto remoto. No se han creado cuentas ni enviado correos reales.
 
 El interruptor `NEXT_PUBLIC_SUPABASE_AUTH_ENABLED=false` mantiene el acceso en preparación mientras se instala la base de datos. Solo ponerlo en `true` después de completar los pasos de esta guía. La clave pública permite usar las API, pero no aplicar migraciones ni administrar Auth.

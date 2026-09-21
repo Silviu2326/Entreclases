@@ -1,5 +1,16 @@
 // Original Valencian copy. Spanish source strings are the stable lookup keys.
 export const valencianMessages: Record<string, string> = {
+  "Escribe tu correo.": "Escriu el teu correu.",
+  "Primero confirma tu correo. Puedes pedir otro enlace abajo.": "Primer confirma el teu correu. Pots demanar un altre enllaç davall.",
+  "La invitación no es válida para este correo, ha caducado o ya se ha usado. Pide a quien te invitó que la revise.": "La invitació no és vàlida per a este correu, ha caducat o ja s’ha usat. Demana a qui t’ha convidat que la revise.",
+  "Abre el enlace que has recibido en tu correo. ¿No aparece? Puedes pedir otro aquí.": "Obri l’enllaç que has rebut al teu correu. No apareix? Pots demanar-ne un altre ací.",
+  "Inicia sesión con tu correo para ver tu cuenta.": "Inicia sessió amb el teu correu per a vore el teu compte.",
+  "Correo universitario o invitación personal. Siempre con correo verificado.": "Correu universitari o invitació personal. Sempre amb correu verificat.",
+  "Acceso con correo universitario o invitación personal.": "Accés amb correu universitari o invitació personal.",
+  "Entra con correo universitario o una invitación": "Entra amb correu universitari o una invitació",
+  "personal. Confirma tu correo y empieza por decir hola.": "personal. Confirma el teu correu i comença per dir hola.",
+  "Puedes entrar con un correo universitario admitido o con la invitación personal de alguien de la comunidad. Cada universitario puede traer a una persona; las cuentas invitadas no pueden invitar. En ambos casos hay que confirmar el correo.": "Pots entrar amb un correu universitari admés o amb la invitació personal d’algú de la comunitat. Cada universitari pot portar una persona; els comptes convidats no poden convidar. En els dos casos cal confirmar el correu.",
+
   "Tu cuenta de Entreclase": "El teu compte d’Entreclase",
   "Ya tienes sitio,": "Ja tens lloc,",
   "colega": "col·lega",
@@ -142,7 +153,7 @@ export const valencianMessages: Record<string, string> = {
   "Inicio": "Inici",
   "Planes": "Plans",
   "Grupos": "Grups",
-  "Mensajes": "Missatges",
+  "Charlas": "Xarrades",
   "Perfil": "Perfil",
   "Tu campus": "El teu campus",
   "Explorar la vista previa": "Explorar la vista prèvia",

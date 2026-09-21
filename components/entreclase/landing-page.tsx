@@ -56,7 +56,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
                 <a href={localHref(locale, "/registro/")}>{tr("Hacerme un sitio")}{" "}<ArrowUpRight data-icon="inline-end" /></a>
               </Button>
               <a href="#unicoins" className="hero-coins-hook"><Coins aria-hidden="true"/>{tr("20 ClasiCoins de bienvenida. Las siguientes te las ganas participando.")}</a>
-              <p className="access-note"><LockKeyhole aria-hidden="true" />{" "}{tr("Acceso con correo universitario verificado.")}</p>
+              <p className="access-note"><LockKeyhole aria-hidden="true" />{" "}{tr("Acceso con correo universitario o invitación personal.")}</p>
               <a className="hero-demo-link" href={localHref(locale, "/demo/")}>{tr("Dar una vuelta por dentro")}<ArrowUpRight aria-hidden="true" /></a>
               <div className="hero-proof" data-reveal="rise" data-reveal-delay="280"><span className="hero-proof-dot" aria-hidden="true"/><span>{tr("Ahora mismo")}</span><strong>{tr("alguien está diciendo «vente»")}</strong></div>
             </div>
@@ -131,7 +131,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
               <h2 id="signup-title">{tr("Aquí tu correo")}<br />{tr("sí sirve para algo.")}</h2>
               <div className="signup-content">
                 {!authConfigured ? <p className="signup-availability">{tr("Estamos preparando la apertura.")}</p> : null}
-                <p>{tr("Para entrar necesitas un correo universitario")}<br className="desktop-break" />{" "}{tr("y verificarlo. Después, empieza por decir hola.")}</p>
+                <p>{tr("Entra con correo universitario o una invitación")}<br className="desktop-break" />{" "}{tr("personal. Confirma tu correo y empieza por decir hola.")}</p>
                 <SignupForm locale={locale} />
               </div>
             </div>

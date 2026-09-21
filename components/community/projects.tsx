@@ -1,70 +1,57 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
-import { ArrowUpRight, Check, Flag, PencilRuler, Clapperboard, Sprout, Plus, Users, X } from "lucide-react";
-import type { Project } from "@/lib/community/studio/types";
-import { safeWebUrl } from "@/lib/community/studio/types";
+import Link from "next/link";
+import { ArrowUpRight, Clapperboard, PencilRuler, Plus, Sprout } from "lucide-react";
+import { projectPath, projectsPath } from "@/lib/community/studio/sections";
 import { matches, useCommunity } from "./context";
-import { Action, Avatar, ExternalLink, SelectField, TextArea, TextField } from "./controls";
+import { Avatar } from "./controls";
 import { StudioStatus, useStudio } from "./studio-context";
 
-export function Projects() { return <div className="st-page"><ProjectCollection /></div>; }
-export function ProjectCollection() {
-  const {locale,me,query,view} = useCommunity(), {data,loading,unavailable,busy} = useStudio();
-  const t = (es:string,va:string) => locale === "va" ? va : es;
-  const [creating,setCreating] = useState(false), [scope,setScope] = useState("all"), [mode,setMode] = useState(""), [stage,setStage] = useState(""), [skill,setSkill] = useState("");
-  const Heading = view === "projects" ? "h1" : "h2";
-  const projects = data.projects.filter(p => matches(query,p.title,p.objective,...p.roles) && matches(skill,...p.roles) && (!mode || p.mode === mode) && (!stage || p.stage === stage) && (scope === "all" || p.owner === me.user_id || p.team.some(x=>x.user_id === me.user_id) || p.following || data.applications.some(x=>x.project_id === p.id && x.applicant === me.user_id)));
-  return <section className="st-projects" id="proyectos" aria-labelledby="projects-title"><header className="st-heading"><div><p className="st-kicker">{t("IDEAS QUE BUSCAN MANOS", "IDEES QUE BUSQUEN MANS")}</p><Heading id="projects-title">{t("Lo que sabes hacer puede ser justo lo que falta.", "El que saps fer pot ser just el que falta.")}</Heading><p>{t("Junta carreras. Comparte lo que sabes. Termina algo que puedas enseñar.", "Junta carreres. Compartix el que saps. Acaba alguna cosa que pugues ensenyar.")}</p></div><button className="st-text-action" disabled={loading || unavailable || busy} onClick={()=>setCreating(x=>!x)}>{creating ? <X/> : <Plus/>}{creating ? t("Cerrar formulario","Tancar formulari") : t("Crear proyecto","Crear projecte")}</button></header>
-    <StudioStatus/>
-    {creating && <ProjectForm onDone={()=>setCreating(false)}/>}
-    <div className="st-filters"><SelectField label={t("Ver proyectos","Vore projectes")} value={scope} onChange={e=>setScope(e.target.value)}><option value="all">{t("Buscar proyecto","Buscar projecte")}</option><option value="mine">{t("Mis proyectos y seguidos","Els meus projectes i seguits")}</option></SelectField><TextField label={t("Habilidad buscada","Habilitat buscada")} placeholder={t("Ej. diseño, sonido…","Ex. disseny, so…")} value={skill} onChange={e=>setSkill(e.target.value)}/><SelectField label={t("Modalidad","Modalitat")} value={mode} onChange={e=>setMode(e.target.value)}><option value="">{t("Todas","Totes")}</option>{["Presencial","Remoto","Mixto"].map(x=><option key={x}>{x}</option>)}</SelectField><SelectField label={t("Etapa","Etapa")} value={stage} onChange={e=>setStage(e.target.value)}><option value="">{t("Todas","Totes")}</option><option value="forming">{t("Formando equipo","Formant equip")}</option><option value="building">{t("En marcha","En marxa")}</option><option value="completed">{t("Terminados","Acabats")}</option></SelectField></div>
-    <p className="st-caption" role="status">{projects.length} {projects.length===1?t("proyecto · la dedicación se indica en su ficha", "projecte · la dedicació s’indica en la fitxa"):t("proyectos · la dedicación se indica en cada ficha", "projectes · la dedicació s’indica en cada fitxa")}</p>
-    <div className="st-project-grid">{projects.map((p,i)=><ProjectCard key={p.id} project={p} index={i}/>)}</div>
-    {!loading && !unavailable && !projects.length && <p className="st-empty">{t("Todavía no hay proyectos con estos filtros. Tu idea puede ser la primera.","Encara no hi ha projectes amb estos filtres. La teua idea pot ser la primera.")}</p>}
+/**
+ * Projects in Explorar: a look at what is open and the way to the hub, where
+ * each project has pages of its own. The whole thing used to live inside this
+ * section, folded into a card that grew.
+ */
+export function ProjectTeaser() {
+  const { locale, demo, data: community, query } = useCommunity();
+  const { data, loading, unavailable } = useStudio();
+  const t = (es: string, va: string) => locale === "va" ? va : es;
+  const open = data.projects.filter(project => project.stage !== "completed" && matches(query, project.title, project.objective, ...project.roles));
+  const shown = open.slice(0, 3);
+
+  return <section className="st-projects" id="proyectos" aria-labelledby="projects-title">
+    <header className="st-heading">
+      <div>
+        <p className="st-kicker">{t("IDEAS QUE BUSCAN MANOS", "IDEES QUE BUSQUEN MANS")}</p>
+        <h2 id="projects-title">{t("Lo que sabes hacer puede ser justo lo que falta.", "El que saps fer pot ser just el que falta.")}</h2>
+        <p>{t("Junta carreras. Comparte lo que sabes. Termina algo que puedas enseñar.", "Junta carreres. Compartix el que saps. Acaba alguna cosa que pugues ensenyar.")}</p>
+      </div>
+      <Link className="st-text-action" href={projectsPath(locale, demo)}>{t("Ver todos los proyectos", "Vore tots els projectes")}<ArrowUpRight aria-hidden="true" /></Link>
+    </header>
+    <StudioStatus />
+    {shown.length > 0 && <div className="st-project-grid">{shown.map((project, index) => {
+      const Icon = [PencilRuler, Clapperboard, Sprout][index % 3];
+      const free = project.roles.filter(role => !project.team.some(member => member.role === role));
+      const owner = community.profiles.find(profile => profile.user_id === project.owner);
+      return <article className={`st-project st-project-${index % 3}`} key={project.id}>
+        <header><div className="st-project-art" aria-hidden="true"><Icon /><span>↗</span><i /></div>
+          <span className="st-stamp">{project.stage === "building" ? t("EN MARCHA", "EN MARXA") : t("FORMANDO EQUIPO", "FORMANT EQUIP")}</span>
+        </header>
+        <div className="st-project-body">
+          <h3><Link href={projectPath(locale, demo, "ficha", project.id)}>{project.title}</Link></h3>
+          <p>{project.objective}</p>
+          <div className="st-roles">{free.length ? free.map(role => <span key={role}>{role}</span>) : <span>{t("Equipo completo", "Equip complet")}</span>}</div>
+          <p className="st-caption">{project.mode} · {project.commitment}</p>
+          <div className="st-person"><Avatar person={owner} /><span>{owner?.name ?? t("Estudiante", "Estudiant")}<small>{project.beginners ? t("Acepta principiantes", "Accepta principiants") : t("Experiencia previa", "Experiència prèvia")}</small></span></div>
+          <footer><Link className="st-text-action" href={projectPath(locale, demo, "ficha", project.id)}>{t("Conocer el proyecto", "Conéixer el projecte")}<ArrowUpRight aria-hidden="true" /></Link></footer>
+        </div>
+      </article>;
+    })}</div>}
+    {!loading && !unavailable && !shown.length && <p className="st-empty">{query
+      ? t("Ningún proyecto abierto coincide con la búsqueda.", "Cap projecte obert coincidix amb la cerca.")
+      : t("Todavía no hay proyectos abiertos. Tu idea puede ser la primera.", "Encara no hi ha projectes oberts. La teua idea pot ser la primera.")}</p>}
+    <p className="st-caption">
+      <Link className="st-text-action" href={projectPath(locale, demo, "nuevo")}><Plus aria-hidden="true" />{t("Crear un proyecto", "Crear un projecte")}</Link>
+      {open.length > shown.length ? ` · ${t(`${open.length} proyectos abiertos`, `${open.length} projectes oberts`)}` : ""}
+    </p>
   </section>;
-}
-function ProjectForm({onDone}:{onDone:()=>void}) {
-  const {locale} = useCommunity(), {act,busy} = useStudio();
-  const t=(es:string,va:string)=>locale==="va"?va:es;
-  const [error,setError] = useState("");
-  async function submit(e:FormEvent<HTMLFormElement>) {
-    e.preventDefault(); const f=new FormData(e.currentTarget), value=Object.fromEntries(f), roles=String(f.get("roles")??"").split("\n").map(x=>x.trim()).filter(Boolean);
-    if (!roles.length || roles.length>6 || new Set(roles).size!==roles.length) { setError(t("Indica de uno a seis puestos distintos, uno por línea.","Indica d’un a sis llocs diferents, un per línia.")); return; }
-    if (await act("create_project",{...value,roles,beginners:f.has("beginners")})) onDone();
-  }
-  return <form className="st-form" onSubmit={submit}><p className="st-kicker">{t("TU IDEA, CON LOS PIES EN EL SUELO","LA TEUA IDEA, AMB ELS PEUS A TERRA")}</p><h3>{t("¿Qué vais a conseguir juntos?","Què aconseguireu junts?")}</h3><div className="st-form-grid"><TextField name="title" label={t("Nombre del proyecto","Nom del projecte")} required minLength={3} maxLength={100} placeholder={t("Un probador virtual para mi colección","Un provador virtual per a la meua col·lecció")}/><SelectField name="mode" label={t("Modalidad","Modalitat")}><option>Presencial</option><option>Remoto</option><option>Mixto</option></SelectField><TextArea name="objective" label={t("Objetivo y primer resultado","Objectiu i primer resultat")} required minLength={3} maxLength={1200}/><TextArea name="existing" label={t("Qué existe ya","Què existix ja")} required minLength={3} maxLength={1200}/><TextArea name="contribution" label={t("Qué aportas tú","Què aportes tu")} required minLength={3} maxLength={1200}/><TextArea name="roles" label={t("Puestos abiertos · uno por línea, una plaza por puesto","Llocs oberts · un per línia, una plaça per lloc")} placeholder={"Desarrollo web\nDiseño 3D"} required maxLength={480}/><TextArea name="commitment" label={t("Dedicación, duración y horarios","Dedicació, duració i horaris")} placeholder={t("3 horas semanales · 6 semanas · jueves tarde","3 hores setmanals · 6 setmanes · dijous vesprada")} required minLength={3} maxLength={1200}/><TextArea name="offer" label={t("Qué ofrece · indica si hay remuneración","Què oferix · indica si hi ha remuneració")} required minLength={3} maxLength={1200}/></div><label className="st-checkbox"><input type="checkbox" name="beginners"/>{t("Aceptamos principiantes","Acceptem principiants")}</label><p className="st-caption">{t("La ficha será visible para la comunidad. Las solicitudes y la conversación del equipo son privadas.","La fitxa serà visible per a la comunitat. Les sol·licituds i la conversa de l’equip són privades.")}</p>{error && <p role="alert">{error}</p>}<Action disabled={busy} type="submit">{t("Publicar proyecto","Publicar projecte")}<ArrowUpRight/></Action></form>;
-}
-function ProjectCard({project:p,index}:{project:Project;index:number}) {
-  const {locale,me,data:community,go} = useCommunity(), {data,act,busy} = useStudio();
-  const t=(es:string,va:string)=>locale==="va"?va:es;
-  const [open,setOpen] = useState(()=>typeof window!=="undefined" && new URLSearchParams(window.location.search).get("project")===p.id), [applying,setApplying] = useState(false);
-  useEffect(()=>{if(open){const frame=requestAnimationFrame(()=>document.getElementById(`project-${p.id}`)?.scrollIntoView({block:"start"}));return()=>cancelAnimationFrame(frame);}},[open,p.id]);
-  const owner=p.owner===me.user_id, team=owner || p.team.some(x=>x.user_id===me.user_id), application=data.applications.find(x=>x.project_id===p.id&&x.applicant===me.user_id);
-  const ProjectIcon = [PencilRuler, Clapperboard, Sprout][index % 3];
-  const free=p.roles.filter(role=>!p.team.some(x=>x.role===role));
-  return <article className={`st-project st-project-${index%3} ${open?"is-open":""}`} id={`project-${p.id}`}><header><div className="st-project-art" aria-hidden="true"><ProjectIcon/><span>↗</span><i/></div><span className="st-stamp">{p.stage==="completed"?t("HECHO","FET"):p.stage==="building"?t("EN MARCHA","EN MARXA"):t("FORMANDO EQUIPO","FORMANT EQUIP")}</span></header><div className="st-project-body"><h3>{p.title}</h3><p>{p.objective}</p><div className="st-roles">{free.map(role=><span key={role}>{role}</span>)}{!free.length&&<span>{t("Equipo completo","Equip complet")}</span>}</div><p className="st-caption">{p.mode} · {p.commitment}</p><div className="st-person"><Avatar person={community.profiles.find(x=>x.user_id===p.owner)}/><span>{community.profiles.find(x=>x.user_id===p.owner)?.name??t("Estudiante","Estudiant")}<small>{p.beginners?t("Acepta principiantes","Accepta principiants"):t("Experiencia previa","Experiència prèvia")}</small></span></div><footer><button className="st-text-action" aria-expanded={open} onClick={()=>setOpen(x=>!x)}>{open?t("Cerrar ficha","Tancar fitxa"):t("Conocer el proyecto","Conéixer el projecte")}{open?<X/>:<ArrowUpRight/>}</button><button className="st-save" disabled={busy} aria-pressed={p.following} onClick={()=>void act("follow",{id:p.id,on:!p.following})}><Flag/>{p.following?t("Siguiendo","Seguint"):t("Seguir avances","Seguir avanços")}</button></footer></div>
-    {open && <div className="st-project-expanded"><dl className="st-facts"><div><dt>{t("Ya tenemos","Ja tenim")}</dt><dd>{p.existing}</dd></div><div><dt>{t("Aportación de quien lo impulsa","Aportació de qui l’impulsa")}</dt><dd>{p.contribution}</dd></div><div><dt>{t("Lo que te llevas","El que t’emportes")}</dt><dd>{p.offer}</dd></div></dl><h4><Users/>{t("Equipo y puestos","Equip i llocs")}</h4><ul className="st-team"><li>{community.profiles.find(x=>x.user_id===p.owner)?.name??t("Creador","Creador")} · {t("Impulsa el proyecto","Impulsa el projecte")}</li>{p.roles.map(role=>{const member=p.team.find(x=>x.role===role);return <li key={role}>{role} <span>{member?(community.profiles.find(x=>x.user_id===member.user_id)?.name??t("Miembro del equipo","Membre de l’equip")):t("1 plaza abierta","1 plaça oberta")}</span></li>;})}</ul>
-    {!team && p.stage!=="completed" && !application && free.length>0 && <button className="st-primary" onClick={()=>setApplying(x=>!x)}>{t("Quiero colaborar","Vull col·laborar")} <Plus size={16}/></button>}
-    {application&&<p className="st-notice" role="status">{application.status==="pending"?t("Solicitud enviada. El creador revisará tu aportación.","Sol·licitud enviada. El creador revisarà la teua aportació."):application.status==="accepted"?t("Ya formas parte del equipo.","Ja formes part de l’equip."):t("Esta vez no se ha aceptado tu solicitud.","Esta vegada no s’ha acceptat la teua sol·licitud.")}</p>}
-    {applying&&!application&&<ApplicationForm project={p} roles={free} onDone={()=>setApplying(false)}/>}
-    {owner&&<div className="st-applications"><h4>{t("Solicitudes recibidas","Sol·licituds rebudes")}</h4>{data.applications.filter(x=>x.project_id===p.id).map(a=><div className="st-application" key={a.id}><strong>{community.profiles.find(x=>x.user_id===a.applicant)?.name??t("Estudiante","Estudiant")} · {a.role}</strong><p>{a.body}</p><p>{a.availability}</p>{safeWebUrl(a.portfolio)&&<ExternalLink href={a.portfolio}>Portfolio</ExternalLink>}{a.status==="pending"&&p.stage!=="completed"?<div className="st-actions"><Action disabled={busy} onClick={()=>void act("decide",{id:p.id,application:a.id,status:"accepted"})}>{t("Aceptar en el equipo","Acceptar en l’equip")}</Action><Action secondary disabled={busy} onClick={()=>void act("decide",{id:p.id,application:a.id,status:"rejected"})}>{t("No encaja","No encaixa")}</Action></div>:<p>{a.status==="accepted"?t("Aceptada","Acceptada"):a.status==="pending"?t("Proyecto terminado","Projecte acabat"):t("No aceptada","No acceptada")}</p>}</div>)}{!data.applications.some(x=>x.project_id===p.id)&&<p>{t("Aún no hay solicitudes.","Encara no hi ha sol·licituds.")}</p>}</div>}
-    <h4>{t("Así va el proyecto","Així va el projecte")}</h4><ol className="st-milestones">{p.milestones.map((m,i)=><li key={m.title}><label><input type="checkbox" checked={m.done} disabled={!team||busy||p.stage==="completed"} onChange={e=>void act("milestone",{id:p.id,index:i,done:e.target.checked})}/><span>{m.title}</span></label></li>)}</ol>
-    {owner&&p.stage!=="completed"&&<SelectField label={t("Etapa del proyecto","Etapa del projecte")} value={p.stage} disabled={busy} onChange={e=>void act("stage",{id:p.id,stage:e.target.value})}><option value="forming">{t("Formando equipo","Formant equip")}</option><option value="building">{t("En marcha","En marxa")}</option></SelectField>}
-    {team&&<TeamSpace project={p}/>}
-    {p.stage==="completed"?<section className="st-result"><p className="st-kicker">{t("HECHO ENTRE CLASES","FET ENTRE CLASSES")}</p><h4>{t("Esto es lo que hemos conseguido.","Açò és el que hem aconseguit.")}</h4><p>{p.result}</p>{safeWebUrl(p.result_url)&&<ExternalLink href={p.result_url}>{t("Ver el resultado","Vore el resultat")}</ExternalLink>}<p className="st-caption">{t("Créditos para el equipo que aparece en esta ficha.","Crèdits per a l’equip que apareix en esta fitxa.")}</p>{team&&<button className="st-text-action" disabled={busy} aria-pressed={p.credits.includes(me.user_id)} onClick={()=>void act("credit",{id:p.id,on:!p.credits.includes(me.user_id)})}>{p.credits.includes(me.user_id)?t("Quitar de mi perfil","Llevar del meu perfil"):t("Añadir a mi perfil","Afegir al meu perfil")}<Plus/></button>}</section>:owner&&<ResultForm project={p}/>}
-    {owner&&<button className="st-text-action" onClick={()=>go("magazine")}>{t("Proponerlo para la revista","Proposar-lo per a la revista")}<ArrowUpRight/></button>}
-    </div>}
-  </article>;
-}
-function ApplicationForm({project,roles,onDone}:{project:Project;roles:string[];onDone:()=>void}) {
-  const {act,busy}=useStudio(),{locale}=useCommunity();const t=(es:string,va:string)=>locale==="va"?va:es;
-  return <form className="st-form" onSubmit={async e=>{e.preventDefault();if(await act("apply",{...Object.fromEntries(new FormData(e.currentTarget)),id:project.id}))onDone();}}><SelectField name="role" label={t("Puesto al que te presentas","Lloc al qual et presentes")}>{roles.map(x=><option key={x}>{x}</option>)}</SelectField><TextArea name="body" label={t("Qué puedes aportar","Què pots aportar")} required minLength={10} maxLength={1200}/><TextField name="availability" label={t("Tu disponibilidad","La teua disponibilitat")} required minLength={3} maxLength={300}/><TextField name="portfolio" type="url" pattern="https?://.*" label={t("Ejemplo de trabajo · opcional","Exemple de treball · opcional")} maxLength={500}/><p className="st-caption">{t("Solo tú y quien impulsa el proyecto podréis leer esta solicitud.","Només tu i qui impulsa el projecte podreu llegir esta sol·licitud.")}</p><Action disabled={busy}>{t("Enviar solicitud","Enviar sol·licitud")}</Action></form>;
-}
-function TeamSpace({project:p}:{project:Project}) {
-  const {data,act,busy}=useStudio(), {data:community,locale}=useCommunity();const t=(es:string,va:string)=>locale==="va"?va:es;
-  return <details className="st-team-space"><summary>{t("Espacio privado del equipo","Espai privat de l’equip")} <Plus size={16}/></summary><p className="st-caption">{t("Mensajes y enlaces compartidos solo con el equipo. Actualiza para ver nuevas aportaciones.","Missatges i enllaços compartits només amb l’equip. Actualitza per a vore noves aportacions.")}</p><button className="st-text-action" disabled={busy} onClick={()=>void act("read")}>{t("Actualizar conversación","Actualitzar conversa")}</button><div className="st-team-messages">{data.messages.filter(m=>m.project_id===p.id).map(m=><article key={m.id}><strong>{community.profiles.find(x=>x.user_id===m.author)?.name??t("Compañero","Company")}</strong><p>{m.body.split(/(https?:\/\/\S+)/g).map((part,i)=>safeWebUrl(part)?<a key={i} href={part} target="_blank" rel="noopener noreferrer">{part}</a>:part)}</p></article>)}</div><form onSubmit={async e=>{e.preventDefault();const form=e.currentTarget;if(await act("team_message",{id:p.id,body:new FormData(form).get("body")}))form.reset();}}><TextArea name="body" label={t("Comparte un avance o un enlace","Compartix un avanç o un enllaç")} required maxLength={2000}/><Action disabled={busy}>{t("Enviar al equipo","Enviar a l’equip")}</Action></form></details>;
-}
-function ResultForm({project:p}:{project:Project}) {
-  const {act,busy}=useStudio(), {locale}=useCommunity();const t=(es:string,va:string)=>locale==="va"?va:es;
-  return <details className="st-team-space"><summary>{t("Publicar resultado final","Publicar resultat final")}<Check size={16}/></summary><form onSubmit={async e=>{e.preventDefault();await act("result",{...Object.fromEntries(new FormData(e.currentTarget)),id:p.id});}}><TextArea name="body" required minLength={20} maxLength={2000} label={t("Qué habéis conseguido","Què heu aconseguit")}/><TextField name="url" type="url" pattern="https?://.*" maxLength={500} label={t("Enlace al resultado · opcional","Enllaç al resultat · opcional")}/><label className="st-checkbox"><input type="checkbox" required/>{t("El equipo ha revisado el resultado y los créditos. Al publicar se cierra la incorporación de colaboradores.","L’equip ha revisat el resultat i els crèdits. En publicar es tanca la incorporació de col·laboradors.")}</label><Action disabled={busy}>{t("Terminar y publicar","Acabar i publicar")}</Action></form></details>;
 }

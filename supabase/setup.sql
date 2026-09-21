@@ -985,4 +985,745 @@ end $$;
 revoke all on function public.universe_studio(text,jsonb) from public,anon;
 grant execute on function public.universe_studio(text,jsonb) to authenticated;
 
+
+-- 202609200010_group_privacy.sql
+-- Private groups stay out of discovery. A random invitation token is required
+-- to open and join them, while members can keep using the normal group feed.
+alter table public.universe_groups
+ add column if not exists is_private boolean not null default false,
+ add column if not exists share_token uuid not null default gen_random_uuid();
+
+create unique index if not exists universe_groups_share_token on public.universe_groups(share_token);
+
+create or replace function public.universe_can_read_group(group_uuid uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+ select exists(
+  select 1 from public.universe_groups g
+  where g.id=group_uuid and (
+   not g.is_private
+   or g.creator_id=(select auth.uid())
+   or exists(select 1 from public.universe_group_members m where m.group_id=g.id and m.user_id=(select auth.uid()))
+  )
+ );
+$$;
+revoke all on function public.universe_can_read_group(uuid) from public,anon,authenticated;
+grant execute on function public.universe_can_read_group(uuid) to authenticated;
+
+drop policy if exists groups_read on public.universe_groups;
+create policy groups_read on public.universe_groups for select to authenticated
+ using((select public.universe_is_member()) and (not is_private or creator_id=(select auth.uid()) or public.universe_can_read_group(id)));
+
+drop policy if exists group_members_read on public.universe_group_members;
+create policy group_members_read on public.universe_group_members for select to authenticated
+ using((select public.universe_is_member()) and public.universe_can_read_group(group_id));
+
+drop policy if exists group_members_insert on public.universe_group_members;
+create policy group_members_insert on public.universe_group_members for insert to authenticated
+ with check(
+  (select public.universe_is_member()) and user_id=(select auth.uid())
+  and exists(select 1 from public.universe_groups g where g.id=group_id and (not g.is_private or g.creator_id=(select auth.uid())))
+ );
+
+drop policy if exists posts_read on public.universe_posts;
+create policy posts_read on public.universe_posts for select to authenticated
+ using((select public.universe_is_member()) and (group_id is null or public.universe_can_read_group(group_id)));
+
+drop policy if exists comments_read on public.universe_comments;
+create policy comments_read on public.universe_comments for select to authenticated
+ using((select public.universe_is_member()) and exists(
+  select 1 from public.universe_posts p where p.id=post_id and (p.group_id is null or public.universe_can_read_group(p.group_id))
+ ));
+
+drop policy if exists likes_read on public.universe_likes;
+create policy likes_read on public.universe_likes for select to authenticated
+ using((select public.universe_is_member()) and exists(
+  select 1 from public.universe_posts p where p.id=post_id and (p.group_id is null or public.universe_can_read_group(p.group_id))
+ ));
+
+create or replace function public.universe_shared_group(share_uuid uuid)
+returns setof public.universe_groups
+language sql stable security definer set search_path = '' as $$
+ select g.* from public.universe_groups g
+ where (select public.universe_is_member()) and g.share_token=share_uuid;
+$$;
+revoke all on function public.universe_shared_group(uuid) from public,anon;
+grant execute on function public.universe_shared_group(uuid) to authenticated;
+
+create or replace function public.universe_set_group_membership(group_uuid uuid, attending boolean, share_uuid uuid default null)
+returns void
+language plpgsql security definer set search_path = '' as $$
+declare g public.universe_groups; caller uuid:=(select auth.uid());
+begin
+ if not public.universe_is_member() or attending is null then raise exception 'UNIVERSE_UNIVERSITY_REQUIRED' using errcode='42501'; end if;
+ select * into g from public.universe_groups where id=group_uuid for update;
+ if not found then raise exception 'GROUP_UNAVAILABLE'; end if;
+ if attending then
+  if g.is_private and g.creator_id<>caller and not exists(select 1 from public.universe_group_members m where m.group_id=g.id and m.user_id=caller) and g.share_token is distinct from share_uuid then
+   raise exception 'PRIVATE_GROUP_INVITE_REQUIRED';
+  end if;
+  insert into public.universe_group_members(group_id,user_id) values(g.id,caller) on conflict(group_id,user_id) do nothing;
+ else
+  if g.creator_id=caller then raise exception 'GROUP_OWNER_CANNOT_LEAVE'; end if;
+  delete from public.universe_group_members where group_id=g.id and user_id=caller;
+ end if;
+end;
+$$;
+revoke all on function public.universe_set_group_membership(uuid,boolean,uuid) from public,anon;
+grant execute on function public.universe_set_group_membership(uuid,boolean,uuid) to authenticated;
+
+
+-- 202609200011_magazine_proposals.sql
+-- Entre líneas: private drafts, images, editorial decisions and author history.
+-- Apply after 202609190008. Existing proposals and editions are preserved.
+alter table public.universe_magazine_submissions drop constraint universe_magazine_submissions_kind_check;
+alter table public.universe_magazine_submissions add constraint universe_magazine_submissions_kind_check check(kind in ('story','project','plan','post','initiative'));
+alter table public.universe_magazine_submissions
+ add column status text not null default 'pending' check(status in ('draft','pending','changes_requested','accepted','rejected','published','withdrawn')),
+ add column summary text not null default '', add column section text not null default 'Vida de campus',
+ add column layout text not null default 'classic' check(layout in ('classic','photo','split')),
+ add column images jsonb not null default '[]' check(jsonb_typeof(images)='array' and jsonb_array_length(images)<=4),
+ add column author_note text not null default '', add column editorial_note text not null default '',
+ add column revision integer not null default 1, add column updated_at timestamptz not null default now(),
+ add column history jsonb not null default '[]';
+update public.universe_magazine_submissions s set status=case when not consent then 'withdrawn' when exists(select 1 from public.universe_magazine_editions e where e.id=s.edition_id and e.published) then 'published' when edition_id is not null then 'accepted' else 'pending' end;
+update public.universe_magazine_submissions set history=jsonb_build_array(jsonb_build_object('status',status,'at',created_at,'note',''));
+create index universe_magazine_review_queue on public.universe_magazine_submissions(status,created_at) where consent;
+
+-- Keep existing project commands behind the same RPC, with no direct legacy access.
+alter function public.universe_studio(text,jsonb) rename to universe_studio_legacy;
+revoke all on function public.universe_studio_legacy(text,jsonb) from public,anon,authenticated;
+
+create or replace function public.universe_magazine_can_read_image(object_name text) returns boolean
+language sql stable security definer set search_path='' as $$
+ select public.universe_is_member() and (
+ split_part(object_name,'/',1)=auth.uid()::text or exists(
+  select 1 from public.universe_magazine_submissions s where s.consent and s.status<>'draft'
+  and exists(select 1 from jsonb_array_elements(s.images) i where i->>'path'=object_name)
+  and (exists(select 1 from public.universe_magazine_editors where user_id=auth.uid()) or
+   (s.status='published' and exists(select 1 from public.universe_magazine_editions e where e.id=s.edition_id and e.published)))
+ ));
+$$;
+create or replace function public.universe_magazine_can_remove_image(object_name text) returns boolean
+language sql stable security definer set search_path='' as $$
+ select public.universe_is_member() and split_part(object_name,'/',1)=auth.uid()::text
+ and not exists(select 1 from public.universe_magazine_submissions s, jsonb_array_elements(s.images) i where i->>'path'=object_name);
+$$;
+revoke all on function public.universe_magazine_can_read_image(text), public.universe_magazine_can_remove_image(text) from public,anon;
+grant execute on function public.universe_magazine_can_read_image(text), public.universe_magazine_can_remove_image(text) to authenticated;
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values('universe-magazine','universe-magazine',false,2097152,array['image/webp'])
+on conflict(id) do update set public=false,file_size_limit=2097152,allowed_mime_types=array['image/webp'];
+create policy magazine_image_upload on storage.objects for insert to authenticated with check(
+ bucket_id='universe-magazine' and (select public.universe_is_member())
+ and name ~ '^[a-f0-9-]{36}/[a-f0-9-]{36}\.webp$' and split_part(name,'/',1)=(select auth.uid())::text);
+create policy magazine_image_read on storage.objects for select to authenticated using(bucket_id='universe-magazine' and public.universe_magazine_can_read_image(name));
+create policy magazine_image_remove on storage.objects for delete to authenticated using(bucket_id='universe-magazine' and public.universe_magazine_can_remove_image(name));
+
+create or replace function public.universe_studio(p_command text default 'read',p_input jsonb default '{}') returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare
+ u uuid:=auth.uid(); editor boolean; s public.universe_magazine_submissions; sid uuid; eid uuid;
+ sending boolean; k text; st text; v_images jsonb; image jsonb; field text; val text; content jsonb;
+begin
+ if not public.universe_is_member() then raise exception 'Necesitas una cuenta universitaria verificada.'; end if;
+ select exists(select 1 from public.universe_magazine_editors where user_id=u) into editor;
+ if p_command<>'read' then perform pg_advisory_xact_lock(hashtextextended(u::text,8)); end if;
+ if p_command in ('save_submission','submit') then
+  sending:=p_command='submit' or coalesce((p_input->>'send')::boolean,false);
+  sid:=nullif(p_input->>'id','')::uuid;
+  if sid is not null then
+   select * into s from public.universe_magazine_submissions where id=sid and author=u for update;
+   if not found or s.status not in ('draft','changes_requested','rejected','withdrawn') then raise exception 'Retira la propuesta antes de editarla.'; end if;
+   if s.revision is distinct from (p_input->>'revision')::integer then raise exception 'Esta propuesta ha cambiado. Recarga antes de guardar.'; end if;
+  end if;
+  k:=coalesce(p_input->>'kind','');
+  if k not in ('story','project','plan','post','initiative') then raise exception 'Elige un tipo de historia.'; end if;
+  foreach field in array array['title','body','summary','author_note'] loop
+   val:=trim(coalesce(p_input->>field,''));
+   if length(val)>(case field when 'title' then 120 when 'body' then 8000 when 'summary' then 240 else 1000 end) then raise exception 'Revisa la longitud del texto.'; end if;
+  end loop;
+  if sending and (length(trim(coalesce(p_input->>'title','')))<3 or length(trim(coalesce(p_input->>'body','')))<40) then raise exception 'Añade un título y al menos 40 caracteres de historia.'; end if;
+  if sending and coalesce((p_input->>'consent')::boolean,false) is not true then raise exception 'Debes autorizar esta versión exacta.'; end if;
+  if coalesce(p_input->>'section','Vida de campus') not in ('Vida de campus','Proyectos','Planes','Cultura','Opinión') or coalesce(p_input->>'layout','classic') not in ('classic','photo','split') then raise exception 'Elige sección y presentación.'; end if;
+  if sending or nullif(p_input->>'source_id','') is not null then
+   if k='project' and not exists(select 1 from public.universe_projects where id=nullif(p_input->>'source_id','')::uuid and owner=u) then raise exception 'Solo puedes proponer un proyecto propio.'; end if;
+   if k='plan' and not exists(select 1 from public.universe_plans where id=nullif(p_input->>'source_id','')::uuid and creator_id=u) then raise exception 'Solo puedes proponer un plan propio.'; end if;
+   if k='post' and not exists(select 1 from public.universe_posts where id=nullif(p_input->>'source_id','')::uuid and author_id=u and group_id is null) then raise exception 'Solo puedes proponer un hilo público propio.'; end if;
+  end if;
+  val:=coalesce(p_input->>'source_url','');
+  if length(val)>500 or (val<>'' and (val !~ '^https?://[^[:space:]]+$' or val ~ '^https?://[^/]*@')) or (sending and k='initiative' and val='') then raise exception 'Incluye un enlace válido a la fuente.'; end if;
+  v_images:=coalesce(p_input->'images','[]'::jsonb);
+  if jsonb_typeof(v_images) is distinct from 'array' then raise exception 'Revisa las imágenes.'; end if;
+  if jsonb_array_length(v_images)>4 then raise exception 'Máximo cuatro imágenes.'; end if;
+  if sending and jsonb_array_length(v_images)>0 and coalesce((p_input->>'image_rights')::boolean,false) is not true then raise exception 'Confirma los permisos de las imágenes.'; end if;
+  if sending and coalesce(p_input->>'layout','classic')<>'classic' and jsonb_array_length(v_images)=0 then raise exception 'Esta presentación necesita una imagen.'; end if;
+  for image in select value from jsonb_array_elements(v_images) loop
+   if jsonb_typeof(image) is distinct from 'object' or coalesce(image->>'path','') !~ '^[a-f0-9-]{36}/[a-f0-9-]{36}\.webp$' or split_part(image->>'path','/',1)<>u::text then raise exception 'Solo puedes adjuntar tus imágenes.'; end if;
+   if not exists(select 1 from storage.objects where bucket_id='universe-magazine' and name=image->>'path') then raise exception 'Una imagen no se ha subido. Inténtalo de nuevo.'; end if;
+   foreach field in array array['alt','caption','credit'] loop
+    if jsonb_typeof(image->field) is distinct from 'string' or length(image->>field)>(case field when 'alt' then 200 when 'caption' then 300 else 120 end) then raise exception 'Revisa los textos de las imágenes.'; end if;
+   end loop;
+   if sending and (length(trim(image->>'alt'))=0 or length(trim(image->>'credit'))=0) then raise exception 'Añade una descripción y un crédito a cada imagen.'; end if;
+  end loop;
+  if (select count(distinct i->>'path') from jsonb_array_elements(v_images) i)<>jsonb_array_length(v_images) then raise exception 'No repitas la misma imagen.'; end if;
+  st:=case when sending then 'pending' else 'draft' end;
+  if sid is null then
+   insert into public.universe_magazine_submissions(author,title,body,kind,source_id,source_url,attribution,consent,status)
+   select u,'','',k,null,'',name,false,'draft' from public.universe_profiles where user_id=u returning id into sid;
+  end if;
+  update public.universe_magazine_submissions set title=trim(coalesce(p_input->>'title','')),body=trim(coalesce(p_input->>'body','')),kind=k,
+   source_id=case when k in ('project','plan','post') then nullif(p_input->>'source_id','')::uuid else null end,
+   source_url=case when k='initiative' then val else '' end,summary=trim(coalesce(p_input->>'summary','')),
+   section=coalesce(p_input->>'section','Vida de campus'),layout=coalesce(p_input->>'layout','classic'),images=v_images,
+   author_note=trim(coalesce(p_input->>'author_note','')),editorial_note='',consent=sending,status=st,edition_id=null,
+   revision=revision+1,updated_at=now(),history=history||jsonb_build_array(jsonb_build_object('status',st,'at',now(),'note',case when sending then 'Versión autorizada y enviada a revisión.' else 'Borrador guardado.' end)) where id=sid;
+ elsif p_command='review_submission' then
+  if not editor then raise exception 'Necesitas acceso editorial.'; end if;
+  select * into s from public.universe_magazine_submissions where id=(p_input->>'id')::uuid for update;
+  if not found or not s.consent or s.status<>'pending' then raise exception 'La propuesta ya no está pendiente de revisión.'; end if;
+  st:=coalesce(p_input->>'status',''); val:=trim(coalesce(p_input->>'note',''));
+  if st not in ('accepted','rejected','changes_requested') or length(val)>1000 or (st<>'accepted' and length(val)<5) then raise exception 'Indica la decisión y explica el motivo (5–1000 caracteres).'; end if;
+  update public.universe_magazine_submissions set status=st,editorial_note=val,revision=revision+1,updated_at=now(),history=history||jsonb_build_array(jsonb_build_object('status',st,'at',now(),'note',val)) where id=s.id;
+ elsif p_command='withdraw' then
+  select * into s from public.universe_magazine_submissions where id=(p_input->>'id')::uuid and author=u and consent for update;
+  if not found then raise exception 'La propuesta no está disponible.'; end if;
+  update public.universe_magazine_submissions set consent=false,status='withdrawn',edition_id=null,revision=revision+1,updated_at=now(),history=history||jsonb_build_array(jsonb_build_object('status','withdrawn','at',now(),'note','El autor ha retirado el permiso.')) where id=s.id;
+ elsif p_command in ('select','publish_edition') then
+  if not editor then raise exception 'Necesitas acceso editorial.'; end if;
+  eid:=(p_input->>'edition')::uuid;
+  perform 1 from public.universe_magazine_editions where id=eid and not published for update;
+  if not found then raise exception 'Esta edición ya no es un borrador.'; end if;
+  if p_command='select' then
+   select * into s from public.universe_magazine_submissions where id=(p_input->>'id')::uuid and consent and status='accepted' for update;
+   if not found then raise exception 'Solo puedes seleccionar propuestas aceptadas y autorizadas.'; end if;
+   if coalesce((p_input->>'on')::boolean,false) then
+    if s.edition_id is not null then raise exception 'La propuesta ya está seleccionada.'; end if;
+    if (select count(*) from public.universe_magazine_submissions where edition_id=eid and consent)>=6 then raise exception 'Una edición admite hasta seis piezas.'; end if;
+    update public.universe_magazine_submissions set edition_id=eid,updated_at=now() where id=s.id;
+   else
+    if s.edition_id is distinct from eid then raise exception 'La propuesta no pertenece a esta edición.'; end if;
+    update public.universe_magazine_submissions set edition_id=null,updated_at=now() where id=s.id;
+   end if;
+  else
+   perform 1 from public.universe_magazine_submissions where edition_id=eid and consent and status='accepted' for update;
+   if not found then raise exception 'Selecciona al menos una pieza aceptada y autorizada.'; end if;
+   update public.universe_magazine_editions set published=true where id=eid;
+   update public.universe_magazine_submissions set status='published',revision=revision+1,updated_at=now(),history=history||jsonb_build_array(jsonb_build_object('status','published','at',now(),'note','Publicada en una edición.')) where edition_id=eid and consent and status='accepted';
+  end if;
+ else
+  perform public.universe_studio_legacy(p_command,p_input);
+ end if;
+ content:=public.universe_studio_legacy('read','{}');
+ return content||jsonb_build_object('magazine_version',2,'submissions',coalesce((
+  select jsonb_agg(case when x.author=u or editor then to_jsonb(x) else to_jsonb(x)-'author_note'-'editorial_note'-'history' end order by x.created_at desc)
+  from public.universe_magazine_submissions x where x.author=u or (x.consent and x.status<>'draft' and (editor or (x.status='published' and exists(select 1 from public.universe_magazine_editions e where e.id=x.edition_id and e.published))))
+ ),'[]'::jsonb));
+end $$;
+revoke all on function public.universe_studio(text,jsonb) from public,anon;
+grant execute on function public.universe_studio(text,jsonb) to authenticated;
+
+
+-- 202609200012_thread_signals.sql
+-- Señales de hilo. Apply after the existing migrations.
+-- A like says "I saw this". A signal says what you are going to do about it:
+--   in   → "Me apunto": count me in for what this thread proposes
+--   same → "Yo también": I have the same question
+--   help → "Te ayudo": I can answer this, talk to me
+-- One row per person, thread and kind. Rules mirror universe_likes.
+create table public.universe_post_signals (
+ post_id uuid references public.universe_posts(id) on delete cascade,
+ user_id uuid references public.universe_profiles(user_id) on delete cascade,
+ kind text not null check (kind in ('in','same','help')),
+ created_at timestamptz not null default now(),
+ primary key(post_id,user_id,kind)
+);
+revoke all on public.universe_post_signals from public,anon,authenticated;
+alter table public.universe_post_signals enable row level security;
+create policy signals_read on public.universe_post_signals for select to authenticated using((select public.universe_is_member()));
+create policy signals_insert on public.universe_post_signals for insert to authenticated with check((select public.universe_is_member()) and user_id=(select auth.uid()));
+create policy signals_delete on public.universe_post_signals for delete to authenticated using((select public.universe_is_member()) and user_id=(select auth.uid()));
+grant select,insert,delete on public.universe_post_signals to authenticated;
+create index universe_post_signals_user on public.universe_post_signals(user_id);
+
+
+-- 202609200013_chat_media.sql
+-- Fotos, GIFs y vídeos en el chat privado. Apply after the existing migrations.
+-- A message may now carry one file instead of (or along with) text. The file lives
+-- in a private bucket under <thread>/<sender>/<uuid>.<ext>, so the path alone says
+-- who may touch it: only the two people of that conversation can read it, and only
+-- the sender can write or remove it. Nothing here is ever public.
+alter table public.universe_messages
+ add column media_path text,
+ add column media_kind text check (media_kind in ('image','video'));
+alter table public.universe_messages drop constraint if exists universe_messages_body_check;
+alter table public.universe_messages
+ add constraint universe_messages_body_check check (char_length(body)<=2000 and (char_length(btrim(body))>=1 or media_path is not null)),
+ add constraint universe_messages_media_pair check ((media_path is null)=(media_kind is null)),
+ add constraint universe_messages_media_owner check (media_path is null or media_path like thread_id::text||'/'||sender_id::text||'/%');
+
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values('universe-chat','universe-chat',false,26214400,array['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm'])
+on conflict(id) do update set public=false,file_size_limit=26214400,allowed_mime_types=array['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm'];
+create policy universe_chat_upload on storage.objects for insert to authenticated
+with check(bucket_id='universe-chat' and (select public.universe_is_member())
+ and name ~ '^[a-f0-9-]{36}/[a-f0-9-]{36}/[a-f0-9-]{36}\.(jpg|png|webp|gif|mp4|webm)$'
+ and split_part(name,'/',2)=(select auth.uid())::text
+ and exists(select 1 from public.universe_threads t where t.id::text=split_part(name,'/',1) and (t.user_a=(select auth.uid()) or t.user_b=(select auth.uid()))));
+create policy universe_chat_view on storage.objects for select to authenticated
+using(bucket_id='universe-chat' and (select public.universe_is_member())
+ and exists(select 1 from public.universe_threads t where t.id::text=split_part(name,'/',1) and (t.user_a=(select auth.uid()) or t.user_b=(select auth.uid()))));
+create policy universe_chat_remove on storage.objects for delete to authenticated
+using(bucket_id='universe-chat' and (select public.universe_is_member()) and split_part(name,'/',2)=(select auth.uid())::text);
+
+
+-- 202609200013_profile_tastes.sql
+-- The shelf of the profile: what each person watches, plays and listens to, and
+-- the quick picks. Both are filled by tapping, never typed.
+-- Favourites arrive already resolved from the public catalogues (title, subtitle
+-- and cover path), so reading a profile never calls an external API. The shape
+-- is checked in lib/community/tastes.ts; here we only bound size and vocabulary.
+alter table public.universe_profiles
+  add column favorites jsonb not null default '[]'::jsonb
+    check (jsonb_typeof(favorites) = 'array'
+           and jsonb_array_length(favorites) <= 20
+           and length(favorites::text) <= 4000),
+  add column picks text[] not null default '{}'
+    check (cardinality(picks) <= 12 and picks <@ array[
+      'madrugar','trasnochar','biblioteca','cocina','horchata','cafe',
+      'mano','tablet','bus','bici','playa','montana',
+      'ultima-noche','al-dia','maraton','capitulo','auriculares','altavoz',
+      'salir','sofa','menu','tupper','contesto','silenciado'
+    ]::text[]);
+
+grant update(favorites, picks) on public.universe_profiles to authenticated;
+
+
+-- 202609200014_plus_one.sql
+-- Tu +1. Apply after the existing migrations. No client metadata grants access.
+-- Keep consumed slots even after either auth account is deleted (no cascading FK).
+create table public.universe_plus_one (
+ inviter_id uuid primary key,
+ token uuid not null unique default gen_random_uuid(),
+ recipient_email text not null check (recipient_email = lower(btrim(recipient_email))),
+ created_at timestamptz not null default now(),
+ expires_at timestamptz not null default now() + interval '7 days',
+ cancelled_at timestamptz,
+ claimed_user_id uuid unique,
+ claimed_at timestamptz,
+ check ((claimed_user_id is null) = (claimed_at is null))
+);
+alter table public.universe_plus_one enable row level security;
+revoke all on public.universe_plus_one from public, anon, authenticated, supabase_auth_admin;
+
+-- Internal helpers have no API grants, including lookup by arbitrary user id.
+create function public.universe_account_kind(account_id uuid) returns text
+language sql stable security definer set search_path='' as $$
+ select case when exists (
+  select 1 from public.universe_university_domains d
+  where d.domain=split_part(lower(u.email),'@',2) and d.enabled and d.launch_region='valencia'
+ ) then 'university' when exists (
+  select 1 from public.universe_plus_one i where i.claimed_user_id=u.id
+ ) then 'guest' end
+ from auth.users u where u.id=account_id and u.email_confirmed_at is not null and not coalesce(u.is_anonymous,false);
+$$;
+revoke all on function public.universe_account_kind(uuid) from public, anon, authenticated;
+
+create function public.universe_plus_one_eligible(account_id uuid) returns boolean
+language sql stable security definer set search_path='' as $$
+ select coalesce(public.universe_account_kind(account_id)='university',false)
+ and exists(select 1 from public.universe_profiles p where p.user_id=account_id and length(btrim(p.bio))>0 and cardinality(p.interests)>0)
+ and (exists(select 1 from public.universe_posts p where p.author_id=account_id)
+   or exists(select 1 from public.universe_comments c where c.author_id=account_id)
+   or exists(select 1 from public.universe_plan_members m where m.user_id=account_id));
+$$;
+revoke all on function public.universe_plus_one_eligible(uuid) from public, anon, authenticated;
+
+create function public.universe_plus_one_status() returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare caller uuid:=auth.uid(); kind text:=public.universe_account_kind(caller); invitation public.universe_plus_one;
+begin
+ if kind is null then raise exception 'INVITE_ACCESS_REQUIRED'; end if;
+ if kind='guest' then return jsonb_build_object('state','guest'); end if;
+ select * into invitation from public.universe_plus_one where inviter_id=caller;
+ if invitation.claimed_at is not null then return jsonb_build_object('state','used'); end if;
+ if not public.universe_plus_one_eligible(caller) then return jsonb_build_object('state','locked'); end if;
+ if invitation.inviter_id is null or invitation.cancelled_at is not null or invitation.expires_at<=now() then return jsonb_build_object('state','available'); end if;
+ return jsonb_build_object('state','pending','token',invitation.token,'email',invitation.recipient_email,'expires_at',invitation.expires_at);
+end;
+$$;
+revoke all on function public.universe_plus_one_status() from public, anon;
+grant execute on function public.universe_plus_one_status() to authenticated;
+
+create function public.universe_create_plus_one(recipient text) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare caller uuid:=auth.uid(); target text:=lower(btrim(recipient)); invitation public.universe_plus_one;
+begin
+ -- Serialize competing issue/cancel requests from the same account.
+ perform 1 from auth.users where id=caller for update;
+ if not public.universe_plus_one_eligible(caller) then raise exception 'INVITE_NOT_ELIGIBLE'; end if;
+ if target is null or length(target)>254 or target !~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$'
+  or exists(select 1 from auth.users where id=caller and lower(email)=target) then raise exception 'INVITE_EMAIL_INVALID'; end if;
+ select * into invitation from public.universe_plus_one where inviter_id=caller for update;
+ if invitation.claimed_at is not null then raise exception 'INVITE_ALREADY_USED'; end if;
+ if invitation.inviter_id is not null and invitation.cancelled_at is null and invitation.expires_at>now() then
+  if invitation.recipient_email<>target then raise exception 'INVITE_PENDING'; end if;
+  return public.universe_plus_one_status();
+ end if;
+ insert into public.universe_plus_one(inviter_id,recipient_email) values(caller,target)
+ on conflict(inviter_id) do update set token=gen_random_uuid(),recipient_email=excluded.recipient_email,
+  created_at=now(),expires_at=now()+interval '7 days',cancelled_at=null;
+ return public.universe_plus_one_status();
+end;
+$$;
+revoke all on function public.universe_create_plus_one(text) from public, anon;
+grant execute on function public.universe_create_plus_one(text) to authenticated;
+
+create function public.universe_cancel_plus_one() returns jsonb
+language plpgsql security definer set search_path='' as $$
+begin
+ perform 1 from auth.users where id=auth.uid() for update;
+ if public.universe_account_kind(auth.uid()) is distinct from 'university' then raise exception 'INVITE_NOT_ELIGIBLE'; end if;
+ -- A used invitation cannot be revoked by the inviter, even before confirmation.
+ update public.universe_plus_one set cancelled_at=now() where inviter_id=auth.uid() and claimed_at is null;
+ return public.universe_plus_one_status();
+end;
+$$;
+revoke all on function public.universe_cancel_plus_one() from public, anon;
+grant execute on function public.universe_cancel_plus_one() to authenticated;
+
+-- The auth hook provides early feedback; the trigger below is the authority.
+create or replace function public.universe_before_user_created(event jsonb) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare email text:=lower(coalesce(event->'user'->>'email','')); invite text:=event->'user'->'user_metadata'->>'plus_one_token';
+begin
+ if coalesce(event->'user'->>'is_anonymous','false')='true'
+  or coalesce(event->'user'->'app_metadata'->>'provider','email')<>'email' then
+  return jsonb_build_object('error',jsonb_build_object('http_code',403,'message','UNIVERSE_UNIVERSITY_REQUIRED'));
+ end if;
+ if exists(select 1 from public.universe_university_domains d where d.domain=split_part(email,'@',2) and d.enabled and d.launch_region='valencia')
+ or exists(select 1 from public.universe_plus_one i where i.token::text=invite and i.recipient_email=email
+  and i.claimed_at is null and i.cancelled_at is null and i.expires_at>now() and public.universe_account_kind(i.inviter_id)='university') then return '{}'::jsonb; end if;
+ return jsonb_build_object('error',jsonb_build_object('http_code',403,'message',case when invite is not null then 'INVITE_INVALID' else 'UNIVERSE_UNIVERSITY_REQUIRED' end));
+end;
+$$;
+revoke all on function public.universe_before_user_created(jsonb) from public,anon,authenticated;
+grant execute on function public.universe_before_user_created(jsonb) to supabase_auth_admin;
+
+create or replace function public.universe_guard_email() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare allowed boolean; claimed uuid;
+begin
+ if new.email is null or coalesce(new.is_anonymous,false) then raise exception 'UNIVERSE_UNIVERSITY_REQUIRED' using errcode='23514'; end if;
+ allowed:=exists(select 1 from public.universe_university_domains d where d.domain=split_part(lower(new.email),'@',2) and d.enabled and d.launch_region='valencia');
+ if tg_op='UPDATE' then
+  if allowed or exists(select 1 from public.universe_plus_one i where i.claimed_user_id=new.id) then return new; end if;
+ elsif new.raw_user_meta_data->>'plus_one_token' is not null then
+  -- Atomic claim: double use cannot pass even when two signups race or the hook is disabled.
+  update public.universe_plus_one i set claimed_user_id=new.id,claimed_at=now()
+  where i.token::text=new.raw_user_meta_data->>'plus_one_token' and i.recipient_email=lower(new.email)
+   and i.claimed_at is null and i.cancelled_at is null and i.expires_at>now()
+   and public.universe_account_kind(i.inviter_id)='university' returning i.inviter_id into claimed;
+  if claimed is null then raise exception 'INVITE_INVALID' using errcode='23514'; end if;
+  new.raw_user_meta_data:=new.raw_user_meta_data-'plus_one_token';
+  return new;
+ elsif allowed then return new;
+ end if;
+ raise exception 'UNIVERSE_UNIVERSITY_REQUIRED' using errcode='23514';
+end;
+$$;
+
+create or replace function public.universe_current_member() returns jsonb
+language sql stable security definer set search_path='' as $$
+ select jsonb_build_object('id',u.id,'email',u.email,'name',left(coalesce(u.raw_user_meta_data->>'full_name',''),60),
+  'university',case when public.universe_account_kind(u.id)='university' then d.university_name else 'Acceso por invitación' end,
+  'account_kind',public.universe_account_kind(u.id))
+ from auth.users u left join public.universe_university_domains d on d.domain=split_part(lower(u.email),'@',2) and d.enabled and d.launch_region='valencia'
+ where u.id=auth.uid() and public.universe_account_kind(u.id) is not null;
+$$;
+
+alter table public.universe_profiles add column account_kind text not null default 'university' check(account_kind in ('university','guest'));
+alter table public.universe_profiles drop constraint universe_profiles_year_check;
+alter table public.universe_profiles add constraint universe_profiles_year_check check(year between 0 and 6);
+alter table public.universe_profiles drop constraint universe_profiles_campus_check;
+alter table public.universe_profiles add constraint universe_profiles_campus_check check(campus in ('Tarongers','Blasco Ibáñez','Vera','Burjassot-Paterna','Otra sede en Valencia','Valencia'));
+create or replace function public.universe_profile_identity() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare member jsonb:=public.universe_current_member();
+begin
+ if member is null or new.user_id<>(member->>'id')::uuid then raise exception 'UNIVERSE_UNIVERSITY_REQUIRED' using errcode='42501'; end if;
+ if tg_op='UPDATE' and new.user_id<>old.user_id then raise exception 'IMMUTABLE_ID' using errcode='42501'; end if;
+ new.university:=member->>'university'; new.account_kind:=member->>'account_kind';
+ if new.account_kind='guest' then new.year:=0;
+ elsif new.year<1 then raise exception 'PROFILE_YEAR_REQUIRED'; end if;
+ return new;
+end;
+$$;
+
+create or replace function public.universe_open_thread(peer_uuid uuid) returns uuid
+language plpgsql security definer set search_path='' as $$
+declare caller uuid:=auth.uid(); a uuid; b uuid; result uuid;
+begin
+ if not public.universe_is_member() then raise exception 'UNIVERSE_UNIVERSITY_REQUIRED' using errcode='42501'; end if;
+ if peer_uuid is null or peer_uuid=caller or public.universe_account_kind(peer_uuid) is null
+  or not exists(select 1 from public.universe_profiles p where p.user_id=peer_uuid) then raise exception 'PEER_UNAVAILABLE'; end if;
+ a:=least(caller,peer_uuid); b:=greatest(caller,peer_uuid);
+ insert into public.universe_threads(user_a,user_b) values(a,b) on conflict(user_a,user_b) do update set user_a=excluded.user_a returning id into result;
+ return result;
+end;
+$$;
+
+
+-- 202609200014_profile_faces.sql
+-- Profile photo and banner. The browser crops and shrinks the picture to a small
+-- webp before uploading, so the bucket only ever holds known, bounded files.
+alter table public.universe_profiles
+  add column avatar_url text
+    check (avatar_url is null or avatar_url ~ '^[a-f0-9-]{36}/avatar-[0-9]{1,14}\.webp$'),
+  add column banner_url text
+    check (banner_url is null or banner_url ~ '^[a-f0-9-]{36}/banner-[0-9]{1,14}\.webp$');
+
+grant update(avatar_url, banner_url) on public.universe_profiles to authenticated;
+
+-- Private, like the notes bucket: a face is visible to verified members through a
+-- short-lived signed link, never to the open internet.
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values('universe-faces','universe-faces',false,1048576,array['image/webp'])
+on conflict(id) do update set public=false,file_size_limit=1048576,allowed_mime_types=array['image/webp'];
+
+create policy universe_faces_write on storage.objects for insert to authenticated
+with check(bucket_id='universe-faces' and (select public.universe_is_member())
+ and name ~ '^[a-f0-9-]{36}/(avatar|banner)-[0-9]{1,14}\.webp$' and split_part(name,'/',1)=(select auth.uid())::text);
+create policy universe_faces_replace on storage.objects for update to authenticated
+using(bucket_id='universe-faces' and (select public.universe_is_member()) and split_part(name,'/',1)=(select auth.uid())::text)
+with check(bucket_id='universe-faces' and name ~ '^[a-f0-9-]{36}/(avatar|banner)-[0-9]{1,14}\.webp$' and split_part(name,'/',1)=(select auth.uid())::text);
+create policy universe_faces_read on storage.objects for select to authenticated
+using(bucket_id='universe-faces' and (select public.universe_is_member()));
+create policy universe_faces_remove on storage.objects for delete to authenticated
+using(bucket_id='universe-faces' and (select public.universe_is_member()) and split_part(name,'/',1)=(select auth.uid())::text);
+
+
+-- 202609210015_backoffice.sql
+-- Private operations layer for the Entreclase backoffice.
+-- All records below are hidden behind a security-definer RPC. The public client
+-- never receives direct table grants, and every mutation is audited.
+
+create table public.universe_backoffice_roles (
+  user_id uuid primary key references public.universe_profiles(user_id) on delete cascade,
+  role text not null check (role in ('admin','moderator','editor','support')),
+  granted_by uuid references public.universe_profiles(user_id) on delete set null,
+  granted_at timestamptz not null default now(),
+  revoked_at timestamptz
+);
+alter table public.universe_backoffice_roles enable row level security;
+revoke all on public.universe_backoffice_roles from public, anon, authenticated;
+
+create table public.universe_backoffice_reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid references public.universe_profiles(user_id) on delete set null,
+  target_type text not null check (target_type in ('profile','post','comment','group','plan','project','game','message')),
+  target_id uuid not null,
+  reason_code text not null check (length(btrim(reason_code)) between 2 and 40),
+  detail text not null default '' check (length(detail) <= 1200),
+  content_excerpt text not null default '' check (length(content_excerpt) <= 600),
+  metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
+  status text not null default 'pending' check (status in ('pending','in_review','resolved','dismissed','escalated')),
+  priority text not null default 'normal' check (priority in ('low','normal','high','urgent')),
+  assigned_to uuid references public.universe_profiles(user_id) on delete set null,
+  resolution text not null default '' check (length(resolution) <= 1200),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+alter table public.universe_backoffice_reports enable row level security;
+revoke all on public.universe_backoffice_reports from public, anon, authenticated;
+create index universe_backoffice_reports_queue on public.universe_backoffice_reports(status, priority, created_at desc);
+create index universe_backoffice_reports_target on public.universe_backoffice_reports(target_type, target_id);
+
+create table public.universe_backoffice_restrictions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.universe_profiles(user_id) on delete cascade,
+  kind text not null check (kind in ('warning','suspension','ban')),
+  reason text not null check (length(btrim(reason)) between 3 and 1200),
+  starts_at timestamptz not null default now(),
+  ends_at timestamptz,
+  created_by uuid not null references public.universe_profiles(user_id) on delete restrict,
+  revoked_at timestamptz,
+  revoked_by uuid references public.universe_profiles(user_id) on delete set null,
+  created_at timestamptz not null default now(),
+  check (ends_at is null or ends_at > starts_at)
+);
+alter table public.universe_backoffice_restrictions enable row level security;
+revoke all on public.universe_backoffice_restrictions from public, anon, authenticated;
+create index universe_backoffice_restrictions_user on public.universe_backoffice_restrictions(user_id, revoked_at, ends_at);
+
+create table public.universe_backoffice_audit (
+  id bigint generated always as identity primary key,
+  actor_id uuid references public.universe_profiles(user_id) on delete set null,
+  action text not null check (length(btrim(action)) between 2 and 80),
+  resource_type text not null check (length(btrim(resource_type)) between 2 and 40),
+  resource_id uuid,
+  detail jsonb not null default '{}'::jsonb check (jsonb_typeof(detail) = 'object'),
+  created_at timestamptz not null default now()
+);
+alter table public.universe_backoffice_audit enable row level security;
+revoke all on public.universe_backoffice_audit from public, anon, authenticated;
+create index universe_backoffice_audit_recent on public.universe_backoffice_audit(created_at desc);
+
+create table public.universe_backoffice_feature_flags (
+  key text primary key check (key ~ '^[a-z][a-z0-9_]{2,80}$'),
+  enabled boolean not null default false,
+  config jsonb not null default '{}'::jsonb check (jsonb_typeof(config) = 'object'),
+  updated_by uuid references public.universe_profiles(user_id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+alter table public.universe_backoffice_feature_flags enable row level security;
+revoke all on public.universe_backoffice_feature_flags from public, anon, authenticated;
+
+insert into public.universe_backoffice_feature_flags(key, enabled, config)
+values
+ ('explore_projects', true, '{"highlighted_limit":6}'),
+ ('game_questions', true, '{"anonymous":true}'),
+ ('magazine_submissions', true, '{"max_images":4}')
+on conflict (key) do nothing;
+
+create or replace function public.universe_backoffice_role()
+returns text language sql stable security definer set search_path='' as $$
+  select coalesce(
+    (select r.role from public.universe_backoffice_roles r where r.user_id = auth.uid() and r.revoked_at is null),
+    case when exists (select 1 from public.universe_magazine_editors e where e.user_id = auth.uid()) then 'editor' end
+  );
+$$;
+revoke all on function public.universe_backoffice_role() from public, anon;
+grant execute on function public.universe_backoffice_role() to authenticated;
+
+create or replace function public.universe_backoffice_can(required_role text)
+returns boolean language sql stable security definer set search_path='' as $$
+  select case public.universe_backoffice_role()
+    when 'admin' then true
+    when 'moderator' then required_role in ('moderator','support')
+    when 'editor' then required_role = 'editor'
+    when 'support' then required_role = 'support'
+    else false
+  end;
+$$;
+revoke all on function public.universe_backoffice_can(text) from public, anon;
+grant execute on function public.universe_backoffice_can(text) to authenticated;
+
+create or replace function public.universe_create_report(
+  p_target_type text, p_target_id uuid, p_reason_code text, p_detail text default ''
+) returns uuid language plpgsql security definer set search_path='' as $$
+declare result uuid;
+begin
+  if not public.universe_is_member() then raise exception 'UNIVERSE_MEMBER_REQUIRED' using errcode='42501'; end if;
+  if p_target_type not in ('profile','post','comment','group','plan','project','game','message') then raise exception 'REPORT_TARGET_INVALID'; end if;
+  if p_target_id is null or length(btrim(coalesce(p_reason_code,''))) not between 2 and 40 or length(coalesce(p_detail,'')) > 1200 then raise exception 'REPORT_INVALID'; end if;
+  insert into public.universe_backoffice_reports(reporter_id,target_type,target_id,reason_code,detail)
+  values(auth.uid(),p_target_type,p_target_id,left(btrim(p_reason_code),40),btrim(coalesce(p_detail,''))) returning id into result;
+  return result;
+end;
+$$;
+revoke all on function public.universe_create_report(text,uuid,text,text) from public, anon;
+grant execute on function public.universe_create_report(text,uuid,text,text) to authenticated;
+
+create or replace function public.universe_backoffice(p_command text default 'read', p_input jsonb default '{}'::jsonb)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare
+  actor uuid := auth.uid(); role_name text := public.universe_backoffice_role();
+  report_id uuid; restriction_id uuid; target_user uuid; requested_status text; note text; flag_key text;
+  can_manage boolean := public.universe_backoffice_can('moderator');
+begin
+  if role_name is null then raise exception 'BACKOFFICE_ACCESS_REQUIRED' using errcode='42501'; end if;
+  if p_command = 'review_report' then
+    if not can_manage then raise exception 'BACKOFFICE_MODERATION_REQUIRED' using errcode='42501'; end if;
+    report_id := nullif(p_input->>'report_id','')::uuid;
+    requested_status := coalesce(p_input->>'status',''); note := left(btrim(coalesce(p_input->>'note','')),1200);
+    if requested_status not in ('in_review','resolved','dismissed','escalated') then raise exception 'REPORT_STATUS_INVALID'; end if;
+    update public.universe_backoffice_reports set status=requested_status, priority=coalesce(nullif(p_input->>'priority',''),priority), assigned_to=coalesce(nullif(p_input->>'assigned_to','')::uuid,actor), resolution=note, updated_at=now(), resolved_at=case when requested_status in ('resolved','dismissed') then now() else null end where id=report_id;
+    if not found then raise exception 'REPORT_NOT_FOUND'; end if;
+    insert into public.universe_backoffice_audit(actor_id,action,resource_type,resource_id,detail) values(actor,'review_report','report',report_id,jsonb_build_object('status',requested_status,'note',note));
+  elsif p_command = 'restrict_user' then
+    if not can_manage then raise exception 'BACKOFFICE_MODERATION_REQUIRED' using errcode='42501'; end if;
+    target_user := nullif(p_input->>'user_id','')::uuid;
+    if target_user is null or target_user=actor or not exists(select 1 from public.universe_profiles where user_id=target_user) then raise exception 'USER_NOT_FOUND'; end if;
+    note := left(btrim(coalesce(p_input->>'reason','')),1200);
+    if p_input->>'kind' not in ('warning','suspension','ban') or length(note)<3 then raise exception 'RESTRICTION_INVALID'; end if;
+    insert into public.universe_backoffice_restrictions(user_id,kind,reason,ends_at,created_by) values(target_user,p_input->>'kind',note,nullif(p_input->>'ends_at','')::timestamptz,actor) returning id into restriction_id;
+    insert into public.universe_backoffice_audit(actor_id,action,resource_type,resource_id,detail) values(actor,'restrict_user','restriction',restriction_id,jsonb_build_object('user_id',target_user,'kind',p_input->>'kind'));
+  elsif p_command = 'revoke_restriction' then
+    if not can_manage then raise exception 'BACKOFFICE_MODERATION_REQUIRED' using errcode='42501'; end if;
+    restriction_id := nullif(p_input->>'restriction_id','')::uuid;
+    update public.universe_backoffice_restrictions set revoked_at=now(),revoked_by=actor where id=restriction_id and revoked_at is null;
+    if not found then raise exception 'RESTRICTION_NOT_FOUND'; end if;
+    insert into public.universe_backoffice_audit(actor_id,action,resource_type,resource_id,detail) values(actor,'revoke_restriction','restriction',restriction_id,jsonb_build_object('reason',left(coalesce(p_input->>'reason',''),500)));
+  elsif p_command = 'review_submission' then
+    if not public.universe_backoffice_can('editor') then raise exception 'BACKOFFICE_EDITOR_REQUIRED' using errcode='42501'; end if;
+    report_id := nullif(p_input->>'id','')::uuid; requested_status := coalesce(p_input->>'status',''); note := left(btrim(coalesce(p_input->>'note','')),1000);
+    if requested_status not in ('accepted','rejected','changes_requested') or (requested_status <> 'accepted' and length(note)<5) then raise exception 'EDITORIAL_DECISION_INVALID'; end if;
+    update public.universe_magazine_submissions set status=requested_status, editorial_note=note, revision=revision+1, updated_at=now(), history=history||jsonb_build_array(jsonb_build_object('status',requested_status,'at',now(),'note',note)) where id=report_id and consent and status='pending';
+    if not found then raise exception 'SUBMISSION_NOT_FOUND'; end if;
+    insert into public.universe_backoffice_audit(actor_id,action,resource_type,resource_id,detail) values(actor,'review_submission','magazine_submission',report_id,jsonb_build_object('status',requested_status));
+  elsif p_command = 'set_feature_flag' then
+    if not public.universe_backoffice_can('admin') then raise exception 'BACKOFFICE_ADMIN_REQUIRED' using errcode='42501'; end if;
+    flag_key := p_input->>'key';
+    if flag_key is null or flag_key !~ '^[a-z][a-z0-9_]{2,80}$' then raise exception 'FEATURE_FLAG_INVALID'; end if;
+    insert into public.universe_backoffice_feature_flags(key,enabled,config,updated_by,updated_at) values(flag_key,coalesce((p_input->>'enabled')::boolean,false),coalesce(p_input->'config','{}'::jsonb),actor,now()) on conflict(key) do update set enabled=excluded.enabled,config=excluded.config,updated_by=excluded.updated_by,updated_at=now();
+    insert into public.universe_backoffice_audit(actor_id,action,resource_type,resource_id,detail) values(actor,'set_feature_flag','feature_flag',null,jsonb_build_object('key',flag_key,'enabled',(p_input->>'enabled')::boolean));
+  elsif p_command <> 'read' then
+    raise exception 'BACKOFFICE_COMMAND_INVALID';
+  end if;
+  return jsonb_build_object(
+    'role', role_name,
+    'metrics', jsonb_build_object(
+      'pending_reports',(select count(*) from public.universe_backoffice_reports where status in ('pending','in_review')),
+      'urgent_reports',(select count(*) from public.universe_backoffice_reports where status in ('pending','in_review') and priority in ('high','urgent')),
+      'pending_account_requests',0,
+      'pending_magazine_submissions',(select count(*) from public.universe_magazine_submissions where consent and status='pending'),
+      'active_restrictions',(select count(*) from public.universe_backoffice_restrictions where revoked_at is null and (ends_at is null or ends_at>now())),
+      'active_members',(select count(*) from public.universe_profiles),
+      'projects_with_open_roles',(select count(*) from public.universe_projects where stage<>'completed'),
+      'upcoming_plans',(select count(*) from public.universe_plans where starts_at>=now())
+    ),
+    'reports',case when can_manage then coalesce((select jsonb_agg(to_jsonb(r) order by r.created_at desc) from public.universe_backoffice_reports r),'[]'::jsonb) else '[]'::jsonb end,
+    'restrictions',case when can_manage then coalesce((select jsonb_agg(to_jsonb(r) order by r.created_at desc) from public.universe_backoffice_restrictions r where r.revoked_at is null),'[]'::jsonb) else '[]'::jsonb end,
+    'submissions',case when public.universe_backoffice_can('editor') then coalesce((select jsonb_agg(to_jsonb(s) order by s.created_at desc) from public.universe_magazine_submissions s where s.consent),'[]'::jsonb) else '[]'::jsonb end,
+    'people',case when role_name in ('admin','moderator','support') then coalesce((select jsonb_agg(jsonb_build_object('user_id',p.user_id,'name',p.name,'university',p.university,'campus',p.campus,'degree',p.degree,'year',p.year,'created_at',p.created_at) order by p.created_at desc) from public.universe_profiles p),'[]'::jsonb) else '[]'::jsonb end,
+    'audit',case when role_name in ('admin','moderator','editor') then coalesce((select jsonb_agg(to_jsonb(a) order by a.created_at desc) from public.universe_backoffice_audit a limit 100),'[]'::jsonb) else '[]'::jsonb end,
+    'feature_flags',case when role_name='admin' then coalesce((select jsonb_agg(to_jsonb(f) order by f.key) from public.universe_backoffice_feature_flags f),'[]'::jsonb) else '[]'::jsonb end
+  );
+end;
+$$;
+revoke all on function public.universe_backoffice(text,jsonb) from public, anon;
+grant execute on function public.universe_backoffice(text,jsonb) to authenticated;
+
+
+-- 202609210016_enable_test_domains.sql
+-- Test domains explicitly approved for the Entreclase development environment.
+-- Keep this migration separate so the domains can be removed without rewriting history.
+insert into public.universe_university_domains (domain, university_name, enabled, launch_region)
+values
+  ('opre.com', 'Opre · entorno de pruebas', true, 'valencia'),
+  ('xarly.com', 'Xarly · entorno de pruebas', true, 'valencia')
+on conflict (domain) do update set university_name = excluded.university_name, enabled = true, launch_region = excluded.launch_region;
+
+-- 202609210016_plan_places.sql
+-- El mapa de Inicio pintaba once puntos pero un plan sólo podía vivir en cinco:
+-- los otros seis salían siempre apagados y al tocarlos no había nada que ver.
+-- La lista queda igual que `lib/community/places.ts`, que es la que leen el mapa,
+-- el filtro de lugar de Explorar y el formulario de crear plan.
+alter table public.universe_plans drop constraint if exists universe_plans_place_check;
+alter table public.universe_plans add constraint universe_plans_place_check
+  check (place in (
+    'Benimaclet',
+    'Torres de Serranos',
+    'La Malvarrosa',
+    'L’Albufera · Gola de Pujol',
+    'Campus de Vera · Ágora',
+    'Ruzafa · Café',
+    'Mercado de Colón · Restaurantes',
+    'Biblioteca Pública',
+    'Marina · Discotecas',
+    'Cines Lys',
+    'Jardín del Turia'
+  ));
+
 commit;

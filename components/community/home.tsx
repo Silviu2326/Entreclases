@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Dices, MapPin, MessageCircle, Plus, Sparkles } from "lucide-react";
 import { formatDate, localName, relativeDate } from "@/lib/community/copy";
 import { places, type Plan, type Profile, type View } from "@/lib/community/types";
@@ -9,22 +9,30 @@ import { Action, Avatar } from "./controls";
 import { ActivityMap } from "./activity-map";
 import { MagazineTeaser } from "./magazine";
 import { Feed } from "./feed";
-import { Attendance, CreatePlanModal } from "./plans";
-
-const WEEK = 7 * 24 * 60 * 60 * 1000;
+import { Attendance, CreatePlanModal, PlaceGame, planHereEmpty } from "./plans";
+import { GameOfDay } from "./home-game";
+import { spotOf, WEEK_MS, type PlaceKind, type PlanPeriod } from "@/lib/community/places";
 
 type PulseItem = { id: string; date: string; person?: Profile; verb: string; detail?: string; plan?: Plan; view?: View; linkLabel?: string; scrollToForum?: boolean };
 
 export function Home() {
-  const { c, locale, data, me, query, go } = useCommunity();
-  const [place, setPlace] = useState<string | null>(null);
-  const [scope, setScope] = useState<"week" | "all" | "mine">("week");
+  const { c, locale, data, me, query, go, place: arriving, period: arrivingPeriod, kind: arrivingKind } = useCommunity();
+  const [place, setPlace] = useState<string | null>(arriving);
+  // Mismo nombre que en Explorar: el periodo y el tipo de sitio viajan entre las dos pantallas.
+  const [period, setPeriod] = useState<PlanPeriod>(arrivingPeriod ?? "week");
+  const [kind, setKind] = useState<PlaceKind | null>(arrivingKind);
   const [showAllPulse, setShowAllPulse] = useState(false);
   const [creating, setCreating] = useState(false);
+  // El mismo reloj de minuto que Explorar, para que las dos pantallas cuenten los mismos planes.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 60000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const upcoming = useMemo(() => data.plans
-    .filter(plan => new Date(plan.starts_at).getTime() > Date.now())
-    .sort((a, b) => a.starts_at.localeCompare(b.starts_at)), [data.plans]);
+    .filter(plan => new Date(plan.starts_at).getTime() > now)
+    .sort((a, b) => a.starts_at.localeCompare(b.starts_at)), [data.plans, now]);
 
   const counts = useMemo(() => {
     const total: Record<string, number> = {};
@@ -44,10 +52,29 @@ export function Home() {
   }, [data, me.user_id, locale, c]);
   const visiblePulse = showAllPulse ? pulse : pulse.slice(0, 4);
 
-  const weekPlans = upcoming.filter(plan => new Date(plan.starts_at).getTime() < Date.now() + WEEK);
+  const weekPlans = upcoming.filter(plan => new Date(plan.starts_at).getTime() < now + WEEK_MS);
   const mine = (id: string) => data.planMembers.some(member => member.plan_id === id && member.user_id === me.user_id);
-  const listed = (scope === "mine" ? upcoming.filter(plan => mine(plan.id)) : scope === "week" ? weekPlans : upcoming)
-    .filter(plan => !place || plan.place === place);
+  // Los mismos filtros que Explorar (sin «con plazas libres»), para que «Ver en Explorar» cuente lo mismo.
+  const listed = (period === "mine" ? upcoming.filter(plan => mine(plan.id)) : period === "week" ? weekPlans : upcoming)
+    .filter(plan => (!place || plan.place === place) && (!kind || spotOf(plan.place)?.kind === kind));
+  const explore = { place: place ?? undefined, period, kind: kind ?? undefined };
+
+  // Volver desde Explorar deja ese punto, ese periodo y ese tipo ya elegidos en el mapa.
+  // Ajuste durante el render, no en un efecto: el mapa no llega a pintarse con el filtro viejo.
+  const [lastArrival, setLastArrival] = useState({ place: arriving, period: arrivingPeriod, kind: arrivingKind });
+  if (arriving !== lastArrival.place || arrivingPeriod !== lastArrival.period || arrivingKind !== lastArrival.kind) {
+    setLastArrival({ place: arriving, period: arrivingPeriod, kind: arrivingKind });
+    if (arriving) setPlace(arriving);
+    if (arrivingPeriod) setPeriod(arrivingPeriod);
+    if (arrivingKind) setKind(arrivingKind);
+  }
+  // Las cifras del hero y el filtro de Explorar mandan aquí con el id de la sección en el hash.
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const frame = window.requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: "start" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const newcomers = data.profiles.filter(profile => profile.user_id !== me.user_id).slice(0, 4);
   const hour = new Date().getHours();
@@ -61,7 +88,11 @@ export function Home() {
       <div className="u-home-top-copy">
         <p className="u-eyebrow">{greeting}, {firstName} · València</p>
         <h2>{c("homeHeroLine")}</h2>
-        <p className="u-home-top-stats">{data.profiles.length} {c("homeStatsPeople")} · {weekPlans.length} {c("homeStatsPlans")} · {data.groups.length} {c("homeStatsGroups")}</p>
+        <p className="u-home-top-stats">
+          <button type="button" onClick={() => go("people")}>{data.profiles.length} {c("homeStatsPeople")}</button>
+          <button type="button" onClick={() => go("explore", { anchor: "ex-plans", period: "week" })}>{weekPlans.length} {c("homeStatsPlans")}</button>
+          <button type="button" onClick={() => go("explore", { anchor: "ex-groups" })}>{data.groups.length} {c("homeStatsGroups")}</button>
+        </p>
       </div>
       <div className="u-home-pills" role="group" aria-label={c("quickActions")}>
         <Action onClick={() => setCreating(true)}><Plus />{c("createPlan")}</Action>
@@ -75,6 +106,8 @@ export function Home() {
         <div className="u-home-top-groups">{data.groups.slice(0, 3).map(group => <button type="button" key={group.id} onClick={() => go("groups", { groupId: group.id })}>{group.name}<ArrowUpRight aria-hidden="true" /></button>)}</div>
       </div>
     </section>
+
+    <GameOfDay />
 
     <section className="u-home-forum u-home-forum-top" id="u-home-forum" aria-label={c("forumSection")}>
       <Feed compact home />
@@ -93,6 +126,8 @@ export function Home() {
             {item.plan && <div className="u-pulse-plan">
               <span><CalendarDays aria-hidden="true" />{formatDate(item.plan.starts_at, locale)}<MapPin aria-hidden="true" />{localName(item.plan.place, locale)}</span>
               <Attendance plan={item.plan} />
+              {/* El detalle del plan vive en Explorar; los que ya pasaron no están allí. */}
+              {upcoming.includes(item.plan) && <button type="button" className="u-text-link" onClick={() => go("explore", { anchor: `plan-${item.plan!.id}` })}>{c("planDetails")}<ArrowUpRight aria-hidden="true" /></button>}
             </div>}
             {!item.plan && item.linkLabel && <button type="button" className="u-text-link" onClick={() => item.scrollToForum ? focusComposer(false) : go(item.view ?? "home")}>{item.linkLabel}<ArrowUpRight aria-hidden="true" /></button>}
           </div>
@@ -101,8 +136,8 @@ export function Home() {
       {pulse.length > 4 && <button type="button" className="u-pulse-more" onClick={() => setShowAllPulse(value => !value)}>{showAllPulse ? c("showLess") : c("seeMore")}<ArrowRight aria-hidden="true" /></button>}
     </section>
 
-    <section className="u-home-map" aria-label={c("mapTitle")}>
-      <ActivityMap selected={place} onSelect={setPlace} counts={counts} />
+    <section className="u-home-map" id="mapa" aria-label={c("mapTitle")}>
+      <ActivityMap selected={place} onSelect={setPlace} counts={counts} kind={kind} onKindChange={setKind} />
 
       <div className="u-activity">
         <div className="u-activity-head">
@@ -110,22 +145,27 @@ export function Home() {
             <p className="u-eyebrow">{place ? c("activityHere") : c("activityAll")}</p>
             <h2>{place ? localName(place, locale) : c("activityTitle")}</h2>
           </div>
-          <button type="button" className="u-text-link" onClick={() => go("plans")}>{c("seeAll")}<ArrowUpRight aria-hidden="true" /></button>
+          <button type="button" className="u-text-link" onClick={() => go("explore", { ...explore, anchor: "ex-plans" })}>{c("seeInExplore")}<ArrowUpRight aria-hidden="true" /></button>
         </div>
 
         <div className="u-activity-tabs" role="group" aria-label={c("plans")}>
           {([["week", c("thisWeek")], ["all", c("upcoming")], ["mine", c("myPlans")]] as const).map(([key, label]) =>
-            <button key={key} type="button" className={scope === key ? "active" : ""} aria-pressed={scope === key} onClick={() => setScope(key)}>{label}</button>)}
+            <button key={key} type="button" className={period === key ? "active" : ""} aria-pressed={period === key} onClick={() => setPeriod(key)}>{label}</button>)}
         </div>
 
         <div className="u-activity-list">
-          {listed.length ? listed.slice(0, 6).map(plan => <ActivityRow key={plan.id} plan={plan} />) : <div className="u-activity-empty">
+          {listed.length ? listed.slice(0, 6).map(plan => <ActivityRow key={plan.id} plan={plan} onDetails={() => go("explore", { ...explore, anchor: `plan-${plan.id}` })} />) : <div className="u-activity-empty">
             <MapPin aria-hidden="true" />
-            <strong>{c("noActivityHere")}</strong>
-            <p>{c("noActivityHereBody")}</p>
+            {/* Con un lugar elegido, el mismo texto que el vacío de Explorar. */}
+            <strong>{place ? planHereEmpty(c, place, locale) : c("noActivityHere")}</strong>
+            {!place && <p>{c("noActivityHereBody")}</p>}
             <Action secondary onClick={() => setCreating(true)}><Plus />{c("planHere")}</Action>
           </div>}
         </div>
+
+        {listed.length > 6 && <button type="button" className="u-text-link u-activity-more" onClick={() => go("explore", { ...explore, anchor: "ex-plans" })}>{c("seeAllPlans")} · {listed.length} {c("plansCount")}<ArrowRight aria-hidden="true" /></button>}
+
+        {place && <PlaceGame place={place} className="u-activity-game" />}
 
         {place && <a className="u-activity-directions" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.replace(" · ", " ") + ", Valencia")}`} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{c("openMaps")}<ArrowUpRight aria-hidden="true" /></a>}
       </div>
@@ -162,11 +202,11 @@ function focusComposer(withFocus = true) {
   if (withFocus) composer.focus({ preventScroll: true });
 }
 
-function ActivityRow({ plan }: { plan: Plan }) {
-  const { c, locale, data, go } = useCommunity();
+function ActivityRow({ plan, onDetails }: { plan: Plan; onDetails: () => void }) {
+  const { c, locale, data } = useCommunity();
   const members = data.planMembers.filter(member => member.plan_id === plan.id);
   const free = Math.max(0, plan.capacity - members.length);
-  const tone = Math.max(0, places.indexOf(plan.place as typeof places[number]));
+  const tone = Math.max(0, places.indexOf(plan.place));
   return <article className={`u-activity-row u-activity-tone-${tone % 5}`}>
     <div className="u-activity-when">
       <CalendarDays aria-hidden="true" />
@@ -181,7 +221,7 @@ function ActivityRow({ plan }: { plan: Plan }) {
       </div>
       <div className="u-activity-cta">
         <Attendance plan={plan} />
-        <button type="button" className="u-text-link" onClick={() => go("plans")}>{c("planDetails")}<ArrowUpRight aria-hidden="true" /></button>
+        <button type="button" className="u-text-link" onClick={onDetails}>{c("planDetails")}<ArrowUpRight aria-hidden="true" /></button>
       </div>
     </div>
   </article>;

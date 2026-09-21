@@ -10,7 +10,7 @@ export function normalizeEmail(value: string) { return value.trim().toLowerCase(
 
 export function emailError(value: string, universityOnly = false): string {
   const email = normalizeEmail(value);
-  if (!email) return "Escribe tu correo universitario.";
+  if (!email) return "Escribe tu correo.";
   if (email.length > 254 || !/^[a-z0-9.!#$%&'*+\-/=?^_`{|}~]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i.test(email))
     return "Revisa el correo. Parece que falta algo.";
   if (universityOnly && personalDomains.has(email.split("@")[1]))
@@ -27,11 +27,12 @@ export function passwordError(value: string): string {
 export function authErrorMessage(error: unknown): string {
   const message = typeof error === "object" && error !== null && "message" in error ? String(error.message) : "";
   const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+  if (message.includes("INVITE_INVALID")) return "La invitación no es válida para este correo, ha caducado o ya se ha usado. Pide a quien te invitó que la revise.";
   if (message.includes("UNIVERSE_UNIVERSITY_REQUIRED") || code === "23514")
     return "Empezamos en Valencia. Este correo aún no pertenece a una universidad admitida de Valencia.";
   const messages: Record<string, string> = {
     invalid_credentials: "El correo o la contraseña no coinciden. Revisa ambos.",
-    email_not_confirmed: "Primero confirma tu correo universitario. Puedes pedir otro enlace abajo.",
+    email_not_confirmed: "Primero confirma tu correo. Puedes pedir otro enlace abajo.",
     weak_password: "Prueba una contraseña más larga y difícil de adivinar.",
     same_password: "Elige una contraseña distinta de la anterior.",
     over_email_send_rate_limit: "Ya has pedido un correo hace poco. Espera un minuto y vuelve a intentarlo.",

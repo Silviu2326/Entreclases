@@ -1,0 +1,62 @@
+/* JuradoDelCampus: a dilemma, two stances and the campus verdict. */
+.g-jury { --g-accent:#a6622e; --g-soft:#f5e6d8; display:grid; gap:22px; }
+
+.g-jury-section { display:grid; gap:12px; }
+.g-jury-section-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:750; letter-spacing:-.01em; }
+.g-jury-section-title svg { width:16px; height:16px; color:var(--g-accent); }
+
+.g-jury-card { display:grid; gap:16px; padding:20px; border:1px solid var(--g-line); border-radius:18px; background:var(--g-paper); }
+.g-jury-head { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.g-jury-head > :first-child { flex:1; min-width:0; }
+.g-jury-owner { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:650; }
+.g-jury-owner small { display:block; color:var(--g-muted); font-size:11px; font-weight:400; }
+.g-jury-owner svg { width:15px; height:15px; color:var(--g-accent); }
+.g-jury-owner-weekly { color:var(--g-accent); }
+.g-jury-badge { padding:3px 9px; border-radius:999px; background:var(--g-soft); color:var(--g-accent); font-size:10px; font-weight:750; letter-spacing:.04em; text-transform:uppercase; }
+
+.g-jury-dilemma { font-size:17px; font-weight:650; letter-spacing:-.02em; line-height:1.4; }
+
+.g-jury-demo { margin:0; }
+.g-jury-demo .u-button, .g-jury-column > .u-button { border-style:dashed; font-size:11px; }
+
+.g-jury-result { display:grid; gap:2px; }
+.g-jury-breakdown { display:grid; gap:12px; padding:14px; border-radius:14px; background:var(--g-soft); }
+.g-jury-breakdown-row { display:grid; gap:2px; }
+
+.g-jury-deliberation { display:grid; gap:14px; padding-top:6px; border-top:1px dashed var(--g-line); }
+.g-jury-columns { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.g-jury-column { display:grid; align-content:start; gap:10px; }
+.g-jury-column h4 { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:750; letter-spacing:-.01em; }
+.g-jury-mine-side { padding:2px 7px; border-radius:999px; background:var(--g-soft); color:var(--g-accent); font-size:9px; font-weight:750; letter-spacing:.05em; text-transform:uppercase; }
+.g-jury-column ul { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
+.g-jury-column li { display:grid; gap:6px; padding:10px; border:1px solid var(--g-line); border-radius:12px; }
+.g-jury-column li.g-jury-top { border-color:var(--g-accent); background:var(--g-soft); }
+.g-jury-column li p { font-size:12px; line-height:1.55; }
+.g-jury-support { display:flex; align-items:center; gap:5px; min-height:32px; padding:5px 10px; border:1px solid var(--g-line); border-radius:999px; background:var(--g-paper); color:inherit; font-size:11px; font-weight:650; font-variant-numeric:tabular-nums; }
+.g-jury-support svg { width:13px; height:13px; }
+.g-jury-support[aria-pressed="true"] { border-color:var(--g-accent); background:var(--g-accent); color:#fffaf3; }
+
+.g-jury-argue-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+.g-jury-convinced { justify-self:start; }
+
+.g-jury-verdict { border-color:var(--g-accent); }
+.g-jury-split { display:flex; align-items:center; gap:8px; padding:12px 14px; border-radius:12px; background:var(--g-soft); color:var(--g-accent); font-size:14px; font-weight:750; }
+.g-jury-split svg { width:18px; height:18px; }
+.g-jury-best { display:grid; gap:10px; }
+.g-jury-best blockquote { margin:0; padding:12px 14px; border-left:3px solid var(--g-accent); border-radius:0 12px 12px 0; background:var(--g-soft); }
+.g-jury-best blockquote strong { display:block; margin-bottom:4px; font-size:10px; font-weight:750; letter-spacing:.05em; text-transform:uppercase; color:var(--g-accent); }
+.g-jury-best blockquote p { font-size:13px; font-style:italic; line-height:1.5; }
+.g-jury-best blockquote cite { display:block; margin-top:5px; color:var(--g-muted); font-size:11px; font-style:normal; }
+.g-jury-switched { padding:14px; border-radius:14px; background:var(--g-plum); color:#fffaf3; font-size:13px; line-height:1.6; }
+.g-jury-switched strong { font-size:22px; letter-spacing:-.03em; }
+
+.g-jury-mine-list { display:grid; gap:14px; }
+.g-jury-mine-item { display:grid; gap:10px; }
+
+.g-jury-caution { padding:10px 12px; border-radius:10px; background:var(--g-soft); color:var(--g-plum); font-size:12px; line-height:1.55; }
+.g-jury-stance { display:grid; gap:6px; font-size:12px; font-weight:650; }
+
+@media(max-width:560px) {
+  .g-jury-columns { grid-template-columns:1fr; }
+  .g-jury-argue-form { grid-template-columns:1fr; }
+}

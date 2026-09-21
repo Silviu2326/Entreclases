@@ -16,7 +16,7 @@ await db.exec(`
  -- Supabase's initial defaults can be permissive; migrations must narrow them.
  alter default privileges in schema public grant all on tables to authenticated;
 `);
-for(const name of ['202609090001_university_auth','202609090002_valencia_launch','202609090003_community','202609090004_community_storage'])await db.exec(await readFile(new URL('../supabase/migrations/'+name+'.sql',import.meta.url),'utf8'));
+for(const name of ['202609090001_university_auth','202609090002_valencia_launch','202609090003_community','202609090004_community_storage','202609200010_group_privacy'])await db.exec(await readFile(new URL('../supabase/migrations/'+name+'.sql',import.meta.url),'utf8'));
 await db.exec("insert into public.universe_university_domains values('campus.example.test','Campus verificado',true,'valencia')");
 const ids=[1,2,3,4].map(n=>'00000000-0000-4000-8000-00000000000'+n);
 for(let i=0;i<4;i++)await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,$3)',[ids[i],`user${i}@campus.example.test`,i===3?null:new Date().toISOString()]);
@@ -42,6 +42,19 @@ test('Group posting requires membership and the creator stays enrolled',async()=
  group=(await asUser(0,()=>q("insert into public.universe_groups(creator_id,name,description,category,campus) values($1,'Grupo de estudio','Descripción suficiente','study','Tarongers') returning id",[ids[0]]))).rows[0].id;
  await asUser(1,async()=>{await assert.rejects(q("insert into public.universe_posts(author_id,body,kind,group_id) values($1,'Hola grupo','post',$2)",[ids[1],group]),/row-level security/);await q('insert into public.universe_group_members values($1,$2)',[group,ids[1]]);await q("insert into public.universe_posts(author_id,body,kind,group_id) values($1,'Hola grupo','post',$2)",[ids[1],group]);});
  assert.equal((await asUser(0,()=>q('delete from public.universe_group_members where group_id=$1 and user_id=$2 returning *',[group,ids[0]]))).rows.length,0);
+});
+test('Private groups require an invitation token and keep discovery and posts private',async()=>{
+ const privateGroup=(await asUser(0,()=>q("insert into public.universe_groups(creator_id,name,description,category,campus,is_private) values($1,'Grupo cerrado','Solo con invitación','study','Tarongers',true) returning id,share_token",[ids[0]]))).rows[0];
+ await asUser(1,async()=>{
+  assert.equal((await q('select * from public.universe_groups where id=$1',[privateGroup.id])).rows.length,0);
+  assert.equal((await q('select * from public.universe_shared_group($1)',[privateGroup.share_token])).rows.length,1);
+  await assert.rejects(q('insert into public.universe_group_members values($1,$2)',[privateGroup.id,ids[1]]),/row-level security/);
+  await assert.rejects(q('select public.universe_set_group_membership($1,true,null)',[privateGroup.id]),/PRIVATE_GROUP_INVITE_REQUIRED/);
+  await q('select public.universe_set_group_membership($1,true,$2)',[privateGroup.id,privateGroup.share_token]);
+  assert.equal((await q('select * from public.universe_groups where id=$1',[privateGroup.id])).rows.length,1);
+  await q("insert into public.universe_posts(author_id,body,kind,group_id) values($1,'Dentro del grupo','post',$2)",[ids[1],privateGroup.id]);
+ });
+ await asUser(2,async()=>{assert.equal((await q('select * from public.universe_groups where id=$1',[privateGroup.id])).rows.length,0);assert.equal((await q('select * from public.universe_posts where group_id=$1',[privateGroup.id])).rows.length,0);});
 });
 test('Attendance is idempotent, counts its organiser and cannot bypass capacity through a table write',async()=>{
  plan=(await asUser(0,()=>q("insert into public.universe_plans(creator_id,title,place,meeting_point,starts_at,capacity) values($1,'Un café en el barrio','Benimaclet','En la plaza',now()+interval '2 days',2) returning id",[ids[0]]))).rows[0].id;

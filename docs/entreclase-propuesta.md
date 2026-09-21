@@ -53,7 +53,7 @@ Es el centro de Entreclase. Reúne en un mismo recorrido las cuatro formas de en
 
 Explorar no funciona como un menú que obliga a elegir una sección antes de empezar. La idea es que una persona pueda pasar de una historia a un perfil, de un perfil a un plan y de un plan a una conversación.
 
-### Mensajes
+### Charlas
 
 Conviven dos maneras de hablar:
 
@@ -90,7 +90,7 @@ Entreclase incluye juegos breves que funcionan como excusas sociales. Cada uno t
 | **Dos verdades y una trola** | Compartir tres frases y descubrir cuál es la mentira. |
 | **Hay hueco** | Crear un plan pequeño con una hora y plazas disponibles para que alguien se apunte. |
 | **El jurado del campus** | Votar entre dos posturas sobre un dilema universitario y comentar el resultado. |
-| **La cita empieza hablando** | Conversar durante doce minutos antes de decidir si se quiere revelar el perfil. |
+| **La cita empieza hablando** | Conversar durante 48 horas antes de decidir si se quiere revelar el perfil. |
 
 No son juegos pensados para acumular puntos sin más. Su función es quitar la tensión del primer mensaje y crear una situación que haga natural decir «hola».
 
@@ -141,6 +141,6 @@ La plataforma no promete que todos los planes saldrán bien ni que cada conversa
 
 ## Estado actual de la propuesta
 
-La experiencia está preparada para recorrer Inicio, Explorar, Mensajes, Mi perfil, planes, grupos, campus, ClasiCoins y los siete juegos. La demo permite probar el recorrido con datos de ejemplo sin afectar a otras personas.
+La experiencia está preparada para recorrer Inicio, Explorar, Charlas, Mi perfil, planes, grupos, campus, ClasiCoins y los siete juegos. La demo permite probar el recorrido con datos de ejemplo sin afectar a otras personas.
 
 Para una comunidad real todavía hay que activar y revisar la parte de cuentas, moderación y almacenamiento de datos. La idea de producto ya está definida; el siguiente paso es decidir qué experiencias se lanzan primero y con qué universidad se prueba.

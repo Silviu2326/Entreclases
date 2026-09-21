@@ -8,7 +8,7 @@ const messages = {
   balance: ["Tu saldo", "El teu saldo"],
   wallet: ["Ver mis ClasiCoins", "Vore les meues ClasiCoins"],
   welcome: ["Bienvenida al campus", "Benvinguda al campus"],
-  welcomeHelp: ["Al completar tu perfil con un correo universitario verificado. Una vez por cuenta.", "En completar el perfil amb un correu universitari verificat. Una vegada per compte."],
+  welcomeHelp: ["Al completar tu perfil con tu correo verificado. Una vez por cuenta.", "En completar el perfil amb el teu correu verificat. Una vegada per compte."],
   start: ["Tus primeras 20 ClasiCoins van de nuestra parte.", "Les primeres 20 ClasiCoins van de la nostra part."],
   startHelp: ["Para que puedas proponer el primer plan sin haber ganado ninguna todavía.", "Perquè pugues proposar el primer pla sense haver-ne guanyat cap encara."],
   createEvent: ["Crear un evento", "Crear un esdeveniment"],

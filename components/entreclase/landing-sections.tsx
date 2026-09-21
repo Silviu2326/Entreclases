@@ -63,7 +63,7 @@ const questions = [
   },
   {
     question: "¿Puedo entrar con mi correo personal?",
-    answer: "El acceso está pensado para correos universitarios que podamos verificar. Un Gmail o un Outlook personal no basta. El tuyo de la universidad es la puerta de entrada.",
+    answer: "Puedes entrar con un correo universitario admitido o con la invitación personal de alguien de la comunidad. Cada universitario puede traer a una persona; las cuentas invitadas no pueden invitar. En ambos casos hay que confirmar el correo.",
   },
   {
     question: "¿Puedo entrar ya?",

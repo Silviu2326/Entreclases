@@ -1,0 +1,247 @@
+/* Charlas — where the magazine is print, this is voice.
+   Everything on the page is a speech bubble: the masthead is one big bubble with
+   its tail pointing at the conversation, threads and chats share the same corner. */
+.u-workspace:has(.u-charlas) { background:#f4eff5; }
+.u-page:has(.u-charlas) > main > :is(.u-search,.u-page-heading) { display:none; }
+.u-charlas {
+  --ch-ink:#2a172e;
+  --ch-lime:#e1ff3e;
+  --ch-cream:#fffefa;
+  --ch-lilac:#e6dcf0;
+  --ch-peach:#f8dcc3;
+  --ch-haze:#b9a9c0;
+}
+.ch-masthead,.ch-footer { grid-column:1 / -1; }
+
+.ch-masthead {
+  container-type:inline-size;
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  gap:26px 40px;
+  align-items:end;
+  padding:34px 38px 30px;
+  margin-bottom:22px;
+  border-radius:30px 30px 30px 8px;
+  background:var(--ch-ink);
+  color:var(--ch-cream);
+}
+/* The tail of the bubble. */
+.ch-masthead::after {
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-19px;
+  width:34px;
+  height:20px;
+  background:var(--ch-ink);
+  clip-path:polygon(0 0,100% 0,0 100%);
+}
+.ch-masthead :is(h1,p,ul) { margin:0; }
+.ch-live { display:inline-flex; align-items:center; gap:9px; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ch-haze); }
+.ch-live>span { width:8px; height:8px; border-radius:50%; background:var(--ch-lime); box-shadow:0 0 0 0 rgba(225,255,62,.55); }
+.community-surface .ch-masthead h1 { font-size:clamp(56px,13cqi,138px); line-height:.92; font-weight:800; letter-spacing:-.075em; margin:14px 0 18px; color:var(--ch-cream); outline:none; }
+.ch-masthead h1>span { color:var(--ch-lime); }
+.ch-lead { max-width:430px; font-size:clamp(15px,1.9cqi,19px); line-height:1.4; color:#e9e0ee; }
+.ch-stats { display:flex; flex-wrap:wrap; gap:8px 26px; padding:0; margin-top:24px; list-style:none; }
+.ch-stats li { display:flex; align-items:baseline; gap:7px; font-size:11px; color:var(--ch-haze); }
+.ch-stats strong { font-family:var(--font-display); font-size:24px; font-weight:800; letter-spacing:-.05em; color:var(--ch-cream); font-variant-numeric:tabular-nums; }
+
+/* The last things people said, as they said them. */
+.ch-voices { display:grid; gap:11px; padding:0; list-style:none; }
+.ch-voices>li { display:flex; }
+.ch-voices>li:nth-child(2) { justify-content:flex-end; }
+.ch-voices>li:nth-child(3) { padding-left:34px; }
+.ch-voice { display:flex; align-items:flex-start; gap:10px; max-width:380px; padding:12px 15px 13px 12px; border-radius:18px 18px 18px 5px; color:var(--ch-ink); background:var(--ch-lilac); text-align:left; transition:box-shadow .2s ease,filter .2s ease; }
+.ch-voices>li:nth-child(2) .ch-voice { border-radius:18px 18px 5px 18px; background:var(--ch-lime); }
+.ch-voices>li:nth-child(3) .ch-voice { background:var(--ch-peach); }
+.ch-voice:hover { filter:brightness(1.04); box-shadow:0 10px 26px rgba(0,0,0,.28); }
+.community-surface .ch-voice:focus-visible { outline:3px solid var(--ch-lime); outline-offset:3px; }
+.ch-voice .u-avatar { flex:0 0 auto; }
+.ch-voice>span:last-child { min-width:0; font-size:12px; line-height:1.45; overflow-wrap:anywhere; }
+.ch-voice strong { display:block; font-size:10px; font-weight:750; letter-spacing:.02em; opacity:.72; }
+
+/* Each side of the page is named for what it is, not for the feature behind it. */
+.ch-kicker { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; margin:0 0 14px; font-size:12px; color:var(--u-muted); }
+.ch-kicker strong { font-family:var(--font-display); font-size:22px; font-weight:800; letter-spacing:-.055em; color:var(--ch-ink); }
+.u-charlas .u-chat-list-head h2 { font-size:22px; font-weight:800; letter-spacing:-.055em; }
+
+/* The thread of the day: the cover story of a page made of voices. */
+.ch-hot { position:relative; margin:0 0 20px; padding:22px 24px 20px; border-radius:24px 24px 24px 6px; background:var(--ch-lime); color:var(--ch-ink); }
+.ch-hot::after { content:""; position:absolute; left:0; bottom:-14px; width:26px; height:15px; background:var(--ch-lime); clip-path:polygon(0 0,100% 0,0 100%); }
+.ch-hot-label { display:inline-flex; align-items:center; gap:7px; margin:0; font-size:10px; font-weight:750; letter-spacing:.13em; text-transform:uppercase; }
+.ch-hot-label svg { width:15px; height:15px; }
+.ch-hot blockquote { margin:13px 0 18px; font-family:var(--font-display); font-size:clamp(21px,2.5vw,29px); font-weight:750; line-height:1.18; letter-spacing:-.045em; text-wrap:balance; overflow-wrap:anywhere; }
+.ch-hot footer { display:flex; align-items:center; flex-wrap:wrap; gap:10px 12px; }
+.ch-hot-author { display:grid; font-size:11px; line-height:1.35; }
+.ch-hot-author strong { font-size:12px; }
+.ch-hot-counts { display:inline-flex; align-items:center; gap:5px; margin-left:6px; font-size:12px; font-weight:650; font-variant-numeric:tabular-nums; }
+.ch-hot-counts svg { width:14px; height:14px; }
+.ch-hot-counts svg:nth-of-type(2) { margin-left:8px; }
+.ch-hot-link { display:inline-flex; align-items:center; gap:8px; margin-left:auto; min-height:38px; padding:8px 16px; border-radius:999px; background:var(--ch-ink); color:var(--ch-cream); font-size:12px; font-weight:650; }
+.ch-hot-link svg { width:15px; height:15px; transition:transform .2s ease; }
+.ch-hot-link:hover svg { transform:translateY(3px); }
+/* Where a conversation you just opened lands. */
+.u-charlas-dock { scroll-margin-top:96px; }
+.u-charlas .u-charlas-dock.ch-arrived { animation:ch-arrive 1.5s ease-out 1; }
+@keyframes ch-arrive { 0%,30% { box-shadow:0 0 0 5px var(--ch-lime),5px 5px 0 5px var(--ch-ink); } 100% { box-shadow:5px 5px 0 var(--ch-peach),5px 5px 0 2px var(--ch-ink); } }
+.u-post.ch-spotlit { animation:ch-spot 1.8s ease-out 1; }
+@keyframes ch-spot { 0%,35% { box-shadow:0 0 0 4px var(--ch-lime),0 0 0 7px var(--ch-ink); } 100% { box-shadow:0 0 0 0 transparent; } }
+
+/* People you have not said hello to yet. */
+.ch-strangers { margin-top:10px; padding:14px 10px 4px; border-top:1px dashed #d9cfdd; }
+.ch-strangers h3 { margin:0 0 8px; font-size:10px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; color:var(--u-muted); font-family:inherit; }
+.ch-strangers>div { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.ch-strangers>div>span:not(.u-avatar) { flex:1; min-width:0; }
+.ch-strangers strong { display:block; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ch-strangers small { display:block; font-size:10px; color:var(--u-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ch-strangers button { flex:0 0 auto; min-height:30px; padding:5px 12px; border:1px solid var(--ch-ink); border-radius:999px; font-size:11px; font-weight:650; color:var(--ch-ink); transition:background .18s ease,color .18s ease; }
+.ch-strangers button:hover:not(:disabled) { background:var(--ch-ink); color:var(--ch-lime); }
+
+.ch-search { grid-column:1 / -1; display:flex; align-items:center; gap:10px; min-height:46px; padding:0 17px; border:1px solid rgba(255,255,255,.17); border-radius:999px; background:rgba(255,255,255,.08); transition:background .2s ease,border-color .2s ease; }
+.ch-search:focus-within { background:rgba(255,255,255,.13); border-color:var(--ch-lime); }
+.ch-search svg { width:16px; height:16px; color:var(--ch-haze); }
+.ch-search input { flex:1; min-width:0; border:0; outline:0; background:none; color:var(--ch-cream); font-size:13px; }
+.ch-search input::placeholder { color:var(--ch-haze); opacity:1; }
+.ch-search button { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; color:var(--ch-cream); }
+.ch-search button:hover { background:rgba(255,255,255,.14); }
+
+/* One corner language for everything that speaks: threads come from the left,
+   what you write comes from the right — the same as the private chat. */
+.u-charlas .u-post { border-radius:6px 20px 20px 20px; }
+.u-charlas .u-composer { border-radius:20px 6px 20px 20px; }
+.u-charlas .u-forum-community { border-radius:20px; }
+.u-charlas .u-charlas-dock { border-radius:20px; }
+
+/* Edges with a voice. Hairlines say "form"; an inked outline with a hard shadow
+   says "someone drew this bubble". The shadow takes the colour of what is inside:
+   ink for a thread, lilac for a question, lime for what you are writing. */
+.u-charlas :is(.u-post,.u-composer,.u-forum-community,.u-charlas-dock,.ch-hot) { border:2px solid var(--ch-ink); box-shadow:5px 5px 0 var(--ch-ink); }
+.u-charlas .u-post { margin-bottom:22px; transition:transform .18s ease,box-shadow .18s ease; }
+.u-charlas .u-post:hover { transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ch-ink); }
+.u-charlas .u-post[data-kind="question"] { box-shadow:5px 5px 0 #b79fd0; }
+.u-charlas .u-post[data-kind="question"]:hover { box-shadow:7px 7px 0 #b79fd0; }
+.u-charlas .u-composer { box-shadow:5px 5px 0 var(--ch-lime),5px 5px 0 2px var(--ch-ink); }
+.u-charlas .u-charlas-dock { box-shadow:5px 5px 0 var(--ch-peach),5px 5px 0 2px var(--ch-ink); }
+.u-charlas .ch-hot { box-shadow:5px 5px 0 var(--ch-ink); }
+.u-charlas .ch-hot::after { bottom:-16px; left:-2px; }
+.u-charlas .ch-masthead { box-shadow:7px 7px 0 var(--ch-lime); }
+/* Inside a bubble the rules are torn, not ruled. */
+.u-charlas .u-post-actions { border-top:2px dashed #d9cfdd; }
+.u-charlas .u-comments { border-top:2px dashed #d9cfdd; }
+.u-charlas .u-forum-chip { border-width:1.5px; border-color:var(--ch-ink); color:var(--ch-ink); }
+.u-charlas .u-forum-chip-new { border-style:dashed; }
+.u-charlas .u-forum-filters .u-chip { border:1.5px solid transparent; }
+.u-charlas .u-forum-filters .u-chip.active { border-color:var(--ch-ink); box-shadow:2px 2px 0 var(--ch-lime); }
+.u-charlas .ch-voice { border:2px solid var(--ch-ink); box-shadow:3px 3px 0 rgba(0,0,0,.45); }
+.u-charlas .ch-strangers { border-top:2px dashed #d9cfdd; }
+.u-charlas .u-chat-list>button.active { background:var(--ch-lime); }
+.u-charlas .u-forum-chip.active { border-color:var(--ch-ink); background:var(--ch-ink); color:var(--ch-lime); }
+.u-charlas .u-forum-chip.active>span { background:rgba(225,255,62,.16); color:var(--ch-lime); }
+.u-charlas .u-message.own { background:var(--ch-ink); }
+
+.ch-footer { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px 24px; margin-top:26px; padding-top:22px; border-top:1px solid #dcd2e0; }
+.ch-footer>span { font-family:var(--font-display); font-size:24px; font-weight:800; letter-spacing:-.06em; }
+.ch-footer small { margin-left:8px; font-family:"Inter",Arial,sans-serif; font-size:10px; font-weight:400; letter-spacing:0; color:var(--u-muted); }
+.ch-footer p { font-size:12px; color:var(--u-muted); }
+
+@media (prefers-reduced-motion:no-preference) {
+  .ch-live>span { animation:ch-pulse 2.2s ease-out infinite; }
+  .ch-voice { animation:ch-float 7s ease-in-out infinite alternate; }
+  .ch-voices>li:nth-child(2) .ch-voice { animation-delay:-2.4s; }
+  .ch-voices>li:nth-child(3) .ch-voice { animation-delay:-4.6s; }
+  .ch-masthead { animation:ch-in .5s ease-out both; }
+  @keyframes ch-pulse { to { box-shadow:0 0 0 9px rgba(225,255,62,0); } }
+  @keyframes ch-float { from { transform:translateY(0) rotate(-.6deg); } to { transform:translateY(-5px) rotate(.6deg); } }
+  @keyframes ch-in { from { opacity:.94; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+}
+@media (max-width:900px) {
+  .ch-masthead { grid-template-columns:1fr; padding:28px 26px 26px; }
+  .ch-voices { grid-template-columns:repeat(3,minmax(230px,1fr)); overflow-x:auto; scrollbar-width:none; margin-inline:-26px; padding-inline:26px; }
+  .ch-voices::-webkit-scrollbar { display:none; }
+  .ch-voices>li:nth-child(n) { padding-left:0; justify-content:flex-start; }
+  .ch-voice { max-width:none; width:100%; }
+}
+@media (max-width:560px) {
+  .ch-masthead { padding:24px 20px 22px; border-radius:24px 24px 24px 6px; margin-bottom:20px; }
+  .ch-voices { margin-inline:-20px; padding-inline:20px; }
+  .community-surface .ch-masthead h1 { font-size:19cqi; }
+  .ch-stats { gap:6px 20px; margin-top:18px; }
+  .ch-stats strong { font-size:20px; }
+  .ch-search input { font-size:16px; }
+  .ch-footer>span { font-size:21px; }
+}
+
+/* ---------- Entre dos: the conversation itself ---------- */
+.ck-chat { position:relative; }
+.u-charlas .u-chat>header { background:var(--ch-ink); color:var(--ch-cream); border-bottom:0; }
+.u-charlas .u-chat>header h2 { color:var(--ch-cream); }
+.u-charlas .u-chat>header p { color:var(--ch-haze); }
+.u-charlas .u-chat>header>svg { color:var(--ch-lime); }
+.community-surface .u-charlas .u-chat>header .u-icon-button { color:var(--ch-cream); }
+.community-surface .u-charlas .u-chat>header .u-icon-button:hover { background:rgba(255,255,255,.12); color:var(--ch-lime); }
+.u-charlas .u-chat-privacy { background:#efe8f3; color:#6b5f70; }
+.u-charlas .u-message-scroll { gap:12px; background:radial-gradient(circle at 1px 1px,#e4d9ea 1px,transparent 1.5px) 0 0/18px 18px,#fbf8fc; }
+.u-charlas .u-message { border:1.5px solid var(--ch-ink); border-radius:5px 16px 16px 16px; background:var(--ch-cream); box-shadow:2px 2px 0 var(--ch-ink); padding:10px 13px 7px; }
+.u-charlas .u-message.own { border-radius:16px 5px 16px 16px; background:var(--ch-ink); color:var(--ch-cream); box-shadow:2px 2px 0 var(--ch-lime); }
+.u-charlas .u-message.own time { color:var(--ch-haze); }
+.u-charlas .u-message a { color:inherit; text-decoration:underline; text-underline-offset:3px; overflow-wrap:anywhere; }
+/* Messages sent in a burst sit close together and only the last one carries the time. */
+.u-charlas .u-message.ck-joined { margin-top:-7px; border-radius:16px; }
+.ck-day { display:flex; align-items:center; gap:12px; align-self:stretch; margin:6px 0 2px; font-size:10px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; color:#8a7d90; }
+.ck-day::before,.ck-day::after { content:""; flex:1; border-top:2px dashed #ddd0e3; }
+
+.u-charlas .u-message.ck-bare { padding:0; border:0; background:none; box-shadow:none; }
+.u-charlas .u-message.ck-bare time { color:#8a7d90; margin-top:4px; }
+.u-message .ck-jumbo { font-size:44px; line-height:1.1; }
+.ck-sticker { display:inline-block; margin:4px 2px; padding:10px 18px 11px; border:2px solid var(--ch-ink); border-radius:14px; box-shadow:4px 4px 0 var(--ch-ink); font-family:var(--font-display); font-size:22px; font-weight:800; line-height:1.1; letter-spacing:-.05em; color:var(--ch-ink); transform:rotate(-3deg); white-space:normal; }
+.u-message.own .ck-sticker { transform:rotate(2.5deg); }
+.u-message p.ck-sticker { font-size:24px; }
+.ck-sticker-lime { background:var(--ch-lime); }
+.ck-sticker-peach { background:var(--ch-peach); }
+.ck-sticker-lilac { background:var(--ch-lilac); }
+.ck-sticker-ink { background:var(--ch-ink); color:var(--ch-lime); box-shadow:4px 4px 0 var(--ch-lime); }
+
+.ck-quote { margin:0 0 8px; padding:6px 10px; border-left:3px solid var(--ch-lime); border-radius:4px; background:rgba(255,255,255,.1); font-size:11px; line-height:1.4; opacity:.9; }
+.u-message:not(.own) .ck-quote { background:#f1eaf5; border-left-color:var(--ch-ink); }
+.u-charlas .u-message.ck-has-media { padding:5px 5px 7px; max-width:min(330px,88%); }
+.u-message.ck-has-media>p,.u-message.ck-has-media>time,.u-message.ck-has-media>.ck-quote { margin-inline:8px; }
+.u-message.ck-has-media>p { margin-top:8px; }
+.ck-media { display:block; width:100%; max-height:340px; border-radius:11px; overflow:hidden; background:#1d1020; }
+button.ck-media { padding:0; cursor:zoom-in; }
+.ck-media img { display:block; width:100%; max-height:340px; object-fit:cover; transition:transform .3s ease; }
+button.ck-media:hover img { transform:scale(1.03); }
+video.ck-media { object-fit:contain; }
+.ck-gone { padding:14px 10px; font-size:11px; font-style:italic; opacity:.75; }
+.ck-zoom { display:block; max-width:100%; max-height:72dvh; margin:0 auto; border-radius:10px; }
+
+.ck-composer { position:relative; border-top:2px solid var(--ch-ink); background:var(--ch-cream); }
+.u-charlas .ck-form { gap:2px; padding:10px 10px 10px 6px; border-top:0; }
+.u-charlas .ck-form .u-input { margin-left:4px; border-radius:999px; padding-inline:15px; border:1.5px solid var(--ch-ink); }
+.community-surface .u-charlas .ck-form .u-icon-button { width:36px; height:36px; color:var(--ch-ink); border-radius:50%; }
+.community-surface .u-charlas .ck-form .u-icon-button:hover,.community-surface .u-charlas .ck-form .u-icon-button[aria-expanded="true"] { background:var(--ch-lime); color:var(--ch-ink); }
+.community-surface .u-charlas .ck-form .u-button { width:40px; min-height:40px; margin-left:6px; padding:0; border-radius:50%; background:var(--ch-ink); color:var(--ch-lime); }
+.ck-tray { position:absolute; left:8px; right:8px; bottom:calc(100% + 8px); z-index:5; max-height:260px; overflow-y:auto; padding:12px; border:2px solid var(--ch-ink); border-radius:16px 16px 16px 5px; background:var(--ch-cream); box-shadow:5px 5px 0 var(--ch-ink); overscroll-behavior:contain; }
+.ck-tray h3 { margin:8px 2px 5px; font-family:inherit; font-size:9px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; color:#8a7d90; }
+.ck-tray h3:first-child { margin-top:0; }
+.ck-emoji-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(34px,1fr)); gap:2px; }
+.ck-emoji-grid button { aspect-ratio:1; border-radius:9px; font-size:21px; line-height:1; transition:transform .12s ease,background .12s ease; }
+.ck-emoji-grid button:hover { background:var(--ch-lilac); transform:scale(1.18); }
+.ck-sticker-tray { display:flex; flex-wrap:wrap; align-items:center; gap:12px 10px; padding:16px 14px 18px; }
+.ck-sticker-tray .ck-sticker { font-size:16px; padding:8px 13px; box-shadow:3px 3px 0 var(--ch-ink); transition:transform .15s ease; }
+.ck-sticker-tray .ck-sticker:nth-child(even) { transform:rotate(2deg); }
+.ck-sticker-tray .ck-sticker:hover:not(:disabled) { transform:rotate(0) scale(1.06); }
+.ck-draft { display:flex; align-items:center; gap:11px; margin:10px 10px 0; padding:7px; border:1.5px dashed var(--ch-ink); border-radius:13px; background:#f6f0f8; }
+.ck-draft img,.ck-draft-video { width:48px; height:48px; border-radius:9px; object-fit:cover; flex:0 0 auto; }
+.ck-draft-video { display:grid; place-items:center; background:var(--ch-ink); color:var(--ch-lime); }
+.ck-draft>span:not(.ck-draft-video) { flex:1; min-width:0; }
+.ck-draft strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+.ck-draft small { font-size:10px; color:var(--u-muted); }
+.ck-drop { position:absolute; inset:8px; z-index:6; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; margin:0; border:3px dashed var(--ch-ink); border-radius:16px; background:rgba(225,255,62,.93); color:var(--ch-ink); font-family:var(--font-display); font-size:18px; font-weight:800; letter-spacing:-.04em; text-align:center; pointer-events:none; }
+.community-surface .ck-drop svg { width:34px; height:34px; }
+@media (prefers-reduced-motion:no-preference) {
+  .u-charlas .u-message { animation:ck-pop .22s ease-out both; }
+  .ck-tray { animation:ck-tray-in .18s ease-out both; transform-origin:bottom left; }
+  @keyframes ck-pop { from { opacity:0; transform:translateY(6px) scale(.97); } to { opacity:1; transform:none; } }
+  @keyframes ck-tray-in { from { opacity:0; transform:translateY(8px) scale(.97); } to { opacity:1; transform:none; } }
+}

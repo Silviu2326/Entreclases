@@ -1,0 +1,92 @@
+/* Pages of one project. The surfaces, the type and the corners come from studio.css;
+   this file only adds what a page of its own needs that a card never did. */
+.st-section,.st-hub{--st-ink:#2c1832;--st-line:#e6e0e7;--st-paper:#fffefa;--st-shadow:0 12px 30px -20px #2c18322b;color:var(--st-ink)}
+.st-section{display:grid;gap:26px;max-width:880px;padding-bottom:20px}
+.st-section h3{display:flex;align-items:center;gap:9px;font-size:19px;letter-spacing:-.02em;margin-bottom:4px}
+.st-section h3 svg{width:19px;height:19px}
+.st-section>section{display:grid;gap:14px;min-width:0}
+.st-lead{font-size:16px;line-height:1.75;color:#5d5361;white-space:pre-wrap;overflow-wrap:anywhere}
+.st-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+
+/* The project's own header, repeated on every one of its pages. */
+.st-project-bar{display:grid;gap:18px;padding:24px 26px;border:1px solid #dce5c5;border-radius:20px;background:linear-gradient(120deg,#f0f4df,#e6eed3);box-shadow:var(--st-shadow)}
+.st-project-bar-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.st-project-bar .st-kicker{color:#6a7645}
+.community-surface .st-project-bar h2{font:750 clamp(22px,2.5vw,32px)/1.12 var(--font-display);letter-spacing:-.045em;margin-top:8px;text-wrap:balance;overflow-wrap:anywhere}
+.st-project-bar h2 a{color:inherit;text-decoration:none}
+.st-project-bar h2 a:hover{text-decoration:underline}
+.st-project-nav{display:flex;flex-wrap:wrap;gap:7px}
+.st-project-nav a{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 13px;border:1px solid #cfdcb5;border-radius:999px;background:#fffefabf;color:#4d4a3e;font-size:12px;font-weight:650;text-decoration:none;transition:background .2s,border-color .2s,color .2s}
+.st-project-nav a svg{width:15px;height:15px}
+.st-project-nav a:hover{background:#fffefa;border-color:#9fb377}
+.st-project-nav a.is-current{background:var(--st-ink);border-color:var(--st-ink);color:#fffefa}
+.st-badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#b4472f;color:#fffefa;font-size:10px;font-weight:750}
+.st-project-nav a.is-current .st-badge{background:#e1ff3e;color:#2c1832}
+
+.st-missing{display:grid;gap:10px;justify-items:start;border:1px dashed var(--st-line);border-block:1px dashed var(--st-line);border-radius:16px;padding:34px 28px;background:var(--st-paper)}
+.community-surface .st-empty h2{font:750 24px/1.15 var(--font-display);letter-spacing:-.04em}
+.st-empty p{font-size:13px;line-height:1.8;color:#7a6f7e;max-width:520px;margin-top:8px}
+
+/* The hub: what is mine before what is everybody's. */
+.st-hub .st-mine,.st-hub .st-sent{margin:26px 0}
+.community-surface .st-hub :is(.st-mine,.st-sent) h2{font:750 24px/1.15 var(--font-display);letter-spacing:-.04em;margin-bottom:14px}
+.st-hub ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.st-mine li{display:grid;gap:4px;padding:16px 18px;border:1px solid var(--st-line);border-radius:14px;background:var(--st-paper)}
+.st-mine-title{font-size:15px;font-weight:700;color:inherit;text-decoration:none}
+.st-mine-title:hover{text-decoration:underline}
+.st-mine .st-caption{margin:0}
+.st-mine-links{display:flex;flex-wrap:wrap;gap:16px;margin-top:6px}
+.st-mine-links .st-text-action{font-size:12px;padding:4px 0}
+.st-mine-links .st-text-action svg{width:15px;height:15px}
+.st-text-action.st-waiting{color:#a2402a;font-weight:750}
+.st-sent li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border:1px solid var(--st-line);border-radius:14px;background:var(--st-paper);font-size:13px}
+.st-sent li a{color:inherit;font-weight:650}
+.st-sent small{display:block;color:#7a6f7e;font-size:11px;margin-top:3px}
+
+.st-state{padding:5px 10px;border-radius:999px;font-size:10px;font-weight:750;letter-spacing:.03em;background:#eef0e5;color:#5f6a49;white-space:nowrap}
+.st-state-pending{background:#f6ecd8;color:#8a6224}
+.st-state-accepted{background:#e6f0da;color:#4f6a35}
+.st-state-rejected{background:#f0e6e6;color:#8a5050}
+
+.st-request-list,.st-member-list,.st-file-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.st-request-list>li{border:1px solid var(--st-line);border-radius:16px;background:var(--st-paper);padding:20px 22px}
+.st-request-list .st-person{padding-top:0;margin-top:0;justify-content:space-between;width:100%}
+.st-request-list .st-person>span:first-of-type{flex:1;min-width:0}
+.st-request-role{font-size:12px;color:#7a6f7e;margin:14px 0 8px}
+.st-request-list p{line-height:1.75;font-size:13px;overflow-wrap:anywhere}
+.st-member-list>li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;border:1px solid var(--st-line);border-radius:14px;background:var(--st-paper)}
+.st-member-list .st-person{padding-top:0;margin-top:0}
+.st-section .st-actions{margin:0}
+.st-team-messages article>small{display:block;margin-top:2px;font-size:11px}
+
+/* Files: one row each, with what it is before what it weighs. */
+.st-file-form .st-kicker{margin-bottom:14px}
+.st-file-input{display:flex;align-items:center;gap:12px;padding:16px 18px;border:1px dashed #cbc2cd;border-radius:12px;background:#fbf9f4;font-size:13px;font-weight:650;cursor:pointer;margin-bottom:16px}
+.st-file-input svg{width:18px;height:18px;flex-shrink:0}
+.st-file-input input{flex:1;min-width:0;font-size:12px;font-weight:400}
+.st-file-list>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:16px;padding:14px 18px;border:1px solid var(--st-line);border-radius:14px;background:var(--st-paper)}
+.st-file-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;background:#eef0e5;color:#5f6a49}
+.st-file-icon svg{width:20px;height:20px}
+.st-file-list strong{display:block;font-size:14px;overflow-wrap:anywhere}
+.st-file-list p{font-size:12px;line-height:1.6;color:#7a6f7e;margin-top:3px;overflow-wrap:anywhere}
+.st-file-list .st-caption{margin:4px 0 0}
+
+.st-roles-field,.st-milestone-field{border:0;padding:0;margin:18px 0}
+.st-roles-field legend,.st-milestone-field legend{font-size:13px;font-weight:700;margin-bottom:8px}
+.st-roles-field .st-caption{display:flex;align-items:center;gap:7px;margin:0 0 10px}
+.st-roles-field .st-caption svg{width:14px;height:14px;flex-shrink:0}
+.st-milestone-row{display:flex;align-items:flex-end;gap:10px}
+.st-milestone-row .u-field{flex:1;min-width:0;margin:0 0 12px}
+.st-notice svg{width:15px;height:15px;vertical-align:-2px;margin-right:7px}
+
+@media(max-width:700px){
+ .st-section{gap:20px}
+ .st-project-bar{padding:20px;border-radius:16px}
+ .st-project-bar-top{flex-direction:column;gap:12px}
+ .st-project-nav a{font-size:11px;padding:8px 11px}
+ .st-file-list>li{grid-template-columns:36px minmax(0,1fr);gap:12px}
+ .st-file-list .st-actions{grid-column:1/-1}
+ .st-member-list>li,.st-sent li{flex-direction:column;align-items:flex-start}
+ .st-missing{padding:26px 20px}
+}
+@media(prefers-reduced-motion:reduce){.st-project-nav a{transition:none}}

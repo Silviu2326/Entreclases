@@ -15,6 +15,9 @@ test('Demo changes stay in a repository instance; posts, likes and comments work
 test('Joining a plan is idempotent, leaving works, and a creator can cancel their plan',async()=>{
  const repo=createDemoRepository('va');let data=await repo.read();const plan=data.plans.find(p=>p.id==='plan-coffee');await repo.joinPlan(plan.id,true);await repo.joinPlan(plan.id,true);assert.equal((await repo.read()).planMembers.filter(m=>m.plan_id===plan.id&&m.user_id===demoUserId).length,1);await repo.joinPlan(plan.id,false);assert.equal((await repo.read()).planMembers.filter(m=>m.plan_id===plan.id&&m.user_id===demoUserId).length,0);await repo.removePlan('plan-project');assert.ok(!(await repo.read()).planMembers.some(m=>m.plan_id==='plan-project'));repo.dispose();
 });
+test('Demo groups keep private visibility and expose a share token',async()=>{
+ const repo=createDemoRepository('es');await repo.createGroup({name:'Grupo cerrado',description:'Solo con enlace',category:'study',campus:'Tarongers',is_private:true});const group=(await repo.read()).groups[0];assert.equal(group.is_private,true);assert.ok(group.share_token);assert.equal((await repo.read()).groupMembers.some(m=>m.group_id===group.id&&m.user_id===demoUserId),true);repo.dispose();
+});
 test('Demonstration conversations retain sent text and never invent replies',async()=>{
  const repo=createDemoRepository('es');const thread=await repo.openThread('demo-aina');assert.equal((await repo.messages(thread)).length,0);await repo.sendMessage(thread,'¡Hola!');const messages=await repo.messages(thread);assert.equal(messages.length,1);assert.equal(messages[0].sender_id,demoUserId);assert.equal(messages[0].body,'¡Hola!');assert.equal(await repo.openThread('demo-aina'),thread);repo.dispose();
 });

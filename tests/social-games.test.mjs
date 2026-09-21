@@ -1,8 +1,9 @@
+// Server-side rules of the games, as the current migration enforces them.
+// The demo of each game is covered on its own in tests/game-demos.test.mjs.
 import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
-import { demoPlay } from '../lib/community/games/demo.ts';
 
 const db = new PGlite();
 await db.exec(`
@@ -135,41 +136,4 @@ test('Blind date needs open window and two consents; outsiders see no room or id
   assert.equal((await play(0,'blind','reveal',{id:paired.id}))[0].revealed,false);
   const revealed=(await play(1,'blind','reveal',{id:paired.id}))[0]; assert.equal(revealed.peer_id,ids[0]); assert.equal(revealed.revealed,true);
   await play(1,'blind','leave',{id:paired.id}); assert.deepEqual(await play(0,'blind'),[]);
-});
-
-test('Demo supports truth guessing, explicit match simulation and blind mutual consent',()=>{
-  const user='demo-test',name='Test';
-  let truth=demoPlay('truth','read',{},user,name)[0]; assert.equal(truth.answer,null);
-  truth=demoPlay('truth','vote',{id:truth.id,choice:1},user,name)[0]; assert.equal(truth.answer,1);
-  let crush=demoPlay('crush','create',{adult:true},user,name).find(r=>!r.mine);
-  crush=demoPlay('crush','vote',{id:crush.id,choice:2},user,name).find(r=>!r.mine); assert.equal(crush.matched,false);
-  crush=demoPlay('crush','simulate',{id:crush.id,choice:2},user,name).find(r=>!r.mine); assert.equal(crush.matched,true);
-  let blind=demoPlay('blind','create',{adult:true},user,name)[0];
-  blind=demoPlay('blind','simulate',{id:blind.id},user,name)[0]; assert.equal(blind.count,2); assert.equal(blind.revealed,false);
-  blind=demoPlay('blind','reveal',{id:blind.id},user,name)[0]; assert.equal(blind.revealed,false);
-  blind=demoPlay('blind','simulate',{id:blind.id},user,name)[0]; assert.equal(blind.revealed,true);
-});
-
-test('Demo runs anonymous answers, debate turns, a hangout conversation and jury results',()=>{
-  const user='demo-all-games',name='Test';
-  let box=demoPlay('questions','create',{},user,name).find(r=>r.mine);
-  box=demoPlay('questions','simulate',{id:box.id},user,name).find(r=>r.mine);
-  assert.equal(box.moves[0].reply,'');
-  box=demoPlay('questions','answer',{id:box.id,move:box.moves[0].id,body:'Un café'},user,name).find(r=>r.mine);
-  assert.equal(box.moves[0].reply,'Un café');
-  let debate=demoPlay('debate','read',{},user,name)[0];
-  debate=demoPlay('debate','join',{id:debate.id},user,name)[0];
-  assert.equal(debate.capacity,2);
-  for(let n=0;n<3;n++) {
-    demoPlay('debate','simulate',{id:debate.id},user,name);
-    debate=demoPlay('debate','say',{id:debate.id,body:'Mi réplica'},user,name)[0];
-  }
-  assert.equal(debate.moves.length,6);
-  assert.throws(()=>demoPlay('debate','say',{id:debate.id,body:'Otra réplica'},user,name),/turno/);
-  let hangout=demoPlay('hangout','create',{body:'Café',place:'Campus',capacity:2,minutes:15},user,name).find(r=>r.mine);
-  hangout=demoPlay('hangout','say',{id:hangout.id,body:'Os espero aquí'},user,name).find(r=>r.mine);
-  assert.equal(hangout.moves[0].body,'Os espero aquí');
-  let jury=demoPlay('jury','read',{},user,name)[0]; assert.deepEqual(jury.votes,[]);
-  jury=demoPlay('jury','vote',{id:jury.id,choice:0},user,name)[0]; assert.deepEqual(jury.votes,[1,0]);
-  jury=demoPlay('jury','say',{id:jury.id,body:'Hablando se entiende la gente'},user,name)[0]; assert.equal(jury.moves.length,1);
 });

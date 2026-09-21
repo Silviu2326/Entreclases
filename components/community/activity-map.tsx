@@ -3,42 +3,36 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Filter } from "lucide-react";
 import { useCommunity } from "./context";
+import { kindLabels, placeKinds, spots, type KindFilter, type PlaceKind, type PlaceSpot } from "@/lib/community/places";
 
-export type MapSpotKind = "plans" | "cafe" | "restaurant" | "library" | "nightlife" | "culture" | "outdoors";
-export type MapSpot = { place: string; lat: number; lng: number; short: [string, string]; kind: MapSpotKind; icon: string };
-
-// Coordenadas reales de los puntos que aparecen en Inicio.
-export const spots: MapSpot[] = [
-  { place: "Benimaclet", lat: 39.4892, lng: -0.3619, short: ["Benimaclet", "Benimaclet"], kind: "plans", icon: "✦" },
-  { place: "Torres de Serranos", lat: 39.4794, lng: -0.3751, short: ["Serranos", "Serrans"], kind: "plans", icon: "✦" },
-  { place: "La Malvarrosa", lat: 39.4784, lng: -0.3239, short: ["Malvarrosa", "Malva-rosa"], kind: "outdoors", icon: "☀" },
-  { place: "L’Albufera · Gola de Pujol", lat: 39.3265, lng: -0.3238, short: ["L’Albufera", "L’Albufera"], kind: "outdoors", icon: "⌁" },
-  { place: "Campus de Vera · Ágora", lat: 39.4814, lng: -0.3372, short: ["Vera", "Vera"], kind: "plans", icon: "✦" },
-  { place: "Ruzafa · Café", lat: 39.4627, lng: -0.3711, short: ["Ruzafa", "Russafa"], kind: "cafe", icon: "☕" },
-  { place: "Mercado de Colón · Restaurantes", lat: 39.4690, lng: -0.3654, short: ["Mercado", "Mercat"], kind: "restaurant", icon: "⌁" },
-  { place: "Biblioteca Pública", lat: 39.4705, lng: -0.3768, short: ["Biblioteca", "Biblioteca"], kind: "library", icon: "▤" },
-  { place: "Marina · Discotecas", lat: 39.4586, lng: -0.3223, short: ["Marina", "Marina"], kind: "nightlife", icon: "♫" },
-  { place: "Cines Lys", lat: 39.4688, lng: -0.3762, short: ["Cines Lys", "Cines Lys"], kind: "culture", icon: "▹" },
-  { place: "Jardín del Turia", lat: 39.4708, lng: -0.3658, short: ["Jardín Turia", "Jardí Túria"], kind: "outdoors", icon: "✿" },
-];
+/* Los puntos viven en lib/community/places: el filtro de lugar de Explorar y el
+   formulario de crear plan leen esa misma lista, así que todo punto del mapa
+   puede tener planes y todo plan cae en un punto del mapa. */
+export type MapSpotKind = PlaceKind;
+export type MapSpot = PlaceSpot;
 
 type LeafletMap = import("leaflet").Map;
 type LeafletLayerGroup = import("leaflet").LayerGroup;
-type MapFilter = "all" | "active" | "quiet" | MapSpotKind;
+type MapFilter = KindFilter;
 
-export function ActivityMap({ selected, onSelect, counts }: { selected: string | null; onSelect: (place: string | null) => void; counts: Record<string, number> }) {
+/* Si un punto entra en el filtro: por número de planes o por su tipo de sitio. */
+const fits = (spot: PlaceSpot, filter: MapFilter, counts: Record<string, number>) => filter === "all" || (filter === "active" ? (counts[spot.place] ?? 0) > 0 : filter === "quiet" ? (counts[spot.place] ?? 0) === 0 : spot.kind === filter);
+
+/* El tipo de sitio es controlado (`kind`/`onKindChange`) porque viaja con Explorar;
+   «con planes» y «lugares libres» solo tienen sentido aquí y se quedan dentro. */
+export function ActivityMap({ selected, onSelect, counts, kind, onKindChange }: { selected: string | null; onSelect: (place: string | null) => void; counts: Record<string, number>; kind: PlaceKind | null; onKindChange: (kind: PlaceKind | null) => void }) {
   const { c, locale } = useCommunity();
   const mapNode = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const layersRef = useRef<LeafletLayerGroup | null>(null);
   const onSelectRef = useRef(onSelect);
-  const [filter, setFilter] = useState<MapFilter>("all");
+  const [mode, setMode] = useState<"all" | "active" | "quiet">("all");
+  const filter: MapFilter = kind ?? mode;
   const [filterOpen, setFilterOpen] = useState(false);
   onSelectRef.current = onSelect;
-  const visibleSpots = useMemo(() => spots.filter(spot => filter === "all" || filter === "active" && (counts[spot.place] ?? 0) > 0 || filter === "quiet" && (counts[spot.place] ?? 0) === 0 || filter !== "active" && filter !== "quiet" && spot.kind === filter), [counts, filter]);
+  const visibleSpots = useMemo(() => spots.filter(spot => fits(spot, filter, counts)), [counts, filter]);
   const active = visibleSpots.filter(spot => (counts[spot.place] ?? 0) > 0).length;
-  const filterLabels: Record<MapFilter, [string, string]> = { all: ["Todos los puntos", "Tots els punts"], active: ["Con planes", "Amb plans"], quiet: ["Lugares libres", "Llocs lliures"], plans: ["Planes", "Plans"], cafe: ["Cafés", "Cafés"], restaurant: ["Restaurantes", "Restaurants"], library: ["Bibliotecas", "Biblioteques"], nightlife: ["Discotecas", "Discoteques"], culture: ["Cultura", "Cultura"], outdoors: ["Aire libre", "Aire lliure"] };
-  const filterLabel = filterLabels[filter][locale === "va" ? 1 : 0];
+  const filterLabel = kindLabels[filter][locale === "va" ? 1 : 0];
 
   useEffect(() => {
     let disposed = false;
@@ -86,7 +80,7 @@ export function ActivityMap({ selected, onSelect, counts }: { selected: string |
         const count = counts[spot.place] ?? 0;
         const isSelected = selected === spot.place;
         const label = spot.short[locale === "va" ? 1 : 0];
-        const kindLabel = filterLabels[spot.kind][locale === "va" ? 1 : 0];
+        const kindLabel = kindLabels[spot.kind][locale === "va" ? 1 : 0];
         const planLabel = count ? `${count} ${count === 1 ? c("planOne") : c("plans").toLocaleLowerCase()}` : kindLabel;
         const icon = L.divIcon({
           className: "u-leaflet-icon",
@@ -110,9 +104,12 @@ export function ActivityMap({ selected, onSelect, counts }: { selected: string |
   }, [counts, selected, locale, c, visibleSpots]);
 
   const chooseFilter = (next: MapFilter) => {
-    setFilter(next);
+    if (next === "all" || next === "active" || next === "quiet") { setMode(next); onKindChange(null); }
+    else { setMode("all"); onKindChange(next); }
     setFilterOpen(false);
-    if (selected && next !== "all" && !visibleSpots.some(spot => spot.place === selected)) onSelect(null);
+    // Se comprueba contra el filtro nuevo: el punto elegido se suelta si ya no se ve.
+    const spot = spots.find(entry => entry.place === selected);
+    if (spot && !fits(spot, next, counts)) onSelect(null);
   };
 
   return <div className="u-map">
@@ -126,7 +123,7 @@ export function ActivityMap({ selected, onSelect, counts }: { selected: string |
         <div className="u-map-filter-wrap">
           <button type="button" className={`u-map-filter-button ${filter !== "all" ? "active" : ""}`} aria-expanded={filterOpen} aria-haspopup="menu" onClick={() => setFilterOpen(open => !open)}><Filter aria-hidden="true" />{filterLabel}</button>
           {filterOpen && <div className="u-map-filter-menu" role="menu" aria-label={locale === "va" ? "Filtrar el mapa" : "Filtrar el mapa"}>
-            {(["all", "active", "quiet", "cafe", "restaurant", "library", "nightlife", "culture", "outdoors"] as MapFilter[]).map(value => <button type="button" role="menuitemradio" aria-checked={filter === value} key={value} className={filter === value ? "selected" : ""} onClick={() => chooseFilter(value)}>{filterLabels[value][locale === "va" ? 1 : 0]}<span>{value === "all" ? spots.length : value === "active" ? spots.filter(spot => (counts[spot.place] ?? 0) > 0).length : value === "quiet" ? spots.filter(spot => (counts[spot.place] ?? 0) === 0).length : spots.filter(spot => spot.kind === value).length}</span></button>)}
+            {(["all", "active", "quiet", ...placeKinds] as MapFilter[]).map(value => <button type="button" role="menuitemradio" aria-checked={filter === value} key={value} className={filter === value ? "selected" : ""} onClick={() => chooseFilter(value)}>{kindLabels[value][locale === "va" ? 1 : 0]}<span>{spots.filter(spot => fits(spot, value, counts)).length}</span></button>)}
           </div>}
         </div>
         <button type="button" className={`u-map-reset ${selected ? "" : "active"}`} onClick={() => onSelect(null)} aria-pressed={!selected}>{c("allPlaces")}</button>

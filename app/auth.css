@@ -105,3 +105,8 @@
 .auth-demo-link { display:inline-block; font-weight:700; text-decoration:underline; text-underline-offset:3px; margin-top:7px; }
 .auth-unicoins { display:flex; align-items:flex-start; gap:12px; border-radius:7px; background:#edf3d8; padding:17px; margin:23px 0; }
 .auth-unicoins>svg { width:23px; height:23px; flex-shrink:0; color:#557024; }.auth-unicoins strong { display:block; font-size:16px; line-height:1.45; color:#3e531d; }.auth-unicoins span { display:block; font-size:13px; line-height:1.55; margin-top:8px; color:#616c50; }.auth-unicoins a { display:inline-block; margin-top:10px; color:var(--primary); font-size:14px; font-weight:650; text-decoration:underline; text-underline-offset:3px; }
+
+.auth-invitation { display:flex; align-items:center; gap:17px; padding:20px; margin:0 0 24px; border:1px dashed #bca7c5; border-radius:15px; background:#f1eaf5; }
+.auth-invitation>span { display:grid; place-items:center; flex-shrink:0; width:55px; height:55px; background:#e1ff3e; border-radius:9px; color:#2a172e; font-size:27px; font-weight:800; transform:rotate(-6deg); }
+.auth-invitation strong { font-size:18px; letter-spacing:-.025em; }
+.auth-invitation p { font-size:13px; line-height:1.5; color:#706772; margin:6px 0 0; }

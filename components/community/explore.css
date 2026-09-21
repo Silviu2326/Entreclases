@@ -41,15 +41,22 @@
 
 /* The game itself unfolds in place, not in a modal or a navigation layer. */
 .ex-game-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:17px; align-items:start; }
-.ex-game { --game-bg:#f0e8f5; --game-accent:#8c65a0; grid-column:span 3; min-width:0; border:1px solid var(--ex-line); border-radius:18px; background:#fffefa; overflow:hidden; transition:border-color .2s ease,box-shadow .2s ease; }
+.ex-game-intent { display:grid; gap:14px; }
+.ex-game-intent + .ex-game-intent { margin-top:34px; }
+.ex-game-intent-head { display:flex; justify-content:space-between; align-items:end; gap:20px; }
+.ex-game-intent-head .ex-kicker { color:var(--ex-plum); margin-bottom:4px; }
+.ex-game-intent-head h3 { color:#756a79; font-size:12px; font-weight:500; line-height:1.5; }
+.ex-game-intent-head > span { color:#89778c; font-size:10px; white-space:nowrap; }
+.ex-game { --game-bg:#f0e8f5; --game-accent:#8c65a0; display:block; grid-column:span 3; min-width:0; color:inherit; text-decoration:none; border:1px solid var(--ex-line); border-radius:18px; background:#fffefa; overflow:hidden; transition:border-color .2s ease,box-shadow .2s ease; }
 .ex-game:nth-child(n+5) { grid-column:span 4; }
-.ex-game > summary { display:block; cursor:pointer; list-style:none; }
-.ex-game > summary::-webkit-details-marker { display:none; }
 .ex-game-art { display:flex; align-items:center; justify-content:center; height:150px; background:var(--game-bg); position:relative; isolation:isolate; overflow:hidden; }
-.ex-game-art > svg { width:59px; height:59px; stroke-width:1.3; color:var(--game-accent); transform:rotate(-9deg); transition:transform .5s cubic-bezier(.2,.8,.2,1); }
-.ex-game-art > span { position:absolute; right:14px; bottom:7px; font-family:"Caveat",cursive; font-size:23px; color:var(--game-accent); transform:rotate(-6deg); }
+.ex-game-art::after { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(145deg,#fffefa70 0%,transparent 48%,color-mix(in srgb,var(--game-bg) 72%,transparent) 100%); mix-blend-mode:screen; pointer-events:none; }
+.ex-game-art > img { position:absolute; z-index:-2; inset:0; width:100%; height:100%; object-fit:cover; opacity:.72; filter:saturate(.8) contrast(.95); transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .35s ease,filter .35s ease; }
+.ex-game-art > svg { position:relative; z-index:1; width:59px; height:59px; stroke-width:1.3; color:var(--game-accent); transform:rotate(-9deg); transition:transform .5s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 2px 0 #fffefa80); }
+.ex-game-art > span { position:absolute; z-index:1; right:14px; bottom:7px; font-family:"Caveat",cursive; font-size:23px; color:var(--game-accent); transform:rotate(-6deg); text-shadow:0 1px #fffefa80; }
 .ex-game-art i { position:absolute; z-index:-1; width:120px; height:100px; border:1px solid currentColor; color:var(--game-accent); border-radius:47% 53% 68% 32%; opacity:.25; transform:rotate(20deg); transition:transform .6s ease,border-radius .6s ease; }
 .ex-game:hover .ex-game-art i,.ex-game:focus-within .ex-game-art i { transform:rotate(70deg) scale(1.1); border-radius:65% 35% 40% 60%; }
+.ex-game:hover .ex-game-art > img,.ex-game:focus-within .ex-game-art > img { transform:scale(1.06); opacity:.86; filter:saturate(.95) contrast(1); }
 .ex-game:hover .ex-game-art > svg { transform:rotate(4deg) translateY(-5px); }
 .ex-game-questions { --game-bg:#f6e9d6; --game-accent:#a36534; }
 .ex-game-debate { --game-bg:#e9edcd; --game-accent:#60783b; }
@@ -65,18 +72,38 @@
 .ex-game-caption { display:grid; padding:19px; gap:8px; }
 .ex-game-caption > strong { font-size:18px; letter-spacing:-.04em; line-height:1.2; }
 .ex-game-caption > small { min-height:42px; color:#776c7a; font-size:11px; line-height:1.6; }
-.ex-game-open,.ex-game-close { display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:650; margin-top:8px; }
-.ex-game-close { display:none; }
+.ex-game-effort { color:var(--game-accent); font-size:10px; font-weight:700; letter-spacing:.02em; }
+.ex-game-open { display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:650; margin-top:8px; }
+.ex-game-open svg { width:16px; height:16px; transition:transform .2s ease; }
+.ex-game:hover .ex-game-open svg { transform:translate(2px,-2px); }
 .ex-game:hover { border-color:var(--game-accent); box-shadow:0 12px 25px #2a172e0a; }
-.ex-game[open] { grid-column:1/-1; border-color:var(--game-accent); }
-.ex-game[open] > summary { display:grid; grid-template-columns:155px 1fr; }
-.ex-game[open] .ex-game-art { height:100%; min-height:145px; }
-.ex-game[open] .ex-game-caption > small { min-height:0; }
-.ex-game[open] .ex-game-open { display:none; }
-.ex-game[open] .ex-game-close { display:flex; }
-.ex-game .ec-game { padding:24px; margin:0; max-width:none; border-top:1px solid var(--ex-line); background:#fffefa; }
-.ex-game .ec-game > p { margin-bottom:18px; }
-.ex-game .ec-game-entry { border-radius:12px; }
+/* One page per experience: hero, the game itself and the way to the others. */
+.ex-game-page { --game-bg:#f0e8f5; --game-accent:#8c65a0; gap:36px; }
+.ex-game-hero { display:grid; grid-template-columns:230px minmax(0,1fr); border:1px solid var(--game-accent); border-radius:22px 22px 22px 6px; background:#fffefa; overflow:hidden; }
+.ex-game-hero .ex-game-art { height:100%; min-height:190px; }
+.ex-game-hero .ex-game-art > svg { width:74px; height:74px; }
+.ex-game-hero .ex-game-art i { width:150px; height:125px; }
+.ex-game-hero:hover .ex-game-art i { transform:rotate(70deg) scale(1.1); border-radius:65% 35% 40% 60%; }
+.ex-game-hero-copy { display:grid; align-content:center; gap:10px; padding:28px 32px; }
+.ex-game-hero-copy .ex-kicker { color:#797080; }
+.ex-game-hero-copy h1 { font-size:clamp(28px,3vw,44px); letter-spacing:-.06em; line-height:1.05; }
+.ex-game-hero-copy > p:not(.ex-kicker) { max-width:520px; color:#756a79; font-size:13px; line-height:1.7; }
+.ex-game-hero-copy .ex-link { margin-top:6px; }
+.ex-game-hero-copy .ex-link:hover svg { transform:translateX(-3px); }
+.ex-game-page > .g-shell { padding:28px 32px; border:1px solid var(--ex-line); border-radius:18px; background:#fffefa; }
+.ex-game-others .ex-kicker { color:#797080; margin-bottom:14px; }
+.ex-game-others ul { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:0; padding:0; list-style:none; }
+.ex-game-other { display:grid; grid-template-columns:82px minmax(0,1fr) 18px; align-items:center; gap:14px; min-height:82px; padding-right:16px; color:inherit; text-decoration:none; border:1px solid var(--ex-line); border-radius:14px; background:#fffefa; overflow:hidden; transition:border-color .2s ease,box-shadow .2s ease; }
+.ex-game-other:hover { border-color:var(--game-accent); box-shadow:0 10px 20px #2a172e0a; }
+.ex-game-other .ex-game-art { height:100%; min-height:82px; }
+.ex-game-other .ex-game-art > svg { width:32px; height:32px; }
+.ex-game-other .ex-game-art > span { display:none; }
+.ex-game-other .ex-game-art i { width:70px; height:56px; }
+.ex-game-other > span { display:grid; gap:3px; padding:12px 0; min-width:0; }
+.ex-game-other strong { font-size:14px; letter-spacing:-.03em; line-height:1.2; }
+.ex-game-other small { color:#776c7a; font-size:11px; line-height:1.5; }
+.ex-game-other > svg { width:16px; height:16px; transition:transform .2s ease; }
+.ex-game-other:hover > svg { transform:translate(2px,-2px); }
 
 .ex-filters { display:flex; align-items:center; flex-wrap:wrap; gap:16px 24px; padding:0 0 21px; margin-bottom:22px; border-bottom:1px solid var(--ex-line); }
 .ex-filters label { display:grid; gap:5px; font-size:10px; color:#766b7b; }
@@ -160,7 +187,261 @@
 @keyframes ex-float-left { 0%,100% { transform:rotate(-12deg) translateY(0); } 50% { transform:rotate(-8deg) translateY(-8px); } }
 @keyframes ex-float-right { 0%,100% { transform:rotate(13deg) translateY(17px); } 50% { transform:rotate(8deg) translateY(8px); } }
 @media(prefers-reduced-motion:no-preference) { .ex-weekly-art > span:first-child { animation:ex-float-left 7s ease-in-out infinite; }.ex-weekly-art > span:nth-child(2) { animation:ex-float-right 9s ease-in-out infinite; } }
-@media(max-width:1200px) { .ex-opening { gap:28px; padding:30px; }.ex-opening h1 { font-size:43px; }.ex-first-game { padding:22px; }.ex-game { grid-column:span 4; }.ex-game:nth-child(n+5) { grid-column:span 4; }.ex-game:last-child { grid-column:span 12; }.ex-game:last-child:not([open]) > summary { display:grid; grid-template-columns:170px 1fr; }.ex-game:last-child .ex-game-art { height:100%; min-height:145px; }.ex-game[open] { grid-column:1/-1; }.ex-plan-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.ex-plan-featured { grid-row:auto; }.ex-plan-art { height:150px; } }
-@media(max-width:950px) { .ex-opening { grid-template-columns:1fr; }.ex-opening h1 { font-size:49px; }.ex-opening-copy > p:not(.ex-kicker) { max-width:500px; }.ex-handwritten { display:none; }.ex-first-game { transform:none; }.ex-game { grid-column:span 6; }.ex-game:nth-child(n+5) { grid-column:span 6; }.ex-game:last-child,.ex-game[open] { grid-column:1/-1; }.ex-group-grid { grid-template-columns:1fr 1fr; }.ex-group:last-child { grid-column:1/-1; }.ex-weekly { gap:25px; padding:26px; }.ex-weekly-art > span { width:80px; height:125px; }.ex-campus { gap:25px; } }
-@media(max-width:600px) { .ex-page { gap:42px; }.ex-opening { padding:24px 20px; gap:26px; border-radius:21px 21px 21px 4px; }.ex-opening h1 { font-size:39px; }.ex-opening-copy > p:not(.ex-kicker) { font-size:13px; }.ex-first-game { padding:20px 16px; box-shadow:4px 4px 0 #ffffff13; }.ex-first-game h2 { font-size:26px; }.ex-statements button { font-size:12px; padding:10px 8px; grid-template-columns:19px 1fr 16px; }.ex-section-head { flex-direction:column; align-items:flex-start; gap:10px; }.ex-section-head h2 { font-size:28px; }.ex-section-head > p { max-width:none; }.ex-game-grid { gap:12px; }.ex-game-caption { padding:14px; }.ex-game-caption > strong { font-size:16px; }.ex-game-caption > small { min-height:56px; }.ex-game-art { height:120px; }.ex-game-art > svg { width:44px; height:44px; }.ex-game-art > span { font-size:19px; right:8px; }.ex-game[open] > summary,.ex-game:last-child:not([open]) > summary { grid-template-columns:95px 1fr; }.ex-game[open] .ex-game-art { min-height:155px; }.ex-game .ec-game { padding:18px 14px; }.ex-plan-grid,.ex-group-grid,.ex-weekly,.ex-campus { grid-template-columns:1fr; }.ex-group:last-child { grid-column:auto; }.ex-filters { gap:14px; }.ex-filters select { max-width:100%; font-size:16px; }.ex-filters label { min-width:0; max-width:100%; }.ex-filters > span { margin-left:0; }.ex-plan-main { padding:20px; }.ex-weekly { gap:24px; }.ex-weekly-art { min-height:190px; }.ex-weekly-art > span { width:100px; height:130px; }.ex-weekly-art i { right:10%; bottom:-10px; }.ex-group { padding-bottom:12px; }.ex-campus h2 { font-size:29px; }.ex-empty { padding:22px; } }
-@media(prefers-reduced-motion:reduce) { .ex-page *, .ex-page *::before,.ex-page *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }.ex-game .ec-game { animation:none; } }
+@media(max-width:1200px) { .ex-opening { gap:28px; padding:30px; }.ex-opening h1 { font-size:43px; }.ex-first-game { padding:22px; }.ex-game { grid-column:span 4; }.ex-game:nth-child(n+5) { grid-column:span 4; }.ex-game-grid > .ex-game:last-child { grid-column:span 12; display:grid; grid-template-columns:170px 1fr; }.ex-game-grid > .ex-game:last-child .ex-game-art { height:100%; min-height:145px; }.ex-game-others ul { grid-template-columns:repeat(2,minmax(0,1fr)); }.ex-plan-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.ex-plan-featured { grid-row:auto; }.ex-plan-art { height:150px; } }
+@media(max-width:950px) { .ex-opening { grid-template-columns:1fr; }.ex-opening h1 { font-size:49px; }.ex-opening-copy > p:not(.ex-kicker) { max-width:500px; }.ex-handwritten { display:none; }.ex-first-game { transform:none; }.ex-game { grid-column:span 6; }.ex-game:nth-child(n+5) { grid-column:span 6; }.ex-game-grid > .ex-game:last-child { grid-column:1/-1; }.ex-game-hero { grid-template-columns:170px minmax(0,1fr); }.ex-group-grid { grid-template-columns:1fr 1fr; }.ex-group:last-child { grid-column:1/-1; }.ex-weekly { gap:25px; padding:26px; }.ex-weekly-art > span { width:80px; height:125px; }.ex-campus { gap:25px; } }
+@media(max-width:600px) { .ex-page { gap:42px; }.ex-opening { padding:24px 20px; gap:26px; border-radius:21px 21px 21px 4px; }.ex-opening h1 { font-size:39px; }.ex-opening-copy > p:not(.ex-kicker) { font-size:13px; }.ex-first-game { padding:20px 16px; box-shadow:4px 4px 0 #ffffff13; }.ex-first-game h2 { font-size:26px; }.ex-statements button { font-size:12px; padding:10px 8px; grid-template-columns:19px 1fr 16px; }.ex-section-head { flex-direction:column; align-items:flex-start; gap:10px; }.ex-section-head h2 { font-size:28px; }.ex-section-head > p { max-width:none; }.ex-game-intent-head { align-items:flex-start; flex-direction:column; gap:4px; }.ex-game-grid { gap:12px; }.ex-game-caption { padding:14px; }.ex-game-caption > strong { font-size:16px; }.ex-game-caption > small { min-height:56px; }.ex-game-art { height:120px; }.ex-game-art > svg { width:44px; height:44px; }.ex-game-art > span { font-size:19px; right:8px; }.ex-game-grid > .ex-game:last-child { grid-column:1/-1; grid-template-columns:95px 1fr; }.ex-game-page { gap:26px; }.ex-game-hero { grid-template-columns:1fr; }.ex-game-hero .ex-game-art { min-height:130px; }.ex-game-hero-copy { padding:20px 18px; }.ex-game-page > .g-shell { padding:20px 16px; }.ex-game-others ul { grid-template-columns:1fr; }.ex-plan-grid,.ex-group-grid,.ex-weekly,.ex-campus { grid-template-columns:1fr; }.ex-group:last-child { grid-column:auto; }.ex-filters { gap:14px; }.ex-filters select { max-width:100%; font-size:16px; }.ex-filters label { min-width:0; max-width:100%; }.ex-filters > span { margin-left:0; }.ex-plan-main { padding:20px; }.ex-weekly { gap:24px; }.ex-weekly-art { min-height:190px; }.ex-weekly-art > span { width:100px; height:130px; }.ex-weekly-art i { right:10%; bottom:-10px; }.ex-group { padding-bottom:12px; }.ex-campus h2 { font-size:29px; }.ex-empty { padding:22px; } }
+@media(prefers-reduced-motion:reduce) { .ex-page *, .ex-page *::before,.ex-page *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }.ex-game-page > .g-shell { animation:none; } }
+
+/* Supporting imagery: quiet layers that give each Explore moment a place without
+   taking attention away from the copy or the interaction. */
+.ex-opening { isolation:isolate; overflow:hidden; }
+.ex-opening::before { content:""; position:absolute; inset:0 0 0 42%; z-index:-1; pointer-events:none; background:linear-gradient(90deg,#2a172e 0%,#2a172ed9 28%,#2a172e70 68%,#2a172e2b 100%),url('/images/explore-campus-hero.png') center/cover; opacity:.72; }
+.ex-opening-copy,.ex-first-game { position:relative; z-index:1; }
+.ex-weekly-art { overflow:hidden; border-radius:18px; }
+.ex-weekly-art::before { content:""; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit; background:linear-gradient(120deg,#eee5edee 0%,#eee5ed76 55%,#eee5ed1a 100%),url('/images/explore-community-wall.png') center/cover; opacity:.42; }
+.ex-weekly-art > span,.ex-weekly-art > i { z-index:1; }
+
+/* Seven opening banners, one per game: same layout, each with its own accent. */
+.ex-opening { --ex-hero:#e1ff3e; }
+.ex-opening-crush { --ex-hero:#ffb3cb; }
+.ex-opening-questions { --ex-hero:#ffc97a; }
+.ex-opening-debate { --ex-hero:#c9f26b; }
+.ex-opening-hangout { --ex-hero:#8fe3cf; }
+.ex-opening-jury { --ex-hero:#ffb59a; }
+.ex-opening-blind { --ex-hero:#d9b8ff; }
+.ex-opening .ex-opening-copy .ex-kicker,.ex-opening h1 em { color:var(--ex-hero); }
+.ex-opening .ex-opening-copy > .ex-link { border-bottom-color:var(--ex-hero); }
+.ex-opening .ex-first-game-head svg { color:var(--ex-plum); }
+.ex-opening .ex-first-game { border-top:4px solid var(--ex-hero); }
+@media(prefers-reduced-motion:no-preference) { .ex-opening-copy,.ex-first-game { animation:ex-opening-in .45s ease-out both; }.ex-first-game { animation-delay:.08s; } }
+@keyframes ex-opening-in { from { opacity:.94; translate:0 5px; } to { opacity:1; translate:0 0; } }
+
+/* Each warm-up round borrows the mechanic of its game, so every banner plays differently. */
+.ex-opening { --mini-bg:#e2e5f5; --mini-accent:#6862a6; }
+.ex-opening-crush { --mini-bg:#f7e4ec; --mini-accent:#b04a74; }
+.ex-opening-questions { --mini-bg:#f6e9d6; --mini-accent:#a36534; }
+.ex-opening-debate { --mini-bg:#e9edcd; --mini-accent:#60783b; }
+.ex-opening-hangout { --mini-bg:#e0eee6; --mini-accent:#4d8077; }
+.ex-opening-jury { --mini-bg:#f3dfd8; --mini-accent:#b66c52; }
+.ex-opening-blind { --mini-bg:#eae0ed; --mini-accent:#8c527e; }
+.ex-opening .ex-first-game-head svg { width:22px; height:22px; color:var(--mini-accent); }
+.ex-mini { display:grid; gap:12px; margin-top:20px; }
+.ex-mini button { color:inherit; cursor:pointer; transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease; }
+
+/* ¿Me lío?: two people, a locked choice in between, three tiles to pick from. */
+.ex-crush-pair { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:14px; background:var(--mini-bg); }
+.ex-crush-pair > span { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; border:1px solid var(--mini-accent); border-radius:50%; background:#fffdf8; color:var(--mini-accent); font-family:"Caveat",cursive; font-size:21px; }
+.ex-crush-pair > i { flex:1; max-width:70px; border-top:2px dashed var(--mini-accent); opacity:.4; transition:opacity .3s ease; }
+.ex-crush-pair > b { display:grid; place-items:center; width:38px; height:38px; flex-shrink:0; border-radius:50%; background:var(--mini-accent); color:#fffdf8; }
+.ex-crush-pair > b svg { width:17px; height:17px; }
+.ex-crush-pair.on > i { opacity:1; border-top-style:solid; }
+.ex-crush-pair.on > b { animation:ex-pop .4s cubic-bezier(.2,.8,.2,1); }
+.ex-crush-choices { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+.ex-crush-choices button { display:grid; justify-items:center; align-content:center; gap:8px; min-height:88px; padding:14px 6px; border:1px solid #ddd4dd; border-radius:16px; background:#fffdf8; font-size:12px; font-weight:650; }
+.ex-crush-choices button svg { width:23px; height:23px; color:var(--mini-accent); }
+.ex-crush-choices button:hover { transform:translateY(-3px); border-color:var(--mini-accent); }
+.ex-crush-choices button.chosen { background:var(--mini-accent); border-color:var(--mini-accent); color:#fffdf8; }
+.ex-crush-choices button.chosen svg { color:#fffdf8; }
+
+/* Sin dar la cara: an unsigned, handwritten note and the questions as chips. */
+.ex-letter { position:relative; min-height:100px; padding:14px 60px 16px 16px; border:1px dashed var(--mini-accent); border-radius:4px 14px 14px; background:#fffdf8 repeating-linear-gradient(transparent 0 27px,#a3653424 27px 28px); transform:rotate(-1deg); }
+.ex-letter-from { display:flex; align-items:center; gap:6px; color:var(--mini-accent); font-size:9px; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
+.ex-letter-from svg { width:14px; height:14px; }
+.ex-letter p { margin-top:9px; color:#a2949c; font-family:"Caveat",cursive; font-size:23px; line-height:1.2; }
+.ex-letter.on p { color:var(--ex-plum); }
+.ex-letter-stamp { position:absolute; top:12px; right:12px; display:grid; place-items:center; width:36px; height:42px; border:2px solid var(--mini-accent); border-radius:4px; color:var(--mini-accent); font-family:"Caveat",cursive; font-size:27px; transform:rotate(6deg); }
+.ex-letter-stamp svg { width:17px; height:17px; }
+.ex-letter.on .ex-letter-stamp { background:var(--mini-accent); color:#fffdf8; animation:ex-pop .4s cubic-bezier(.2,.8,.2,1); }
+.ex-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.ex-chips button { min-height:36px; padding:8px 13px; border:1px solid #ddd4dd; border-radius:999px; background:#fffdf8; font-size:11px; line-height:1.35; text-align:left; }
+.ex-chips button:hover { border-color:var(--mini-accent); }
+.ex-chips button.chosen { border-color:var(--mini-accent); background:var(--mini-bg); font-weight:650; }
+
+/* Defiende lo indefendible: the claim as a quote, two sides and three turns. */
+.ex-opening-debate .ex-first-game h2 { font-style:italic; }
+.ex-opening-debate .ex-first-game h2::before { content:"«"; color:var(--mini-accent); }
+.ex-opening-debate .ex-first-game h2::after { content:"»"; color:var(--mini-accent); }
+.ex-versus { position:relative; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ex-versus button { display:grid; justify-items:center; align-content:center; gap:9px; min-height:98px; padding:16px 10px; border:1px solid #ddd4dd; border-radius:18px 4px 4px 18px; background:#fffdf8; font-size:13px; font-weight:700; }
+.ex-versus button + button { --mini-bg:#f6ddd6; --mini-accent:#a8503a; border-radius:4px 18px 18px 4px; }
+.ex-versus button svg { width:22px; height:22px; color:var(--mini-accent); }
+.ex-versus button:hover { border-color:var(--mini-accent); background:var(--mini-bg); }
+.ex-versus button.chosen { border-color:var(--mini-accent); background:var(--mini-accent); color:#fffdf8; }
+.ex-versus button.chosen svg { color:#fffdf8; }
+.ex-vs { position:absolute; top:50%; left:50%; display:grid; place-items:center; width:38px; height:38px; border:3px solid #fbf8ed; border-radius:50%; background:var(--ex-plum); color:#fffdf5; font-size:10px; font-weight:800; letter-spacing:.04em; translate:-50% -50%; pointer-events:none; }
+.ex-turns { display:flex; align-items:center; gap:6px; }
+.ex-turns i { width:28px; height:6px; border-radius:9px; background:#ddd4dd; transition:background .3s ease; }
+.ex-turns.on i:first-child { background:var(--mini-accent); }
+.ex-turns small { margin-left:5px; color:#756376; font-size:10px; }
+
+/* Hay hueco: limited seats, a duration switch and the time it fills. */
+.ex-seats { display:flex; align-items:center; gap:7px; padding:12px 14px; border-radius:12px; background:var(--mini-bg); color:var(--mini-accent); }
+.ex-seats svg { width:17px; height:17px; margin-right:3px; }
+.ex-seats i { width:22px; height:22px; border:2px dashed var(--mini-accent); border-radius:50%; opacity:.5; transition:background .3s ease,opacity .3s ease; }
+.ex-seats i.taken { border-style:solid; background:var(--mini-accent); opacity:1; }
+.ex-seats i.mine { border-color:var(--ex-plum); background:#e1ff3e; animation:ex-pop .4s cubic-bezier(.2,.8,.2,1); }
+.ex-seats small { margin-left:auto; font-size:11px; font-weight:700; }
+.ex-segments { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:4px; padding:4px; border-radius:999px; background:#efe9ea; }
+.ex-segments button { min-height:40px; padding:6px 8px; border-radius:999px; font-size:11px; font-weight:650; line-height:1.2; }
+.ex-segments button:hover { background:#fffdf8; }
+.ex-segments button.chosen { background:var(--mini-accent); color:#fffdf8; }
+.ex-meter { height:6px; border-radius:9px; background:#e6dfe3; overflow:hidden; }
+.ex-meter i { display:block; height:100%; border-radius:inherit; background:var(--mini-accent); transition:width .5s cubic-bezier(.2,.8,.2,1); }
+
+/* El jurado del campus: two verdicts whose bars only fill after voting. */
+.ex-mini-jury button { display:grid; grid-template-columns:96px minmax(0,1fr) 46px; align-items:center; gap:12px; min-height:56px; padding:10px 14px; border:1px solid #ddd4dd; border-radius:12px; background:#fffdf8; text-align:left; }
+.ex-mini-jury button:hover { border-color:var(--mini-accent); }
+.ex-mini-jury button.chosen { border-color:var(--mini-accent); background:var(--mini-bg); }
+.ex-verdict-label { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; }
+.ex-verdict-label svg { width:14px; height:14px; color:var(--mini-accent); }
+.ex-verdict-bar { height:10px; border-radius:9px; background:#efe6e3; overflow:hidden; }
+.ex-verdict-bar i { display:block; height:100%; border-radius:inherit; background:var(--mini-accent); transition:width .7s cubic-bezier(.2,.8,.2,1); }
+.ex-mini-jury button:nth-of-type(2) .ex-verdict-bar i { background:var(--ex-plum); }
+.ex-mini-jury strong { font-size:13px; font-variant-numeric:tabular-nums; text-align:right; }
+.ex-mini-jury > small { color:#756376; font-size:10px; }
+
+/* La cita empieza hablando: a timed chat with someone you cannot see yet. */
+.ex-mini-blind { padding:12px; border-radius:16px; background:var(--mini-bg); }
+.ex-chat-top { display:flex; align-items:center; gap:9px; }
+.ex-chat-top small { color:#6d5a72; font-size:11px; }
+.ex-mystery { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--mini-accent); color:#fffdf8; font-family:"Caveat",cursive; font-size:21px; }
+.ex-timer { display:flex; align-items:center; gap:5px; margin-left:auto; padding:5px 10px; border-radius:999px; background:#fffdf8; font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; }
+.ex-timer svg { width:13px; height:13px; color:var(--mini-accent); }
+.ex-chat { display:grid; align-content:end; gap:6px; min-height:78px; }
+.ex-bubble { max-width:86%; padding:9px 12px; border-radius:14px; font-size:12px; line-height:1.4; }
+.ex-bubble-me { justify-self:end; border-bottom-right-radius:4px; background:var(--ex-plum); color:#fffdf5; animation:ex-opening-in .3s ease-out both; }
+.ex-bubble-them { justify-self:start; display:flex; gap:4px; padding:12px; border-bottom-left-radius:4px; background:#fffdf8; animation:ex-opening-in .3s .25s ease-out both; }
+.ex-bubble-them i { width:6px; height:6px; border-radius:50%; background:var(--mini-accent); animation:ex-typing 1s ease-in-out infinite; }
+.ex-bubble-them i:nth-child(2) { animation-delay:.15s; }
+.ex-bubble-them i:nth-child(3) { animation-delay:.3s; }
+.ex-bubble-empty { justify-self:center; color:#8a7a8e; font-style:italic; }
+.ex-mini-blind .ex-chips button { border-color:transparent; }
+.ex-mini-blind .ex-chips button.chosen { border-color:var(--mini-accent); background:#fffdf8; }
+@keyframes ex-pop { from { scale:.6; } 60% { scale:1.15; } to { scale:1; } }
+@keyframes ex-typing { 0%,60%,100% { translate:0 0; opacity:.45; } 30% { translate:0 -4px; opacity:1; } }
+@media(max-width:600px) { .ex-mini { gap:10px; margin-top:16px; }.ex-crush-choices button { min-height:76px; font-size:11px; }.ex-letter p { font-size:21px; }.ex-versus button { min-height:84px; font-size:12px; }.ex-segments button { font-size:10px; }.ex-mini-jury button { grid-template-columns:74px minmax(0,1fr) 42px; gap:9px; padding:10px; } }
+
+/* ---------------------------------------------------------------------------
+   The seam between sections. Juegos, planes y proyectos llegaban de sistemas
+   distintos: Proyectos y Revista traen su propio lenguaje (`st-`) y rompían el
+   ritmo vertical, la cabecera y los filtros justo en mitad de la página. Aquí
+   se cosen: mismo pulso, misma cabecera, mismos filtros, y una regla con un
+   trazo de color que encadena cada capítulo con el siguiente.
+   Sólo dentro de .ex-page: /proyectos y la revista siguen con su diseño. */
+
+.ex-page:not(.ex-game-page) { gap:44px; }
+
+/* Cada capítulo empieza con la misma regla y su propio acento. */
+.ex-page > .ex-section, .ex-page > .st-projects { position:relative; padding-top:32px; border-top:1px solid var(--ex-line); --ex-accent:var(--tone-games); }
+.ex-page > .ex-section::before, .ex-page > .st-projects::before { content:""; position:absolute; top:-1px; left:0; width:64px; height:2px; background:var(--ex-accent); }
+.ex-page > #ex-plans { --ex-accent:var(--tone-plans); }
+.ex-page > .st-projects { --ex-accent:var(--tone-projects); }
+.ex-page > .ex-groups { --ex-accent:var(--tone-groups); }
+.ex-page > .ex-campus { --ex-accent:var(--tone-campus); }
+.ex-page > .ex-section > .ex-section-head .ex-kicker,
+.ex-page > .ex-campus > .ex-campus-intro > .ex-kicker,
+.ex-page > .st-projects > .st-heading .st-kicker { color:var(--ex-accent); }
+
+/* Proyectos y Revista heredan la tinta y la línea de Explorar. */
+.ex-page > .st-projects, .ex-page > .st-magazine-teaser { --st-ink:var(--ex-plum); --st-line:var(--ex-line); margin:0; }
+.ex-page > .ex-weekly, .ex-page > .st-magazine-teaser { margin-block:10px; }
+
+/* La cabecera de Proyectos deja de ser una tarjeta y pasa a ser la de la página. */
+.ex-page .st-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:25px; padding:0; border:0; border-radius:0; background:none; box-shadow:none; }
+.ex-page .st-heading::after { content:none; }
+.ex-page .st-heading > div { max-width:680px; }
+.community-surface .ex-page .st-heading :is(h1,h2) { font-size:clamp(25px,2.55vw,37px); letter-spacing:-.055em; line-height:1.1; margin:10px 0 0; }
+.ex-page .st-heading .st-kicker { font-size:10px; font-weight:750; letter-spacing:.12em; line-height:1.5; }
+.ex-page .st-heading p:not(.st-kicker) { max-width:430px; margin-top:12px; color:#756a79; font-size:12px; line-height:1.7; }
+.ex-page .st-heading > .st-text-action { min-height:42px; padding:0; gap:9px; border-radius:0; background:none; color:inherit; box-shadow:none; font-size:12px; font-weight:700; }
+.ex-page .st-heading > .st-text-action:hover:not(:disabled) { text-decoration:underline; text-underline-offset:6px; }
+.ex-page .st-text-action svg { width:17px; height:17px; }
+.ex-page :is(.st-projects,.st-magazine-teaser) :is(button,a,summary):focus-visible { outline:3px solid #71568c; outline-offset:5px; }
+
+/* Los filtros de Proyectos adoptan la fila con subrayado de planes y grupos. */
+.ex-page .st-filters { display:flex; align-items:flex-end; flex-wrap:wrap; gap:16px 24px; padding:0; border:0; border-radius:0; background:none; }
+.ex-page .st-filters .u-field { flex:0 1 190px; gap:5px; }
+.ex-page .st-filters .u-field label { color:#766b7b; font-size:10px; font-weight:400; }
+.community-surface .ex-page .st-filters .u-input { min-height:36px; padding:8px 20px 8px 0; border:0; border-bottom:1px solid #c6b8cb; border-radius:0; color:var(--ex-plum); font-size:12px; font-weight:600; }
+.community-surface .ex-page .st-filters select.u-input { padding-right:24px; }
+.community-surface .ex-page .st-filters .u-input::placeholder { color:#9b8f9e; font-weight:400; }
+.ex-page > .st-projects > .st-caption:not([role]) { margin:0 0 20px; color:#8a7e8c; font-size:11px; }
+.ex-page > .st-projects > .st-caption[role="status"] { margin:14px 0 0; padding-bottom:21px; border-bottom:1px solid var(--ex-line); color:#776c7a; font-size:11px; text-align:right; }
+.ex-page > .st-projects > .st-empty { padding:30px; border:1px dashed #d2c7d4; border-radius:15px; color:#7a6b7d; font-size:13px; }
+
+/* Las fichas comparten la rejilla y el radio de las de planes. */
+.ex-page .st-project-grid { gap:18px; margin-top:22px; }
+.ex-page .st-project { border-radius:18px; }
+
+@media(max-width:1100px) { .ex-page .st-heading { flex-direction:row; align-items:flex-end; } }
+@media(max-width:760px) { .ex-page .ex-filters select, .community-surface .ex-page .st-filters .u-input { font-size:16px; } }
+@media(max-width:600px) {
+  .ex-page:not(.ex-game-page) { gap:30px; }
+  .ex-page > .ex-section, .ex-page > .st-projects { padding-top:26px; }
+  .ex-page .st-heading { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:20px; }
+  .community-surface .ex-page .st-heading :is(h1,h2) { font-size:28px; }
+  .ex-page .st-heading > div { max-width:none; }
+  .ex-page .st-heading p:not(.st-kicker) { max-width:none; }
+  .ex-page .st-filters { gap:14px; }
+  .ex-page .st-filters .u-field { flex:1 1 100%; max-width:100%; }
+  .ex-page > .st-projects > .st-caption[role="status"] { text-align:left; }
+}
+
+/* Juegos Inicio↔Explorar */
+/* La ronda de calentamiento lleva sus propios colores, para que la misma tarjeta sirva fuera del banner de Explorar. */
+.ex-warmup { --ex-plum:#2a172e; --mini-bg:#e2e5f5; --mini-accent:#6862a6; }
+.ex-warmup-crush { --mini-bg:#f7e4ec; --mini-accent:#b04a74; }
+.ex-warmup-questions { --mini-bg:#f6e9d6; --mini-accent:#a36534; }
+.ex-warmup-debate { --mini-bg:#e9edcd; --mini-accent:#60783b; }
+.ex-warmup-hangout { --mini-bg:#e0eee6; --mini-accent:#4d8077; }
+.ex-warmup-jury { --mini-bg:#f3dfd8; --mini-accent:#b66c52; }
+.ex-warmup-blind { --mini-bg:#eae0ed; --mini-accent:#8c527e; }
+.ex-warmup .ex-first-game-head svg { width:22px; height:22px; color:var(--mini-accent); }
+
+/* En Inicio la tarjeta se endereza y adopta el borde y el degradado de las demás secciones. */
+.u-home-game-card { transform:none; box-shadow:none; padding:22px; border:1px solid var(--u-line); border-top:3px solid var(--game-accent); border-radius:16px; background:linear-gradient(120deg,#fbf8ed 45%,var(--game-tint)); }
+.u-home-game-card :is(h3,p) { margin:0; }
+.u-home-game-card h3 { margin:12px 0 6px; font-size:22px; letter-spacing:-.05em; line-height:1.15; }
+.u-home-game-card > p { font-size:12px; color:#756376; }
+.u-home-game-card .ex-link { color:var(--game-accent); }
+.u-home-game-card :is(button,a):focus-visible { outline:3px solid #71568c; outline-offset:4px; }
+
+/* Lo que te está esperando, encima del juego del día (solo en la demo). */
+.u-home-game-turns { display:grid; gap:8px; margin:0 0 14px; padding:0; list-style:none; }
+.u-home-game-turn { display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; min-height:44px; padding:9px 14px; border:1px solid var(--u-line); border-radius:999px; background:var(--u-paper); color:inherit; font-size:12px; text-decoration:none; transition:border-color .2s ease; }
+.u-home-game-turn:hover { border-color:var(--game-accent); }
+.u-home-game-turn > b { padding:2px 8px; border-radius:999px; background:var(--game-accent); color:#fffdf8; font-size:9px; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
+.u-home-game-turn > small { color:var(--u-muted); font-size:11px; }
+.u-home-game-turn > svg { width:15px; height:15px; margin-left:auto; color:var(--game-accent); }
+
+/* Lo que viene: los próximos juegos del día y la ronda de la cita. */
+.u-home-game-next { display:grid; gap:6px; margin-top:12px; color:var(--u-muted); font-size:11px; line-height:1.5; }
+.u-home-game-next p { display:flex; align-items:center; flex-wrap:wrap; gap:4px 12px; margin:0; }
+.u-home-game-next p > svg { width:14px; height:14px; flex:none; color:var(--game-accent); }
+.u-home-game-next strong { color:var(--u-ink); font-weight:650; }
+.u-home-game-blind-link { display:inline-flex; align-items:center; gap:5px; color:inherit; text-decoration:none; }
+.u-home-game-blind-link:hover { text-decoration:underline; text-underline-offset:4px; }
+.u-home-game-blind-link svg { width:13px; height:13px; }
+
+/* Explorar marca el juego de hoy: el mismo que abre el banner y anuncia Inicio. */
+.ex-game-today { border-color:var(--game-accent); box-shadow:0 0 0 1px var(--game-accent); }
+.ex-game-today-tag { justify-self:start; padding:2px 9px; border-radius:999px; background:var(--game-accent); color:#fffefa; font-size:9px; font-weight:750; letter-spacing:.1em; text-transform:uppercase; }
+.ex-weekly-next { font-weight:700; color:var(--ex-plum); }
+
+@media(max-width:600px) {
+  .u-home-game-card { padding:18px 16px; }
+  .u-home-game-card h3 { font-size:20px; }
+  .u-home-game-turn { border-radius:14px; }
+}
+
+/* Planes y mapa Inicio↔Explorar */
+.ex-filters .ex-place-game { display:inline-flex; align-items:center; gap:6px; margin:0; font-size:11px; color:#776c7a; }
+.ex-filters .ex-place-game .u-text-link { font-size:11px; font-weight:700; color:var(--ex-plum); }
+.ex-filters .ex-place-game .u-text-link svg { width:13px; height:13px; }
+.ex-filters .ex-place-game + [role="status"] { margin-left:16px; }
+.ex-location .ex-plan-map { display:inline-flex; align-items:center; gap:3px; margin-left:auto; padding:0; border:0; background:none; color:var(--ex-plum); font-size:11px; font-weight:700; cursor:pointer; text-underline-offset:4px; }
+.ex-location .ex-plan-map:hover { text-decoration:underline; }
+.ex-location .ex-plan-map svg { width:12px; height:12px; }
+.ex-plan:target { border-color:var(--ex-plum); box-shadow:0 0 0 1px var(--ex-plum); }
+.ex-empty-place h3 { max-width:420px; line-height:1.35; }
+@media(max-width:600px) { .ex-filters .ex-place-game { width:100%; } .ex-filters .ex-place-game + [role="status"] { margin-left:0; } }

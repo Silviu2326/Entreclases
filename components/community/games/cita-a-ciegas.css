@@ -1,0 +1,55 @@
+/* La cita empieza hablando: alias chat with a clock. Prefixed .g-blind. */
+.g-blind { --g-accent:#c2547a; --g-soft:#fbe7ee; display:grid; gap:18px; }
+
+.g-blind-bullets { display:grid; gap:12px; padding:0; margin:0; list-style:none; }
+.g-blind-bullets li { display:flex; align-items:flex-start; gap:10px; font-size:13px; line-height:1.5; }
+.g-blind-bullets li svg { flex-shrink:0; width:18px; height:18px; margin-top:2px; color:var(--g-accent); }
+
+.g-blind-round-card { display:grid; justify-items:start; gap:12px; text-align:left; }
+.g-blind-round-card p { font-size:13px; line-height:1.6; }
+
+.g-blind-demo { display:grid; gap:8px; padding:12px; border:1px dashed var(--g-accent); border-radius:14px; background:var(--g-soft); }
+.g-blind-demo > span { font-size:10px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--g-accent); }
+.g-blind-demo-row { display:flex; flex-wrap:wrap; gap:8px; }
+
+/* Chat */
+.g-blind-chat-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
+.g-blind-alias { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; }
+.g-blind-alias span { width:14px; height:14px; border-radius:50%; background:var(--g-blind-swatch,#c2547a); }
+.g-blind-alias-0 span { --g-blind-swatch:#c2547a; } .g-blind-alias-1 span { --g-blind-swatch:#b8862f; }
+.g-blind-alias-2 span { --g-blind-swatch:#4d8f6c; } .g-blind-alias-3 span { --g-blind-swatch:#3f79b0; }
+.g-blind-alias-4 span { --g-blind-swatch:#7a5cc0; } .g-blind-alias-5 span { --g-blind-swatch:#c0596e; }
+.g-blind-alias-6 span { --g-blind-swatch:#5a9b9b; } .g-blind-alias-7 span { --g-blind-swatch:#a06a3c; }
+
+.g-blind-silence { padding:10px 12px; border-radius:10px; background:#faedf0; color:#8e2544; font-size:12px; line-height:1.5; }
+
+.g-blind-icebreaker { display:flex; align-items:flex-start; gap:9px; justify-self:center; max-width:92%; padding:12px 14px; border:1px solid var(--g-line); border-radius:14px; background:var(--g-soft); font-size:12px; font-weight:650; line-height:1.5; }
+.g-blind-icebreaker svg { flex-shrink:0; width:16px; height:16px; color:var(--g-accent); margin-top:1px; }
+
+.g-blind-hints { display:grid; gap:8px; }
+.g-blind-hint { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--g-line); border-radius:12px; background:var(--g-paper); }
+.g-blind-hint > svg:first-child { flex-shrink:0; width:18px; height:18px; color:var(--g-accent); }
+.g-blind-hint-body { display:grid; gap:2px; flex:1; min-width:0; }
+.g-blind-hint-body strong { font-size:12px; }
+.g-blind-hint-body span { font-size:11px; }
+.g-blind-hint.on { border-color:var(--g-accent); background:var(--g-soft); }
+.g-blind-hint-lock { width:16px; height:16px; flex-shrink:0; color:var(--g-muted); }
+
+.g-blind-exit { justify-content:flex-end; }
+.g-blind-report { color:#8e2544; }
+
+/* Decision */
+.g-blind-waiting { text-align:center; font-size:13px; }
+
+/* Result */
+.g-blind-result { display:grid; justify-items:start; gap:14px; }
+.g-blind-profile { display:flex; align-items:center; gap:14px; }
+.g-blind-profile strong { font-size:17px; }
+.g-blind-bio { font-size:13px; line-height:1.6; }
+.g-blind-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.g-blind-chips span { padding:6px 11px; border-radius:999px; background:var(--g-soft); font-size:11px; font-weight:650; }
+.g-blind-hangout-link { display:inline-flex; align-items:center; justify-content:center; text-align:center; text-decoration:none; background:var(--g-paper); border:1px solid var(--g-line); color:inherit; }
+
+@media(max-width:480px) {
+  .g-blind-chat-head { flex-direction:column; align-items:flex-start; }
+}

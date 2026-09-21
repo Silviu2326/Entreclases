@@ -34,7 +34,7 @@ export function CampusPreview({ locale = "es" }: { locale?: Locale }) {
           <span className="preview-nav-active"><House />{tr("Inicio")}</span>
           <span><CalendarDays />{tr("Planes")}</span>
           <span><UsersRound />{tr("Grupos")}</span>
-          <span><MessageCircle />{tr("Mensajes")}</span>
+          <span><MessageCircle />{tr("Charlas")}</span>
           <span><UserRound />{tr("Perfil")}</span>
         </div>
       </div>
