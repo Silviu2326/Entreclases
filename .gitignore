@@ -56,3 +56,6 @@ next-env.d.ts
 
 # Generated TypeScript cache
 *.tsbuildinfo
+
+# Generado por scripts/bundle-waitlist-mailer.mjs; la fuente es supabase/functions/
+output/waitlist-mailer.index.ts

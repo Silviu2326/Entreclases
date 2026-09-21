@@ -41,6 +41,8 @@ La web es una exportación estática y no tiene servidor: todo el envío vive en
 
    El `POST` se protege por su cuenta con `WAITLIST_CRON_SECRET`; sin esa cabecera responde 403.
 
+   **Sin línea de comandos:** `node scripts/bundle-waitlist-mailer.mjs` pliega los cinco módulos en `output/waitlist-mailer.index.ts`, que se pega en Edge Functions → Deploy a new function → Via Editor, con el nombre `waitlist-mailer`. En los ajustes de la función, desactivar **Verify JWT**: es lo mismo que `--no-verify-jwt`, y sin ello el enlace de baja responde 401 desde cualquier bandeja de entrada. El archivo generado no se versiona; la fuente sigue siendo la carpeta.
+
 4. **Programa el reloj.** Activa `pg_cron` y `pg_net` (Database → Extensions) y ejecuta una vez, sustituyendo las dos constantes:
 
    ```sql
