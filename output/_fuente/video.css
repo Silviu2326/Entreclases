@@ -1,0 +1,15 @@
+.scene { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--cream); }
+.scene .edge { position: absolute; left: 0; right: 0; height: 24px; background: var(--lime); z-index: 50; opacity: 0; }
+.scene .full, .scene .photo { transform-origin: 50% 40%; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .22em; margin-bottom: -.22em; }
+.w > i { display: inline-block; font-style: normal; will-change: transform; }
+.scene .mark::before { transform-origin: left center; transform: scaleX(var(--m, 0)) rotate(-0.6deg); }
+.scene .pop { opacity: 0; }
+.prog { position: absolute; left: 80px; right: 80px; top: 170px; height: 8px; border-radius: 4px; background: #2a172e1f; overflow: hidden; z-index: 40; }
+.plum .prog, .onphoto .prog { background: #fffefa33; }
+.prog > b { display: block; height: 100%; background: var(--plum); transform-origin: left; transform: scaleX(0); }
+.plum .prog > b, .onphoto .prog > b { background: var(--lime); }
+.scene .top { top: 210px; }
+html.video, html.video body { width: 1080px; height: 1920px; overflow: hidden; padding: 0; display: block; background: var(--plum); }
+.scene.plum { background: var(--plum); }
+.scene.lime { background: var(--lime); }

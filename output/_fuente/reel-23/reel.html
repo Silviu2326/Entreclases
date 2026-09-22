@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 23/09</title>
+<style>
+@font-face { font-family: "Inter"; src: url("PUB/fonts/inter-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Caveat"; src: url("PUB/fonts/caveat-latin.woff2") format("woff2"); font-weight: 600; }
+:root { --plum:#2a172e; --cream:#f9f7f1; --paper:#fffefa; --lime:#e1ff3e; --muted:#6e6470; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--cream); }
+body { font-family: "Inter", Arial, sans-serif; color: var(--plum); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; background: var(--cream); }
+.layer { position: absolute; inset: 0; }
+#lime { background: var(--lime); }
+#grain { background-image: radial-gradient(#2a172e0a 1px, transparent 1.2px); background-size: 6px 6px; opacity: .6; }
+
+/* captions */
+.cap { position: absolute; left: 88px; top: 236px; width: 880px; font-size: 104px; font-weight: 850; line-height: .95; letter-spacing: -0.062em; z-index: 40; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .12em; margin-bottom: -.12em; }
+.w > i { display: inline-block; font-style: normal; will-change: transform; }
+.mark { position: relative; z-index: 0; white-space: nowrap; display: inline-block; }
+.mark::before { content: ""; position: absolute; z-index: -1; inset: 30% -3% 6%; background: var(--lime); transform-origin: left center; transform: scaleX(var(--m, 0)) rotate(-0.6deg); clip-path: polygon(0 5%, 2% 5%, 2% 0, 100% 4%, 100% 85%, 99% 85%, 99% 100%, 0 95%); }
+.mark.plum::before { background: var(--plum); inset: 8% -3% -2%; }
+.mark.plum .w > i { color: var(--lime); }
+.u-line { position: absolute; left: 0; bottom: -14px; width: 100%; height: 40px; overflow: visible; }
+
+/* class chip (scene 1) */
+#chip { position: absolute; left: 150px; top: 900px; width: 780px; background: #fff; border-radius: 28px; padding: 40px 44px; box-shadow: 0 30px 80px #2a172e1c, 0 2px 0 #2a172e10; z-index: 20; }
+#chip .eyebrow { font-size: 24px; font-weight: 750; letter-spacing: .1em; color: var(--muted); }
+#chip h3 { font-size: 52px; font-weight: 800; letter-spacing: -0.045em; margin-top: 14px; }
+#chip .row { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; font-size: 30px; color: var(--muted); font-weight: 550; }
+#chip .bar { height: 14px; border-radius: 7px; background: #efeee9; margin-top: 22px; overflow: hidden; }
+#chip .bar > b { display: block; height: 100%; background: var(--plum); border-radius: 7px; transform-origin: left; }
+#stamp { position: absolute; right: -26px; top: -34px; background: var(--lime); color: var(--plum); font-weight: 850; font-size: 30px; letter-spacing: -0.02em; padding: 14px 24px; border-radius: 14px; box-shadow: 0 10px 24px #2a172e22; }
+.note { position: absolute; font-family: "Caveat", cursive; font-weight: 600; color: var(--plum); z-index: 45; white-space: nowrap; }
+.note svg { position: absolute; }
+
+/* phone */
+#phone { position: absolute; left: 220px; top: 700px; width: 640px; height: 1310px; border-radius: 88px; background: #150b18; padding: 16px; z-index: 30; box-shadow: 0 40px 120px #2a172e40, inset 0 0 0 3px #3b2a3f; }
+#screen { position: absolute; inset: 16px; border-radius: 72px; overflow: hidden; background: #000; }
+#island { position: absolute; top: 26px; left: 50%; width: 170px; height: 48px; margin-left: -85px; border-radius: 24px; background: #000; z-index: 20; }
+.scr { position: absolute; inset: 0; }
+.status { position: absolute; top: 34px; left: 64px; right: 56px; display: flex; justify-content: space-between; font-size: 26px; font-weight: 650; z-index: 10; }
+.status .icons { display: flex; gap: 10px; align-items: center; }
+.status .icons span { display: inline-block; background: currentColor; border-radius: 3px; }
+
+#lock { background: linear-gradient(172deg, #4a2b52 0%, #2a172e 52%, #170c1a 100%); color: var(--paper); }
+#lock .date { position: absolute; top: 150px; width: 100%; text-align: center; font-size: 32px; font-weight: 550; opacity: .85; }
+#lock .clock { position: absolute; top: 186px; width: 100%; text-align: center; font-size: 196px; font-weight: 650; letter-spacing: -0.04em; line-height: 1; }
+.notif { position: absolute; left: 22px; width: 564px; min-height: 124px; border-radius: 34px; background: #ffffffd9; color: #1d1320; padding: 22px 24px 22px 108px; box-shadow: 0 8px 30px #0000002a; }
+.notif .ic { position: absolute; left: 22px; top: 24px; width: 68px; height: 68px; border-radius: 18px; display: grid; place-items: center; }
+.notif .ic.story { background: #ef7d45; }
+.notif .ic.chat { background: #38b76a; }
+.notif .ic svg { width: 38px; height: 38px; }
+.notif .t { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; display: flex; justify-content: space-between; }
+.notif .t small { font-size: 21px; font-weight: 500; color: #7a6f7c; }
+.notif .b { font-size: 25px; margin-top: 5px; letter-spacing: -0.015em; color: #3b303e; }
+#dim { background: #0b050c; }
+
+#splash { background: var(--plum); display: grid; place-items: center; }
+#splash img { width: 250px; }
+
+#app { background: var(--cream); color: var(--plum); }
+#app .wm { position: absolute; top: 108px; left: 40px; height: 46px; }
+#app .bell { position: absolute; top: 106px; right: 42px; width: 54px; height: 54px; border-radius: 50%; background: #fff; box-shadow: 0 2px 10px #2a172e14; display: grid; place-items: center; }
+#app .eyebrow { position: absolute; top: 200px; left: 40px; font-size: 22px; font-weight: 750; letter-spacing: .11em; }
+#app .eyebrow i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #9ab42d; margin-right: 10px; vertical-align: 2px; box-shadow: 0 0 0 5px #e1ff3e88; font-style: normal; }
+#app h2 { position: absolute; top: 238px; left: 40px; font-size: 54px; font-weight: 850; letter-spacing: -0.055em; }
+.card { position: absolute; left: 22px; width: 564px; background: #fff; border-radius: 30px; padding: 26px 28px 24px; box-shadow: 0 10px 34px #2a172e14, 0 1px 0 #2a172e0d; }
+.card .when { font-size: 21px; font-weight: 800; letter-spacing: .08em; color: var(--acc); }
+.card h4 { font-size: 34px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-top: 8px; }
+.card .where { font-size: 23px; color: var(--muted); margin-top: 8px; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+.people { display: flex; align-items: center; gap: 12px; font-size: 21px; color: var(--muted); font-weight: 550; }
+.avs { display: flex; }
+.av { width: 48px; height: 48px; border-radius: 50%; border: 3px solid #fff; margin-left: -12px; background-image: url("PUB/images/campus.webp"); background-size: 650%; background-color: #efeee9; }
+.avs .av:first-child { margin-left: 0; }
+.av.me { background: var(--lime); display: grid; place-items: center; font-size: 17px; font-weight: 850; color: var(--plum); background-image: none; }
+.btn { position: relative; font-size: 23px; font-weight: 800; padding: 15px 22px; border-radius: 14px; background: var(--lime); color: var(--plum); white-space: nowrap; letter-spacing: -0.02em; }
+.btn.on { background: var(--plum); color: var(--lime); }
+#tap { position: absolute; width: 90px; height: 90px; border-radius: 50%; background: #ffffff; border: 4px solid #2a172e55; z-index: 50; }
+
+#photo { background: url("PUB/images/campus.webp") center / cover no-repeat; z-index: 35; }
+#photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #2a172ecc 0%, #2a172e55 32%, transparent 55%, #2a172e33 100%); }
+
+/* end card */
+#end { background: var(--plum); z-index: 60; color: var(--cream); }
+#end .ey { position: absolute; top: 470px; left: 0; width: 100%; text-align: center; font-size: 34px; font-weight: 750; letter-spacing: .22em; color: var(--lime); }
+#end .l1 { position: absolute; top: 560px; left: 0; width: 100%; text-align: center; font-size: 112px; font-weight: 850; letter-spacing: -0.06em; }
+#end .big { position: absolute; top: 690px; left: 0; width: 100%; text-align: center; font-size: 330px; font-weight: 850; letter-spacing: -0.075em; line-height: .9; color: var(--lime); }
+#end .wm { position: absolute; top: 1180px; left: 50%; width: 560px; margin-left: -280px; filter: brightness(0) invert(96%) sepia(6%) saturate(250%); }
+#end .cta { position: absolute; top: 1330px; left: 0; width: 100%; text-align: center; font-size: 36px; font-weight: 600; color: #d8cfd9; letter-spacing: -0.02em; }
+#end .cta b { color: var(--cream); font-weight: 800; }
+#end .mk { position: absolute; width: 230px; right: -40px; top: 110px; opacity: .14; }
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="grain" class="layer"></div>
+ <div id="lime" class="layer"></div>
+
+ <!-- captions -->
+ <div class="cap" id="c1"><span class="w"><i>Sales</i></span> <span class="w"><i>de</i></span> <span class="w"><i>clase.</i></span></div>
+ <div class="cap" id="c2"><span class="w"><i>Miras</i></span> <span class="w"><i>el</i></span> <span class="w"><i>móvil.</i></span></div>
+ <div class="cap" id="c3"><span class="w"><i>Todo</i></span> <span class="w"><i>el</i></span> <span class="w"><i>mundo</i></span> <span class="w"><i>parece</i></span> <span class="mark" id="m3"><span class="w"><i>tener</i></span> <span class="w"><i>plan.</i></span></span></div>
+ <div class="cap" id="c4"><span class="w"><i>Entras</i></span> <span class="w"><i>en</i></span><br><span style="position:relative;display:inline-block"><span class="w"><i>Entreclases.</i></span><svg class="u-line" viewBox="0 0 600 40" preserveAspectRatio="none"><path id="u4" pathLength="1" d="M6 26 C 140 10, 320 8, 594 18" stroke="#2a172e" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span></div>
+ <div class="cap" id="c5"><span class="w"><i>Encuentras</i></span><br><span class="mark plum" id="m5"><span class="w"><i>a</i></span> <span class="w"><i>tu</i></span> <span class="w"><i>gente.</i></span></span></div>
+
+ <!-- scene 1 -->
+ <div id="chip">
+  <div id="stamp">Terminada ✓</div>
+  <div class="eyebrow">AULA 3.12 · FACULTAD</div>
+  <h3>Estadística II</h3>
+  <div class="bar"><b id="bar"></b></div>
+  <div class="row"><span>12:00</span><span id="chipEnd">14:00</span></div>
+ </div>
+ <div class="note" id="n1" style="left:600px;top:1260px;font-size:66px;transform:rotate(-5deg)">por fin.</div>
+
+ <!-- phone -->
+ <div id="phone">
+  <div id="screen">
+   <div id="island"></div>
+   <div class="scr" id="lock">
+    <div class="status"><span>14:07</span><span class="icons"><span style="width:26px;height:16px"></span><span style="width:40px;height:20px;border-radius:6px"></span></span></div>
+    <div class="date">miércoles, 23 de septiembre</div>
+    <div class="clock">14:07</div>
+    <div class="notif" id="nt1" style="top:470px"><div class="ic story"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4.2 2.5"/><circle cx="12" cy="12" r="3.6" fill="#fff" stroke="none"/></svg></div><div class="t">pablo.ferrer <small>ahora</small></div><div class="b">Atardecer en la Malvarrosa</div></div>
+    <div class="notif" id="nt2" style="top:610px"><div class="ic story"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4.2 2.5"/><circle cx="12" cy="12" r="3.6" fill="#fff" stroke="none"/></svg></div><div class="t">lucia_ms <small>ahora</small></div><div class="b">Terraza con los de Derecho</div></div>
+    <div class="notif" id="nt3" style="top:750px"><div class="ic chat"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></div><div class="t">Clase 2ºB <small>ahora</small></div><div class="b">Marc: ya estamos todos, ¿no?</div></div>
+    <div class="notif" id="nt4" style="top:890px"><div class="ic story"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4.2 2.5"/><circle cx="12" cy="12" r="3.6" fill="#fff" stroke="none"/></svg></div><div class="t">6 historias nuevas <small>ahora</small></div><div class="b">De gente de tu clase</div></div>
+    <div class="scr" id="dim"></div>
+   </div>
+   <div class="scr" id="splash"><img id="splashMark" src="PUB/brand/entreclase-mark.png" alt=""></div>
+   <div class="scr" id="app">
+    <div class="status" style="color:#2a172e"><span>14:08</span><span class="icons"><span style="width:26px;height:16px"></span><span style="width:40px;height:20px;border-radius:6px"></span></span></div>
+    <img class="wm" src="PUB/brand/entreclase-wordmark.png" alt="">
+    <div class="bell"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2a172e" stroke-width="2" stroke-linecap="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg></div>
+    <div class="eyebrow"><i></i>HOY · VALENCIA</div>
+    <h2>Planes para esta tarde</h2>
+    <div class="card" id="k1" style="top:336px;--acc:#4f6828">
+     <div class="when">HOY · 17:30</div>
+     <h4>Café y apuntes en la terraza</h4>
+     <div class="where">Blasco Ibáñez</div>
+     <div class="foot"><div class="people"><div class="avs"><span class="av" style="background-position:26% 44%"></span><span class="av" style="background-position:40% 42%"></span><span class="av" style="background-position:68% 43%"></span><span class="av me" id="me">TÚ</span></div><span id="k1who">Ana, Marc y 2 más</span></div><div class="btn" id="b1">Me apunto</div></div>
+    </div>
+    <div class="card" id="k2" style="top:628px;--acc:#734c92">
+     <div class="when">HOY · 19:45</div>
+     <h4>Picnic al atardecer en el Turia</h4>
+     <div class="where">Puente de las Flores</div>
+     <div class="foot"><div class="people"><div class="avs"><span class="av" style="background-position:88% 50%"></span><span class="av" style="background-position:14% 40%"></span></div><span>Sara y 5 más</span></div><div class="btn">Me apunto</div></div>
+    </div>
+    <div class="card" id="k3" style="top:920px;--acc:#2a6f8d">
+     <div class="when">SÁB · 11:00</div>
+     <h4>Vóley en la Malvarrosa</h4>
+     <div class="where">Faltan dos para el 4×4</div>
+    </div>
+    <div id="tap"></div>
+   </div>
+  </div>
+ </div>
+
+ <div class="note" id="n3" style="left:690px;top:560px;font-size:70px;transform:rotate(-6deg)">¿y yo?<svg width="90" height="110" viewBox="0 0 72 88" fill="none" style="left:40px;top:74px"><path id="a3" pathLength="1" d="M20 4c-14 26-10 54 12 76m0 0-2-18m2 18-17-7" stroke="#2a172e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div>
+
+ <div id="photo" class="layer"></div>
+
+ <!-- end card -->
+ <div id="end" class="layer">
+  <div class="ey" id="e0">VALENCIA</div>
+  <div class="l1"><span class="w"><i>Nos</i></span> <span class="w"><i>vemos</i></span> <span class="w"><i>el</i></span></div>
+  <div class="big" id="e2">28/09</div>
+  <img class="wm" id="e3" src="PUB/brand/entreclase-wordmark.png" alt="">
+  <div class="cta" id="e4">Apúntate en <b>entreclases.com</b></div>
+ </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const mix = (c1, c2, x) => { const h = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)); const A = h(c1), B = h(c2); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], x))).join(",")})`; };
+
+// scene boundaries (seconds)
+const S = [0, 2.6, 5.0, 7.8, 10.2, 13.2, 17.0];
+const DURATION = S[6];
+
+function caption(el, start, end, exit = true) {
+  const words = el.querySelectorAll(".w > i");
+  words.forEach((w, k) => {
+    const inn = eOut(p(window.__t, start + 0.08 + k * 0.07, start + 0.08 + k * 0.07 + 0.42));
+    const out = exit ? eInOut(p(window.__t, end - 0.34 + k * 0.025, end - 0.06 + k * 0.025)) : 0;
+    w.style.transform = `translateY(${(1 - inn) * 112 - out * 112}%)`;
+  });
+  el.style.visibility = window.__t >= start && window.__t <= end + 0.05 ? "visible" : "hidden";
+}
+
+window.render = function (t) {
+  window.__t = t;
+
+  // backgrounds
+  const limeR = eInOut(p(t, 7.8, 8.45)) * 2300;
+  $("#lime").style.clipPath = `circle(${limeR}px at 540px 1340px)`;
+
+  // captions
+  caption($("#c1"), S[0] + 0.15, S[1]);
+  caption($("#c2"), S[1], S[2]);
+  caption($("#c3"), S[2], S[3]);
+  caption($("#c4"), S[3] + 0.3, S[4]);
+  caption($("#c5"), S[4], S[5]);
+  $("#m3").style.setProperty("--m", eOut(p(t, 5.75, 6.15)) * (1 - p(t, 7.45, 7.7)));
+  $("#u4").style.strokeDashoffset = 1 - eOut(p(t, 9.0, 9.5)) + eInOut(p(t, 9.85, 10.1));
+  $("#m5").style.setProperty("--m", eOut(p(t, 10.55, 10.9)) * (1 - p(t, 12.85, 13.1)));
+  // caption 5 turns cream once the photo takes the screen
+  const photoIn = eInOut(p(t, 11.95, 12.55));
+  $("#c5").style.color = mix("#2a172e", "#fffefa", photoIn);
+
+  // scene 1: the class ends
+  const chipIn = eBack(p(t, 0.35, 0.95));
+  const chipOut = eInOut(p(t, 2.3, 2.75));
+  $("#chip").style.opacity = p(t, 0.35, 0.6) * (1 - chipOut);
+  $("#chip").style.transform = `translateY(${(1 - chipIn) * 120 - chipOut * 160}px) rotate(${lerp(-1.5, 1.2, chipIn)}deg) scale(${1 - chipOut * .06})`;
+  $("#bar").style.transform = `scaleX(${lerp(.82, 1, eInOut(p(t, 0.8, 1.35)))})`;
+  const st = eBack(p(t, 1.4, 1.75));
+  $("#stamp").style.transform = `scale(${st}) rotate(${lerp(-20, 6, st)}deg)`;
+  $("#stamp").style.opacity = p(t, 1.4, 1.5);
+  $("#n1").style.opacity = p(t, 1.7, 1.95) * (1 - p(t, 2.3, 2.5));
+  $("#n1").style.transform = `rotate(-5deg) translateY(${(1 - eOut(p(t, 1.7, 2.0))) * 24}px)`;
+
+  // phone
+  const ph = eBack(p(t, 2.55, 3.35));
+  const phoneY = lerp(1960, 700, ph) + Math.sin(t * 1.6) * 5 * ph;
+  $("#phone").style.transform = `translateY(${phoneY - 700}px) rotate(${lerp(8, 0, ph)}deg) scale(${1 + eInOut(p(t, 7.8, 8.4)) * 0.0})`;
+  $("#phone").style.visibility = t > 2.5 && t < 12.7 ? "visible" : "hidden";
+
+  // lock screen notifications
+  ["#nt1", "#nt2", "#nt3", "#nt4"].forEach((id, k) => {
+    const a = 5.15 + k * 0.42, x = eBack(p(t, a, a + 0.45));
+    $(id).style.opacity = p(t, a, a + 0.15);
+    $(id).style.transform = `translateY(${(1 - x) * -60}px) scale(${lerp(.9, 1, x)})`;
+  });
+  $("#dim").style.opacity = eInOut(p(t, 7.0, 7.5)) * 0.35;
+  const n3 = p(t, 6.95, 7.2) * (1 - p(t, 7.55, 7.75));
+  $("#n3").style.opacity = n3;
+  $("#n3").style.transform = `rotate(-6deg) scale(${lerp(.85, 1, eBack(p(t, 6.95, 7.3)))})`;
+  $("#a3").style.strokeDashoffset = 1 - eOut(p(t, 7.1, 7.45));
+
+  // scene 4: open the app
+  const lockOut = eInOut(p(t, 8.0, 8.35));
+  $("#lock").style.opacity = 1 - lockOut;
+  $("#lock").style.transform = `scale(${1 - lockOut * .08})`;
+  const sp = p(t, 8.05, 8.3) * (1 - p(t, 9.25, 9.55));
+  $("#splash").style.opacity = sp;
+  $("#splash").style.visibility = sp > 0 ? "visible" : "hidden";
+  const mk = eBack(p(t, 8.15, 8.7));
+  $("#splashMark").style.transform = `scale(${lerp(.3, 1, mk)}) rotate(${lerp(-90, 0, mk)}deg) scale(${1 + eInOut(p(t, 9.1, 9.5)) * 4})`;
+  const appIn = eOut(p(t, 9.3, 9.75));
+  $("#app").style.opacity = p(t, 9.25, 9.45);
+  $("#app").style.visibility = t > 9.2 ? "visible" : "hidden";
+  $("#app").style.transform = `translateY(${(1 - appIn) * 50}px)`;
+
+  // scene 5: find your people
+  ["#k1", "#k2", "#k3"].forEach((id, k) => {
+    const a = 9.5 + k * 0.16, x = eOut(p(t, a, a + 0.5));
+    $(id).style.opacity = p(t, a, a + 0.2);
+    $(id).style.transform = `translateY(${(1 - x) * 70}px)`;
+  });
+  const tapT = p(t, 10.85, 11.25);
+  $("#tap").style.left = "433px";
+  $("#tap").style.top = "471px";
+  $("#tap").style.opacity = (tapT > 0 && tapT < 1) ? (tapT < .35 ? tapT / .35 : 1 - (tapT - .35) / .65) * .65 : 0;
+  $("#tap").style.transform = `scale(${tapT < .35 ? lerp(.7, 1, tapT / .35) : lerp(1, .55, (tapT - .35) / .65)})`;
+  const on = t >= 11.0;
+  const b1 = $("#b1");
+  b1.classList.toggle("on", on);
+  b1.textContent = on ? "Vas ✓" : "Me apunto";
+  const press = p(t, 10.95, 11.2);
+  b1.style.transform = `scale(${press > 0 && press < 1 ? 1 - Math.sin(press * Math.PI) * .1 : 1})`;
+  const me = eBack(p(t, 11.1, 11.45));
+  $("#me").style.transform = `scale(${me})`;
+  $("#me").style.display = t >= 11.1 ? "grid" : "none";
+  $("#k1who").textContent = t >= 11.1 ? "Ana, Marc, 2 más y tú" : "Ana, Marc y 2 más";
+
+  // photo opens from the first card
+  const ph0 = { top: 700 + 16 + 336, left: 220 + 16 + 22, w: 564, h: 250 };
+  const top = lerp(ph0.top, 0, photoIn), left = lerp(ph0.left, 0, photoIn);
+  const right = lerp(1080 - ph0.left - ph0.w, 0, photoIn), bottom = lerp(1920 - ph0.top - ph0.h, 0, photoIn);
+  $("#photo").style.clipPath = `inset(${top}px ${right}px ${bottom}px ${left}px round ${lerp(30, 0, photoIn)}px)`;
+  $("#photo").style.opacity = p(t, 11.9, 12.05);
+  $("#photo").style.backgroundSize = `auto ${lerp(1920, 2080, p(t, 11.95, 13.4))}px`;
+  $("#photo").style.backgroundPosition = `${lerp(46, 52, p(t, 11.95, 13.4))}% 50%`;
+
+  // scene 6: end card wipes up
+  const wipe = eInOut(p(t, 13.05, 13.55));
+  $("#end").style.clipPath = `inset(${(1 - wipe) * 100}% 0 0 0)`;
+  caption($("#end .l1"), 13.45, 99, false);
+  $("#e0").style.opacity = p(t, 13.4, 13.7);
+  $("#e0").style.letterSpacing = `${lerp(.5, .22, eOut(p(t, 13.4, 14.0)))}em`;
+  const big = eBack(p(t, 13.8, 14.35));
+  $("#e2").style.opacity = p(t, 13.8, 13.95);
+  $("#e2").style.transform = `scale(${lerp(.6, 1, big)}) rotate(${lerp(-6, 0, big)}deg)`;
+  const wm = eOut(p(t, 14.35, 14.8));
+  $("#e3").style.opacity = wm;
+  $("#e3").style.transform = `translateY(${(1 - wm) * 30}px)`;
+  const cta = eOut(p(t, 14.65, 15.1));
+  $("#e4").style.opacity = cta;
+  $("#e4").style.transform = `translateY(${(1 - cta) * 24}px)`;
+};
+
+window.DURATION = DURATION;
+window.render(0);
+</script>
+</body>
+</html>

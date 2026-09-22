@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 25/09</title>
+<style>
+@font-face { font-family: "Inter"; src: url("PUB/fonts/inter-latin.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Caveat"; src: url("PUB/fonts/caveat-latin.woff2") format("woff2"); font-weight: 600; }
+:root { --plum:#2a172e; --cream:#f9f7f1; --paper:#fffefa; --lime:#e1ff3e; --muted:#6e6470; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--plum); }
+body { font-family: "Inter", Arial, sans-serif; color: var(--plum); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; background: var(--plum); }
+.layer { position: absolute; inset: 0; }
+
+/* one scene per situation */
+.sc { position: absolute; inset: 0; overflow: hidden; background: var(--plum); }
+.sc .ph { position: absolute; inset: -40px; background-size: cover; background-position: center; }
+.sc .shade { position: absolute; inset: 0; background: linear-gradient(180deg, #1c0e1fe6 0%, #2a172eb3 30%, #2a172e33 52%, transparent 64%, #2a172e55 100%); }
+.sc .edge { position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: var(--lime); }
+
+.count { position: absolute; left: 88px; top: 238px; display: flex; gap: 10px; z-index: 5; }
+.count span { width: 54px; height: 8px; border-radius: 4px; background: #fffefa40; }
+.count span.on { background: var(--lime); }
+
+/* captions: the person's own words */
+.cap { position: absolute; left: 88px; top: 300px; width: 900px; font-size: 102px; font-weight: 850; line-height: .96; letter-spacing: -0.062em; color: var(--paper); z-index: 4; }
+.cap .q { position: absolute; left: -64px; top: -6px; font-size: 130px; color: var(--lime); line-height: 1; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .12em; margin-bottom: -.12em; }
+.w > i { display: inline-block; font-style: normal; will-change: transform; }
+.mark { position: relative; z-index: 0; white-space: nowrap; display: inline-block; }
+.mark::before { content: ""; position: absolute; z-index: -1; inset: 6% -3% -4%; background: var(--lime); transform-origin: left center; transform: scaleX(var(--m, 0)) rotate(-0.6deg); clip-path: polygon(0 5%, 2% 5%, 2% 0, 100% 4%, 100% 85%, 99% 85%, 99% 100%, 0 95%); }
+.mark .w > i { color: var(--mc, var(--paper)); }
+
+/* app cards */
+.card { position: absolute; left: 110px; top: 1030px; width: 860px; background: #fff; border-radius: 40px; padding: 38px 42px 36px; box-shadow: 0 30px 90px #1c0e1f55, 0 2px 0 #2a172e10; z-index: 6; }
+.card .when { font-size: 27px; font-weight: 800; letter-spacing: .09em; color: var(--acc); display: flex; align-items: center; gap: 14px; }
+.card .when i { width: 14px; height: 14px; border-radius: 50%; background: var(--acc); }
+.card h4 { font-size: 52px; font-weight: 850; letter-spacing: -0.05em; line-height: 1.02; margin-top: 12px; }
+.card .where { font-size: 30px; color: var(--muted); margin-top: 10px; letter-spacing: -0.02em; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 30px; gap: 20px; }
+.people { display: flex; align-items: center; gap: 16px; font-size: 27px; color: var(--muted); font-weight: 550; letter-spacing: -0.02em; }
+.avs { display: flex; }
+.av { width: 64px; height: 64px; border-radius: 50%; border: 4px solid #fff; margin-left: -16px; background-image: url("PUB/images/campus.webp"); background-size: 650%; background-color: #efeee9; flex-shrink: 0; }
+.avs .av:first-child { margin-left: 0; }
+.av.me { background: var(--lime); display: grid; place-items: center; font-size: 22px; font-weight: 850; color: var(--plum); background-image: none; }
+.btn { position: relative; font-size: 30px; font-weight: 800; padding: 20px 30px; border-radius: 18px; background: var(--lime); color: var(--plum); white-space: nowrap; letter-spacing: -0.02em; }
+.btn.on { background: var(--plum); color: var(--lime); }
+.tap { position: absolute; width: 110px; height: 110px; border-radius: 50%; background: #ffffff; border: 5px solid #2a172e55; z-index: 8; opacity: 0; pointer-events: none; }
+
+/* person card */
+.who { display: flex; align-items: center; gap: 26px; }
+.who .big-av { width: 128px; height: 128px; border-radius: 50%; background-image: url("PUB/images/campus-walk.webp"); background-size: 820%; background-position: 57% 30%; flex-shrink: 0; border: 5px solid #ece0f6; }
+.who h4 { margin-top: 0; }
+.who .deg { font-size: 30px; color: var(--muted); margin-top: 6px; letter-spacing: -0.02em; }
+.why { margin-top: 28px; padding: 22px 26px; border-radius: 22px; background: #f2ecf6; font-size: 29px; line-height: 1.3; letter-spacing: -0.02em; color: #4b3553; }
+.why b { color: var(--plum); }
+
+/* project card */
+.tagnew { font-size: 24px; font-weight: 800; letter-spacing: .06em; background: var(--plum); color: var(--lime); padding: 8px 14px; border-radius: 10px; margin-left: auto; }
+.roles { display: grid; gap: 14px; margin-top: 28px; }
+.role { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; border-radius: 22px; border: 2px dashed #d9c9bc; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
+.role .slot { font-size: 27px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+.role .slot .av { width: 54px; height: 54px; margin: 0; border-width: 0; }
+.role.filled { border-style: solid; border-color: #f6ddc6; background: #fff7ee; }
+.role.filled .slot { color: var(--plum); }
+.role .ok { width: 40px; height: 40px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; font-size: 24px; font-weight: 900; }
+.mine { margin-top: 22px; font-size: 28px; color: var(--muted); letter-spacing: -0.02em; }
+.mine b { color: var(--plum); }
+
+.note { position: absolute; font-family: "Caveat", cursive; font-weight: 600; color: var(--lime); z-index: 9; white-space: nowrap; }
+
+/* closing */
+#end { background: var(--plum); z-index: 60; color: var(--cream); }
+#end .mk { position: absolute; width: 360px; right: -90px; top: 150px; opacity: .1; }
+#end .l1 { position: absolute; top: 520px; left: 88px; width: 900px; font-size: 128px; font-weight: 850; letter-spacing: -0.062em; line-height: .95; }
+#end .wm { position: absolute; top: 810px; left: 88px; width: 820px; filter: brightness(0) invert(96%) sepia(6%) saturate(250%); }
+#end .dot { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: var(--lime); left: 918px; top: 928px; }
+#end2 { position: absolute; inset: 0; background: var(--lime); z-index: 70; color: var(--plum); }
+#end2 .big { position: absolute; top: 560px; left: 0; width: 100%; text-align: center; font-size: 340px; font-weight: 850; letter-spacing: -0.075em; line-height: .9; }
+#end2 .city { position: absolute; top: 900px; left: 0; width: 100%; text-align: center; font-size: 96px; font-weight: 850; letter-spacing: -0.05em; }
+#end2 .city span { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: var(--plum); vertical-align: 22px; margin-right: 26px; }
+#end2 .wm { position: absolute; top: 1130px; left: 50%; width: 440px; margin-left: -220px; }
+#end2 .url { position: absolute; top: 1270px; left: 0; width: 100%; text-align: center; font-size: 36px; font-weight: 650; letter-spacing: -0.02em; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+ <!-- 1 · estudiar -->
+ <div class="sc" id="s1">
+  <div class="ph" style="background-image:url('PUB/images/explore-bg-cafe.webp');background-position:62% 50%"></div>
+  <div class="shade"></div>
+  <div class="count"><span class="on"></span><span></span><span></span><span></span></div>
+  <div class="cap"><span class="q">“</span><span class="w"><i>Busco</i></span> <span class="w"><i>gente</i></span><br><span class="w"><i>para</i></span> <span class="mark" style="--mc:var(--plum)"><span class="w"><i>estudiar.”</i></span></span></div>
+  <div class="card" style="--acc:#4f6828">
+   <div class="when"><i></i>JUEVES · 16:00</div>
+   <h4>Repaso para el parcial de Estadística</h4>
+   <div class="where">Biblioteca de Tarongers · caben 4</div>
+   <div class="foot"><div class="people"><div class="avs"><span class="av" style="background-position:26% 44%"></span><span class="av" style="background-position:68% 43%"></span><span class="av me">TÚ</span></div><span class="who-t" data-a="Ana y Marc" data-b="Ana, Marc y tú">Ana y Marc</span></div><div class="btn" data-a="Me apunto" data-b="Vas ✓">Me apunto</div></div>
+  </div>
+  <div class="tap"></div>
+ </div>
+
+ <!-- 2 · esta tarde -->
+ <div class="sc" id="s2">
+  <div class="ph" style="background-image:url('PUB/images/explore-bg-evening.webp');background-position:45% 50%"></div>
+  <div class="shade"></div>
+  <div class="count"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+  <div class="cap"><span class="q">“</span><span class="w"><i>Me</i></span> <span class="w"><i>apetece</i></span><br><span class="w"><i>hacer</i></span> <span class="w"><i>algo</i></span><br><span class="mark" style="--mc:var(--plum)"><span class="w"><i>esta</i></span> <span class="w"><i>tarde.”</i></span></span></div>
+  <div class="card" style="--acc:#734c92;top:1070px">
+   <div class="when"><i></i>HOY · 19:45</div>
+   <h4>Picnic al atardecer en el Turia</h4>
+   <div class="where">Puente de las Flores · trae algo de picar</div>
+   <div class="foot"><div class="people"><div class="avs"><span class="av" style="background-position:88% 50%"></span><span class="av" style="background-position:14% 40%"></span><span class="av" style="background-position:40% 42%"></span><span class="av me">TÚ</span></div><span class="who-t" data-a="Sara y 5 más" data-b="Sara, 5 más y tú">Sara y 5 más</span></div><div class="btn" data-a="Me apunto" data-b="Vas ✓">Me apunto</div></div>
+  </div>
+  <div class="tap"></div>
+ </div>
+
+ <!-- 3 · fuera de mi clase -->
+ <div class="sc" id="s3">
+  <div class="ph" style="background-image:url('PUB/images/campus-walk.webp');background-position:50% 50%"></div>
+  <div class="shade"></div>
+  <div class="count"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+  <div class="cap"><span class="q">“</span><span class="w"><i>Quiero</i></span> <span class="w"><i>conocer</i></span><br><span class="w"><i>gente</i></span> <span class="mark" style="--mc:var(--plum)"><span class="w"><i>fuera</i></span> <span class="w"><i>de</i></span></span><br><span class="mark" style="--mc:var(--plum)"><span class="w"><i>mi</i></span> <span class="w"><i>clase.”</i></span></span></div>
+  <div class="card" style="--acc:#7a6397;top:1110px">
+   <div class="who"><span class="big-av"></span><div><h4>Laia</h4><div class="deg">2º de Bellas Artes · Blasco Ibáñez</div></div></div>
+   <div class="why">Os cruzáis los martes en la cafetería. <b>Coincidís en el picnic del Turia.</b></div>
+   <div class="foot" style="justify-content:flex-end"><div class="btn" data-a="Decir hola" data-b="Hola enviado ✓">Decir hola</div></div>
+  </div>
+  <div class="tap"></div>
+ </div>
+
+ <!-- 4 · colaboradores -->
+ <div class="sc" id="s4">
+  <div class="ph" style="background-image:url('PUB/images/explore-project-table.png');background-position:50% 50%"></div>
+  <div class="shade"></div>
+  <div class="count"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+  <div class="cap"><span class="q">“</span><span class="w"><i>Tengo</i></span> <span class="w"><i>una</i></span> <span class="w"><i>idea</i></span><br><span class="w"><i>y</i></span> <span class="w"><i>necesito</i></span><br><span class="mark" style="--mc:var(--plum)"><span class="w"><i>colaboradores.”</i></span></span></div>
+  <div class="card" style="--acc:#a36131;top:1060px">
+   <div class="when"><i></i>PROYECTOS <span class="tagnew">DESDE EL 12/10</span></div>
+   <h4>Una app para cambiar apuntes</h4>
+   <div class="roles">
+    <div class="role" id="r1"><span>Diseño</span><span class="slot"><span class="lbl">Buscando…</span></span></div>
+    <div class="role" id="r2"><span>Programación</span><span class="slot"><span class="lbl">Buscando…</span></span></div>
+   </div>
+   <div class="mine">Pongo yo: <b>la idea y el guion.</b></div>
+  </div>
+ </div>
+
+ <!-- closing -->
+ <div id="end" class="layer">
+  <img class="mk" src="PUB/brand/entreclase-mark.png" alt="">
+  <div class="l1"><span class="w"><i>Para</i></span> <span class="w"><i>eso</i></span><br><span class="w"><i>existe</i></span></div>
+  <img class="wm" id="e3" src="PUB/brand/entreclase-wordmark.png" alt="Entreclases">
+  <div class="dot" id="edot"></div>
+ </div>
+ <div id="end2">
+  <div class="big" id="f1">28/09</div>
+  <div class="city" id="f2">Valencia.</div>
+  <img class="wm" id="f3" src="PUB/brand/entreclase-wordmark.png" alt="">
+  <div class="url" id="f4">entreclases.com</div>
+ </div>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+
+const D = 3.2;                 // one situation
+const START = [0, 3.2, 6.4, 9.6];
+const END_AT = 12.8;           // "Para eso existe Entreclases."
+const DATE_AT = 15.3;          // "28/09 · Valencia."
+const DURATION = 18.0;
+
+function words(el, start, t) {
+  $$(".w > i", el).forEach((w, k) => {
+    const inn = eOut(p(t, start + k * 0.06, start + k * 0.06 + 0.4));
+    w.style.transform = `translateY(${(1 - inn) * 112}%)`;
+  });
+}
+
+function scene(i, t) {
+  const el = $(`#s${i + 1}`), s = START[i], u = t - s;
+  // every scene after the first wipes up over the previous one, lime edge leading
+  const wipe = i === 0 ? 1 : eInOut(p(u, -0.02, 0.38));
+  el.style.clipPath = `inset(${(1 - wipe) * 100}% 0 0 0)`;
+  el.style.visibility = u >= -0.02 && t < END_AT + 0.6 ? "visible" : "hidden";
+  el.style.zIndex = 10 + i;
+  $(".edge", el) || el.insertAdjacentHTML("beforeend", '<div class="edge"></div>');
+  const edge = $(".edge", el);
+  edge.style.top = `${(1 - wipe) * 1920}px`; edge.style.bottom = "auto";
+  edge.style.opacity = i === 0 ? 0 : (wipe > 0 && wipe < 1 ? 1 : 0);
+
+  // photo: slow push in
+  const ph = $(".ph", el);
+  ph.style.transform = `scale(${lerp(1.12, 1.02, eOut(p(u, 0, D + 0.4)))}) translateY(${lerp(0, -24, p(u, 0, D))}px)`;
+
+  const cap = $(".cap", el);
+  words(cap, s + 0.18, t);
+  $(".q", cap).style.opacity = p(u, 0.12, 0.3);
+  $$(".mark", cap).forEach((m, k) => m.style.setProperty("--m", eOut(p(u, 0.72 + k * 0.12, 1.0 + k * 0.12))));
+
+  const card = $(".card", el);
+  const cin = eBack(p(u, 0.95, 1.45));
+  card.style.opacity = p(u, 0.95, 1.1);
+  card.style.transform = `translateY(${(1 - cin) * 180}px) rotate(${lerp(3, 0, cin)}deg)`;
+
+  // tap → state change
+  const btn = $(".btn", card);
+  if (btn) {
+    const tapAt = 1.95;
+    const r = btn.getBoundingClientRect ? null : null;
+    const tap = $(".tap", el);
+    const bt = btn.offsetTop + card.offsetTop, bl = btn.offsetLeft + card.offsetLeft;
+    // offsetTop of btn is relative to its offsetParent (card), foot is static
+    const tp = p(u, tapAt - 0.15, tapAt + 0.35);
+    tap.style.left = `${bl + btn.offsetWidth / 2 - 55}px`;
+    tap.style.top = `${bt + btn.offsetHeight / 2 - 55 + (1 - cin) * 180}px`;
+    tap.style.opacity = tp > 0 && tp < 1 ? (tp < .3 ? tp / .3 : 1 - (tp - .3) / .7) * .6 : 0;
+    tap.style.transform = `scale(${tp < .3 ? lerp(.7, 1, tp / .3) : lerp(1, .55, (tp - .3) / .7)})`;
+    const on = u >= tapAt;
+    btn.classList.toggle("on", on);
+    btn.textContent = on ? btn.dataset.b : btn.dataset.a;
+    const press = p(u, tapAt - 0.05, tapAt + 0.2);
+    btn.style.transform = `scale(${press > 0 && press < 1 ? 1 - Math.sin(press * Math.PI) * .1 : 1})`;
+    const me = $(".av.me", card);
+    if (me) {
+      me.style.display = u >= tapAt + 0.08 ? "grid" : "none";
+      me.style.transform = `scale(${eBack(p(u, tapAt + 0.08, tapAt + 0.4))})`;
+    }
+    const who = $(".who-t", card);
+    if (who) who.textContent = u >= tapAt + 0.08 ? who.dataset.b : who.dataset.a;
+  }
+}
+
+function project(t) {
+  const u = t - START[3];
+  const fill = [[1.75, "Laia · Bellas Artes", "88% 50%"], [2.3, "Pau · Informática", "40% 42%"]];
+  ["#r1", "#r2"].forEach((id, k) => {
+    const r = $(id), [at, name, pos] = fill[k], on = u >= at;
+    r.classList.toggle("filled", on);
+    const slot = $(".slot", r);
+    const html = on ? `<span class="av" style="background-position:${pos}"></span>${name}<span class="ok">✓</span>` : `<span class="lbl">Buscando…</span>`;
+    if (slot.dataset.s !== String(on)) { slot.innerHTML = html; slot.dataset.s = String(on); }
+    const x = eBack(p(u, at, at + 0.35));
+    r.style.transform = `scale(${on ? lerp(.94, 1, x) : 1})`;
+  });
+}
+
+window.render = function (t) {
+  for (let i = 0; i < 4; i++) scene(i, t);
+  project(t);
+
+  // closing 1: plum rises, "Para eso existe" + wordmark
+  const w1 = eInOut(p(t, END_AT, END_AT + 0.45));
+  $("#end").style.clipPath = `inset(${(1 - w1) * 100}% 0 0 0)`;
+  $("#end").style.visibility = t >= END_AT ? "visible" : "hidden";
+  words($("#end .l1"), END_AT + 0.35, t);
+  const wm = eOut(p(t, END_AT + 0.95, END_AT + 1.45));
+  $("#e3").style.opacity = wm;
+  $("#e3").style.transform = `translateY(${(1 - wm) * 40}px)`;
+  const d = eBack(p(t, END_AT + 1.45, END_AT + 1.75));
+  $("#edot").style.transform = `scale(${d})`;
+  $("#end .mk").style.transform = `rotate(${lerp(-30, 0, eOut(p(t, END_AT, END_AT + 2.5)))}deg)`;
+
+  // closing 2: lime takes over from the dot, date and city
+  const g = eInOut(p(t, DATE_AT, DATE_AT + 0.5));
+  $("#end2").style.clipPath = `circle(${g * 2300}px at 938px 948px)`;
+  $("#end2").style.visibility = t >= DATE_AT ? "visible" : "hidden";
+  const big = eBack(p(t, DATE_AT + 0.35, DATE_AT + 0.85));
+  $("#f1").style.opacity = p(t, DATE_AT + 0.35, DATE_AT + 0.5);
+  $("#f1").style.transform = `scale(${lerp(.6, 1, big)}) rotate(${lerp(-6, 0, big)}deg)`;
+  const c = eOut(p(t, DATE_AT + 0.7, DATE_AT + 1.1));
+  $("#f2").style.opacity = c;
+  $("#f2").style.transform = `translateY(${(1 - c) * 36}px)`;
+  const f3 = eOut(p(t, DATE_AT + 1.0, DATE_AT + 1.4));
+  $("#f3").style.opacity = f3; $("#f4").style.opacity = f3;
+  $("#f3").style.transform = `translateY(${(1 - f3) * 26}px)`;
+  $("#f4").style.transform = `translateY(${(1 - f3) * 26}px)`;
+};
+
+window.DURATION = DURATION;
+window.render(0);
+</script>
+</body>
+</html>
