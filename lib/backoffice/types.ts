@@ -125,6 +125,16 @@ export type BackofficeMetrics = {
   upcoming_plans: number;
 };
 
+export type AnalyticsSnapshot = {
+  period_days: number;
+  sessions: number;
+  members: number;
+  active_now: number;
+  avg_active_seconds: number;
+  top_pages: Array<{ path: string; sessions: number }>;
+  top_events: Array<{ event_name: string; events: number }>;
+  daily: Array<{ day: string; sessions: number; members: number; active_seconds: number }>;
+};
 export type BackofficeSnapshot = {
   role: BackofficeRole;
   metrics: BackofficeMetrics;
@@ -176,4 +186,3 @@ export const emptyBackofficeSnapshot = (role: BackofficeRole = "support"): Backo
   audit: [],
   feature_flags: [],
 });
-

@@ -1,5 +1,5 @@
 import { getAuthClient } from "@/lib/auth/client";
-import type { BackofficeRole, BackofficeSnapshot, JsonObject, RestrictionKind } from "./types";
+import type { AnalyticsSnapshot, BackofficeRole, BackofficeSnapshot, JsonObject, RestrictionKind } from "./types";
 
 export type BackofficeData = BackofficeSnapshot & {
   submissions: Array<Record<string, unknown>>;
@@ -48,3 +48,19 @@ export async function runBackofficeCommand(request: BackofficeCommand): Promise<
   return assertPayload(result.data);
 }
 
+
+export async function readAnalytics(days = 30): Promise<AnalyticsSnapshot> {
+  const result = await getAuthClient().rpc("universe_analytics_snapshot", { p_days: days });
+  if (result.error) throw result.error;
+  const value = (result.data ?? {}) as Partial<AnalyticsSnapshot>;
+  return {
+    period_days: Number(value.period_days ?? days),
+    sessions: Number(value.sessions ?? 0),
+    members: Number(value.members ?? 0),
+    active_now: Number(value.active_now ?? 0),
+    avg_active_seconds: Number(value.avg_active_seconds ?? 0),
+    top_pages: Array.isArray(value.top_pages) ? value.top_pages.map(item => ({ path: String(item.path ?? "/app"), sessions: Number(item.sessions ?? 0) })) : [],
+    top_events: Array.isArray(value.top_events) ? value.top_events.map(item => ({ event_name: String(item.event_name ?? ""), events: Number(item.events ?? 0) })) : [],
+    daily: Array.isArray(value.daily) ? value.daily.map(item => ({ day: String(item.day ?? ""), sessions: Number(item.sessions ?? 0), members: Number(item.members ?? 0), active_seconds: Number(item.active_seconds ?? 0) })) : [],
+  };
+}

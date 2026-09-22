@@ -7,11 +7,12 @@ import {
   Search, Settings2, ShieldCheck, Sparkles, Users, X,
 } from "lucide-react";
 import { createBackofficeDemo } from "@/lib/backoffice/demo";
-import { readBackoffice, runBackofficeCommand, type BackofficeCommand, type BackofficeData } from "@/lib/backoffice/client";
+import { readAnalytics, readBackoffice, runBackofficeCommand, type BackofficeCommand, type BackofficeData } from "@/lib/backoffice/client";
 import { loadBackofficeSession, persistBackofficeAction, type BackofficeAction } from "@/lib/backoffice/repository";
+import type { AnalyticsSnapshot } from "@/lib/backoffice/types";
 import "./backoffice.css";
 
-type Section = "overview" | "moderation" | "editorial" | "people" | "coins" | "settings";
+type Section = "overview" | "analytics" | "moderation" | "editorial" | "people" | "coins" | "settings";
 type CaseItem = { id: string | number; type: string; title: string; detail: string; time: string; priority: "Alta" | "Media" | "Baja"; state: "Pendiente" | "En revisión" | "Resuelto" };
 type Proposal = { id: string | number; title: string; author: string; section: string; state: "En revisión" | "Aceptada" | "Rechazada"; age: string };
 
@@ -30,6 +31,7 @@ const proposalsSeed: Proposal[] = [
 
 const nav: { id: Section; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "overview", label: "Inicio", icon: LayoutDashboard },
+  { id: "analytics", label: "Analítica", icon: BarChart3 },
   { id: "moderation", label: "Moderación", icon: ShieldCheck },
   { id: "editorial", label: "Entre líneas", icon: Newspaper },
   { id: "people", label: "Personas", icon: Users },
@@ -112,6 +114,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
   const demoMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
   const [accessError, setAccessError] = useState<string | null>(null);
   const [serverData, setServerData] = useState<BackofficeData | null>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsSnapshot | null>(null);
   const [query, setQuery] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [busyAction, setBusyAction] = useState<string | null>(null);
@@ -128,6 +131,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       queueMicrotask(() => setHydrated(true));
       return;
     }
+    void readAnalytics().then(setAnalytics).catch(() => undefined);
     void readBackoffice().then(data => {
       setServerData(data);
       const nextCases = serverCases(data);
@@ -191,6 +195,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
         {!hydrated && <div className="bo-feedback bo-feedback-loading" role="status"><span className="bo-spinner" />Cargando el estado guardado…</div>}
         {feedback && <div className={`bo-feedback bo-feedback-${feedback.kind}`} role={feedback.kind === "error" ? "alert" : "status"}>{feedback.text}<button onClick={() => setFeedback(null)} aria-label="Cerrar aviso"><X size={14} /></button></div>}
         {section === "overview" && <Overview pending={pending} cases={cases} proposals={proposals} games={games} snapshot={serverData ?? demoSnapshot} onNavigate={setSection} />}
+        {section === "analytics" && <AnalyticsPanel data={analytics} />}
         {section === "moderation" && <Moderation items={filteredCases} onResolve={resolveCase} busyAction={busyAction} />}
         {section === "editorial" && <Editorial items={filteredProposals} onState={setProposalState} busyAction={busyAction} />}
         {section === "people" && <People query={query} people={serverData?.people} />}
@@ -210,6 +215,12 @@ function Overview({ pending, cases, proposals, games, snapshot, onNavigate }: { 
   </>;
 }
 
+function AnalyticsPanel({ data }: { data: AnalyticsSnapshot | null }) {
+  if (!data) return <section className="bo-detail"><div className="bo-feedback bo-feedback-loading" role="status"><span className="bo-spinner" />Cargando analítica…</div></section>;
+  const minutes = Math.floor(data.avg_active_seconds / 60);
+  const seconds = data.avg_active_seconds % 60;
+  return <section className="bo-detail"><div className="bo-detail-intro"><span className="bo-eyebrow">USO · ÚLTIMOS {data.period_days} DÍAS</span><h2>Cómo entra y participa la comunidad.</h2><p>Datos propios y agregados. Las sesiones solo cuentan mientras la pestaña está visible.</p></div><div className="bo-metrics"><Metric label="Sesiones" value={data.sessions} detail={`${data.members} personas distintas`} tone="lime" icon={Users} /><Metric label="Ahora" value={data.active_now} detail="activas en los últimos 5 min" tone="blue" icon={BarChart3} /><Metric label="Tiempo activo" value={`${minutes}:${String(seconds).padStart(2, "0")}`} detail="media por sesión" tone="lavender" icon={ClipboardList} /></div><div className="bo-columns"><section className="bo-panel"><PanelHeading eyebrow="ENTRADAS" title="Páginas de llegada" action="Actualizar" onClick={() => window.location.reload()} /><div className="bo-analytics-list">{data.top_pages.length ? data.top_pages.map(item => <div className="bo-analytics-row" key={item.path}><strong>{item.path}</strong><span>{item.sessions} sesiones</span></div>) : <EmptyState text="Todavía no hay sesiones en este periodo." />}</div></section><section className="bo-panel"><PanelHeading eyebrow="ACCIONES" title="Qué se está usando" action="Actualizar" onClick={() => window.location.reload()} /><div className="bo-analytics-list">{data.top_events.length ? data.top_events.map(item => <div className="bo-analytics-row" key={item.event_name}><strong>{item.event_name}</strong><span>{item.events} eventos</span></div>) : <EmptyState text="Todavía no hay eventos en este periodo." />}</div></section></div></section>;
+}
 function Metric({ label, value, detail, tone, icon: Icon }: { label: string; value: string | number; detail: string; tone: string; icon: typeof BarChart3 }) { return <article className={`bo-metric bo-tone-${tone}`}><span className="bo-metric-icon"><Icon size={17} /></span><small>{label}</small><strong>{value}</strong><p>{detail}</p></article>; }
 function PanelHeading({ eyebrow, title, action, onClick }: { eyebrow: string; title: string; action: string; onClick: () => void }) { return <header className="bo-panel-heading"><div><span className="bo-eyebrow">{eyebrow}</span><h3>{title}</h3></div><button onClick={onClick}>{action}<ArrowUpRight size={15} /></button></header>; }
 function CaseRow({ item, compact = false, onResolve, busyAction }: { item: CaseItem; compact?: boolean; onResolve?: (id: string | number) => void; busyAction?: string | null }) { const busy = busyAction === `case-${item.id}`; return <article className={`bo-case-row ${item.state === "Resuelto" ? "is-resolved" : ""}`}><span className={`bo-priority bo-priority-${item.priority.toLowerCase()}`} /> <div className="bo-row-main"><small>{item.type} · {item.time}</small><strong>{item.title}</strong><p>{item.detail}</p></div><span className={`bo-state bo-state-${item.state.toLowerCase().replace(" ", "-")}`}>{item.state}</span>{!compact && item.state !== "Resuelto" && <div className="bo-row-actions"><button className="bo-primary-small" onClick={() => onResolve?.(item.id)} disabled={busy}>{busy ? <span className="bo-spinner bo-spinner-small" /> : <Check size={14} />}{busy ? "Guardando" : "Resolver"}</button><button className="bo-ghost-small" aria-label="Abrir caso"><ArrowUpRight size={14} /></button></div>}</article>; }
