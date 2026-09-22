@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
     { protocol: "https", hostname: "static.tvmaze.com" },
     { protocol: "https", hostname: "commons.wikimedia.org" },
     { protocol: "https", hostname: "m.media-amazon.com" },
+    // A YouTube piece in the showcase shows its thumbnail before anything of
+    // Google loads; the player itself only arrives when somebody taps.
+    { protocol: "https", hostname: "i.ytimg.com" },
   ] },
   poweredByHeader: false,
   trailingSlash: true,

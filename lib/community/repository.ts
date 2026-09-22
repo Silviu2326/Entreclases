@@ -1,7 +1,8 @@
 import type { CoinWallet } from "./unicoins";
 import { getAuthClient } from "../auth/client";
-import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Message } from "./types";
-import { requireText, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile } from "./validation";
+import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Message, type ShowcaseItem } from "./types";
+import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
+import { isStoredPiece, showcaseFrames } from "./showcase";
 import { faceLimits, isStoredFace, type FaceKind } from "./images";
 
 export function createCommunityRepository(userId: string): CommunityRepository {
@@ -27,6 +28,22 @@ export function createCommunityRepository(userId: string): CommunityRepository {
  // is only ever visible to a verified member. A storage hiccup costs the picture,
  // never the page.
  let faceColumns=false;
+ // The showcase ships in its own migration. Until it is applied the profile has
+ // no frame column and the table is missing: the page loads without a window,
+ // and the buttons that would write to it say so instead of failing.
+ let showcaseColumns=false;
+ // A piece behind a file is signed per read, like a face, and only for rows
+ // the database already let this member see.
+ const signPieces=async(rows:ShowcaseItem[])=>{
+  const paths=[...new Set(rows.map(row=>row.media_path).filter(isStoredPiece) as string[])];
+  if(!paths.length)return rows;
+  try{
+   const signed=await client.storage.from("universe-showcase").createSignedUrls(paths,3600);
+   if(signed.error)return rows;
+   const links=new Map((signed.data??[]).filter(item=>item.signedUrl&&item.path).map(item=>[item.path as string,item.signedUrl as string]));
+   return rows.map(row=>isStoredPiece(row.media_path)?{...row,media_url:links.get(row.media_path as string)}:row);
+  }catch{return rows;}
+ };
  const signFaces=async(rows:Profile[])=>{
   const paths=[...new Set(rows.flatMap(row=>[row.avatar_url,row.banner_url]).filter(isStoredFace) as string[])];
   if(!paths.length)return rows;
@@ -55,7 +72,7 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    const wallet=results[6].data as CoinWallet|null;
    if(!wallet||!Number.isInteger(wallet.balance)||wallet.balance<0||!Array.isArray(wallet.transactions))throw {code:"not_configured"};
    data.wallet=wallet;
-   const profileRows=results[0].data as Profile[];if(profileRows.length){tasteColumns=Object.hasOwn(profileRows[0],"favorites");faceColumns=Object.hasOwn(profileRows[0],"banner_url");}data.profiles=await signFaces(withTastes(profileRows));data.posts=results[1].data as Post[];data.groups=results[2].data as Group[];data.plans=results[3].data as Plan[];data.notes=results[4].data as Note[];data.threads=results[5].data as Thread[];
+   const profileRows=results[0].data as Profile[];if(profileRows.length){tasteColumns=Object.hasOwn(profileRows[0],"favorites");faceColumns=Object.hasOwn(profileRows[0],"banner_url");showcaseColumns=Object.hasOwn(profileRows[0],"showcase_frame");}data.profiles=await signFaces(withTastes(profileRows));data.posts=results[1].data as Post[];data.groups=results[2].data as Group[];data.plans=results[3].data as Plan[];data.notes=results[4].data as Note[];data.threads=results[5].data as Thread[];
    if(sharedGroupToken){
     const shared=check(await client.rpc("universe_shared_group",{share_uuid:sharedGroupToken}));
     const group=(Array.isArray(shared)?shared[0]:shared) as Group|undefined;
@@ -77,6 +94,8 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    data.groupMembers=groupMembers;data.planMembers=planMembers;data.comments=comments;data.likes=likes;
    // Signals arrive with their own migration. Until it is applied the forum still loads, just without them.
    data.signals=await related<Signal>("universe_post_signals","post_id",data.posts.map(p=>p.id),"post_id","user_id").catch(()=>[]);
+   // Same for the showcase: the rows that come back are exactly the ones this member may see.
+   data.showcase=showcaseColumns?await (async()=>{try{const rows=check(await client.from("universe_showcase").select("*").order("position").order("created_at",{ascending:false}).limit(400));return await signPieces((rows??[]) as ShowcaseItem[]);}catch{return [];}})():[];
    const referenced=new Set([userId,...data.posts.map(p=>p.author_id),...data.comments.map(p=>p.author_id),...data.plans.map(p=>p.creator_id),...planMembers.map(p=>p.user_id),...groupMembers.map(p=>p.user_id),...data.notes.map(n=>n.author_id),...data.threads.flatMap(t=>[t.user_a,t.user_b])]);
    data.profiles.forEach(p=>referenced.delete(p.user_id));const missing=[...referenced];
    for(let i=0;i<missing.length;i+=200){const result=check(await client.from("universe_profiles").select("*").in("user_id",missing.slice(i,i+200)));data.profiles.push(...await signFaces(withTastes(result as Profile[])));}
@@ -142,6 +161,50 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    check(await client.storage.from("universe-chat").upload(path,file,{contentType:file.type,upsert:false}));
    const result=await client.from("universe_messages").insert({thread_id:threadId,sender_id:userId,body:body.trim(),media_path:path,media_kind:media.kind});
    if(result.error){await client.storage.from("universe-chat").remove([path]);throw result.error;}
+  },
+  async saveShowcaseFrame(frame) {
+   if(!showcaseColumns)throw {code:"showcase_missing"};
+   if(!showcaseFrames.includes(frame))throw {code:"validation"};
+   const saved=check(await client.from("universe_profiles").update({showcase_frame:frame}).eq("user_id",userId).select().single()) as Profile;
+   return (await signFaces(withTastes([saved])))[0];
+  },
+  async addShowcaseItem(input,file) {
+   if(!showcaseColumns)throw {code:"showcase_missing"};
+   validateShowcase(input);
+   const needsFile=input.kind==="story"||input.kind==="media"||input.kind==="file";
+   if(needsFile!==!!file)throw {code:"validation"};
+   let media_path:string|null=null, media_kind:ShowcaseItem["media_kind"]=null;
+   if(file){
+    const media=await showcaseMedia(input.kind,file);
+    media_path=`${userId}/${crypto.randomUUID()}.${media.ext}`; media_kind=media.kind;
+    check(await client.storage.from("universe-showcase").upload(media_path,file,{contentType:file.type||"application/pdf",upsert:false}));
+   }
+   const row={owner_id:userId,kind:input.kind,title:input.title.trim(),body:input.body.trim(),url:input.kind==="link"?input.url:null,media_path,media_kind,audience:input.audience,viewers:input.audience==="chosen"?input.viewers:[]};
+   const result=await client.from("universe_showcase").insert(row).select().single();
+   if(result.error){ if(media_path)await client.storage.from("universe-showcase").remove([media_path]).catch(()=>{}); throw result.error; }
+   return (await signPieces([result.data as ShowcaseItem]))[0];
+  },
+  async updateShowcaseItem(id,patch) {
+   const current=check(await client.from("universe_showcase").select("*").eq("id",id).eq("owner_id",userId).single()) as ShowcaseItem;
+   const next={...current,...patch};
+   validateShowcase({kind:next.kind,title:next.title,body:next.body,url:next.url??undefined,audience:next.audience,viewers:next.viewers});
+   const saved=check(await client.from("universe_showcase").update({title:next.title.trim(),body:next.body.trim(),audience:next.audience,viewers:next.audience==="chosen"?next.viewers:[],position:next.position}).eq("id",id).eq("owner_id",userId).select().single()) as ShowcaseItem;
+   return (await signPieces([saved]))[0];
+  },
+  async removeShowcaseItem(item) {
+   if(item.owner_id!==userId)throw {code:"validation"};
+   // The bytes go first, as with the notes: a retry after a storage hiccup is
+   // harmless, a row without its file is not.
+   if(isStoredPiece(item.media_path))check(await client.storage.from("universe-showcase").remove([item.media_path as string]));
+   const result=await client.from("universe_showcase").delete().eq("id",item.id).eq("owner_id",userId);
+   if(result.error)throw {code:"note_cleanup"};
+  },
+  async openShowcaseFile(item) {
+   if(!isStoredPiece(item.media_path))throw {code:"invalid_file"};
+   const name=(item.title.trim()||"archivo").replace(/[\\/\u0000]/g,"-").slice(0,116)+(item.media_kind==="pdf"?".pdf":"");
+   const result=check(await client.storage.from("universe-showcase").createSignedUrl(item.media_path as string,60,item.media_kind==="pdf"?{download:name}:undefined));
+   if(!result?.signedUrl)throw {code:"invalid_file"};
+   return result.signedUrl;
   },
   dispose() {},
  };

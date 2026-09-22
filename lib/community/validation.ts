@@ -1,4 +1,5 @@
-import type { GroupInput, PlanInput, ProfileInput } from "./types";
+import type { GroupInput, PlanInput, ProfileInput, ShowcaseInput } from "./types";
+import { showcaseAudiences, showcaseKinds, showcaseLimits, type ShowcaseMediaKind } from "./showcase";
 import { campuses, interests, places, relationshipStatuses } from "./types";
 import { validTastes } from "./tastes";
 import { pickSlugs, pickPairs } from "./picks";
@@ -23,3 +24,19 @@ export function validatePlan(input: PlanInput) {
 }
 export function validateGroup(input: GroupInput) { requireText(input.name,3,80); requireText(input.description,3,600); if(typeof input.is_private!=="boolean" || !["study","leisure","projects"].includes(input.category) || !campuses.includes(input.campus as typeof campuses[number])) throw {code:"validation"}; }
 export async function validatePdf(file: File) { if(!file || !/\.pdf$/i.test(file.name) || (file.type && file.type!=="application/pdf") || file.size>10*1024*1024 || file.size<5 || await file.slice(0,5).text()!=="%PDF-") throw {code:"invalid_file"}; }
+
+/* A piece of the showcase. What each kind needs is decided here and again by the table. */
+export function validateShowcase(input: ShowcaseInput) {
+ if(!showcaseKinds.includes(input.kind) || !showcaseAudiences.includes(input.audience)) throw {code:"validation"};
+ requireText(input.title,0,showcaseLimits.title); requireText(input.body,input.kind==="note"?1:0,showcaseLimits.body);
+ if(input.kind==="link"){ let parsed:URL; try{parsed=new URL(input.url??"");}catch{throw {code:"validation"};} if(parsed.protocol!=="https:"||(input.url??"").length>showcaseLimits.url) throw {code:"validation"}; }
+ else if(input.url) throw {code:"validation"};
+ if(!Array.isArray(input.viewers) || input.viewers.length>showcaseLimits.viewers || new Set(input.viewers).size!==input.viewers.length || input.viewers.some(v=>typeof v!=="string"||!v)) throw {code:"validation"};
+ if(input.audience==="chosen" && !input.viewers.length) throw {code:"validation"};
+}
+/* Which file a piece may carry: pictures and clips as in the chat, or a PDF as in the notes. */
+export async function showcaseMedia(kind: ShowcaseInput["kind"], file: File): Promise<{ kind: ShowcaseMediaKind; ext: string }> {
+ if(kind==="file"){ await validatePdf(file); return {kind:"pdf",ext:"pdf"}; }
+ if(kind==="story"||kind==="media"){ const rule=validateChatMedia(file); return {kind:rule.kind,ext:rule.ext}; }
+ throw {code:"validation"};
+}

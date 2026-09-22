@@ -108,3 +108,8 @@ persisten. Al aplicarla empiezan a guardarse solos, sin tocar código.
 `lib/community/demo.ts` ya traen estantería y elecciones, con coincidencias
 entre ellas, para que «lo que tenéis en común» tenga algo que enseñar. Los
 cambios de la demo duran lo que dure la visita.
+
+
+## El escaparate
+
+Debajo de la tarjeta de presentación. Es la única sección del perfil con acabado propio (madera, cristal o neón) y con visibilidad por pieza. Quien mira el perfil de otra persona (desde Gente o desde «Tu gente») ve la vitrina con las piezas que la base de datos le deja ver; el dueño ve además el selector de acabado, la audiencia de cada pieza y el botón de quitar. Lo que hay que saber para operarlo está en la sección «El escaparate» del README.

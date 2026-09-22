@@ -1,8 +1,9 @@
 import { createDemoWallet } from "./demo-unicoins";
 import { emptyWallet } from "./unicoins";
 import type { Locale } from "../i18n/routes";
-import type { CommunityRepository, CommunityData, Message, Profile, RelationshipStatus } from "./types";
-import { requireText, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile } from "./validation";
+import type { CommunityRepository, CommunityData, Message, Profile, RelationshipStatus, ShowcaseItem } from "./types";
+import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
+import { showcaseFrames, showcaseLimits, type ShowcaseFrame } from "./showcase";
 import { localTaste, type Taste } from "./tastes";
 import { faceLimits, type FaceKind } from "./images";
 
@@ -89,16 +90,43 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
    {id:"plan-project",creator_id:demoUserId,title:l("Ideas en una servilleta","Idees en un tovalló"),description:l("Una hora para contar ese proyecto que lleva meses en tu cabeza.","Una hora per a contar eixe projecte que fa mesos que tens al cap."),place:"Campus de Vera · Ágora",meeting_point:l("Bajo el reloj del Ágora.","Davall del rellotge de l’Àgora."),starts_at:later(121),capacity:6,created_at:ago(20)}
   ],planMembers:[{plan_id:"plan-coffee",user_id:"demo-paula"},{plan_id:"plan-coffee",user_id:"demo-marc"},{plan_id:"plan-turia",user_id:"demo-marc"},{plan_id:"plan-turia",user_id:demoUserId},{plan_id:"plan-beach",user_id:"demo-laia"},{plan_id:"plan-albufera",user_id:"demo-aina"},{plan_id:"plan-project",user_id:demoUserId}],
   notes:[{id:"note1",author_id:"demo-laia",title:l("Estadística. Guía para empezar.","Estadística. Guia per a començar."),subject:l("Estadística","Estadística"),description:l("Un esquema de ejemplo para organizar la asignatura.","Un esquema d’exemple per a organitzar l’assignatura."),campus:"Blasco Ibáñez",file_name:"guia-estadistica-ejemplo.txt",file_path:"demo/note1",file_size:0,created_at:ago(8)},{id:"note2",author_id:"demo-nico",title:l("Antes de programar","Abans de programar"),subject:l("Programación","Programació"),description:l("Lista de ejemplo para pensar un problema antes de escribir código.","Llista d’exemple per a pensar un problema abans d’escriure codi."),campus:"Vera",file_name:"guia-programacion-ejemplo.txt",file_path:"demo/note2",file_size:0,created_at:ago(26)}],
+  // The showcases. Álex owns four; the others cover every audience so the demo
+  // shows what a viewer is and is not handed. Álex has chatted with Paula and
+  // shares a campus with Marc; Laia chose Álex by hand.
+  showcase:[
+   {id:"sc-alex-yt",owner_id:demoUserId,kind:"link",title:l("El vídeo que le pongo a todo el mundo","El vídeo que li pose a tothom"),body:l("Diez minutos que explican mejor la macro que todo el tema 2.","Deu minuts que expliquen millor la macro que tot el tema 2."),url:"https://www.youtube.com/watch?v=aircAruvnKk",audience:"everyone",viewers:[],position:0,created_at:ago(30)},
+   {id:"sc-alex-note",owner_id:demoUserId,kind:"note",title:l("Regla de la semana","Regla de la setmana"),body:l("Un café con alguien nuevo cada jueves. Sin excusas y sin agenda.","Un café amb algú nou cada dijous. Sense excuses i sense agenda."),audience:"campus",viewers:[],position:1,created_at:ago(50)},
+   {id:"sc-alex-story",owner_id:demoUserId,kind:"story",title:l("Turia, 19:40","Túria, 19:40"),body:l("Salimos de clase para ir a casa. Acabamos aquí.","Eixim de classe per a anar a casa. Acabem ací."),media_path:"/images/campus-walk.webp",media_kind:"image",media_url:"/images/campus-walk.webp",audience:"contacts",viewers:[],position:2,created_at:ago(70)},
+   {id:"sc-alex-file",owner_id:demoUserId,kind:"file",title:l("Macro · esquema del tema 3","Macro · esquema del tema 3"),body:l("Solo para mí, de momento. Cuando esté limpio lo abro.","Només per a mi, de moment. Quan estiga net l’òbric."),media_path:"demo/showcase-apuntes",media_kind:"pdf",audience:"only_me",viewers:[],position:3,created_at:ago(90)},
+   {id:"sc-paula-yt",owner_id:"demo-paula",kind:"link",title:l("Cómo se dibuja una silla","Com es dibuixa una cadira"),body:"",url:"https://youtu.be/9bZkp7q19f0",audience:"everyone",viewers:[],position:0,created_at:ago(20)},
+   {id:"sc-paula-story",owner_id:"demo-paula",kind:"story",title:l("Benimaclet, jueves","Benimaclet, dijous"),body:l("Cuadernos fuera, móviles boca abajo.","Quaderns fora, mòbils cap per avall."),media_path:"/images/campus.webp",media_kind:"image",media_url:"/images/campus.webp",audience:"contacts",viewers:[],position:1,created_at:ago(40)},
+   {id:"sc-paula-note",owner_id:"demo-paula",kind:"note",title:l("Ideas que no enseño","Idees que no mostre"),body:l("Todavía no.","Encara no."),audience:"only_me",viewers:[],position:2,created_at:ago(60)},
+   {id:"sc-nico-link",owner_id:"demo-nico",kind:"link",title:l("Lo que estoy construyendo","El que estic construint"),body:l("Código abierto. Se acepta que lo rompas.","Codi obert. S’accepta que el trenques."),url:"https://github.com/entreclases",audience:"everyone",viewers:[],position:0,created_at:ago(25)},
+   {id:"sc-nico-note",owner_id:"demo-nico",kind:"note",title:l("Solo para Vera","Només per a Vera"),body:l("Jueves en el Ágora, 17:00. Traed portátil.","Dijous a l’Àgora, 17:00. Porteu portàtil."),audience:"campus",viewers:[],position:1,created_at:ago(35)},
+   {id:"sc-laia-note",owner_id:"demo-laia",kind:"note",title:l("Para Álex","Per a Àlex"),body:l("El tema 4 te lo explico yo. Martes, biblioteca de Blasco.","El tema 4 t’ho explique jo. Dimarts, biblioteca de Blasco."),audience:"chosen",viewers:[demoUserId],position:0,created_at:ago(12)},
+   {id:"sc-marc-note",owner_id:"demo-marc",kind:"note",title:l("Pachanga de los viernes","Patxanga dels divendres"),body:l("18:30, pistas de Tarongers. Se juega a lo que salga.","18:30, pistes de Tarongers. Es juga al que isca."),audience:"everyone",viewers:[],position:0,created_at:ago(15)},
+   {id:"sc-aina-media",owner_id:"demo-aina",kind:"media",title:l("Albufera, jueves pasado","Albufera, dijous passat"),body:"",media_path:"/images/campus.webp",media_kind:"image",media_url:"/images/campus.webp",audience:"everyone",viewers:[],position:0,created_at:ago(48)},
+  ] as ShowcaseItem[],
   threads:[{id:"thread-paula",user_a:demoUserId,user_b:"demo-paula",created_at:ago(1)}]
  };
+ const frameById:Record<string,ShowcaseFrame>={[demoUserId]:"madera","demo-paula":"cristal","demo-marc":"cristal","demo-laia":"madera","demo-nico":"neon","demo-aina":"neon"};
+ data.profiles.forEach(p=>{p.showcase_frame=frameById[p.user_id]??"madera";});
  const coins=createDemoWallet(data.planMembers.filter(m=>m.user_id===demoUserId).map(m=>m.plan_id),data.comments.filter(m=>m.author_id===demoUserId).map(m=>m.post_id));
- const texts:Record<string,string>={"demo/note1":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nEstadística: por dónde empezar\n1. Identifica la población y la muestra.\n2. Clasifica las variables.\n3. Resume los datos con tablas y gráficos.\n4. Compara media, mediana y dispersión.\n5. Anota las dudas para compartirlas en el grupo.\n\nNo son apuntes oficiales ni material de una asignatura real.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nEstadística: per on començar\n1. Identifica la població i la mostra.\n2. Classifica les variables.\n3. Resumix les dades amb taules i gràfics.\n4. Compara mitjana, mediana i dispersió.\n5. Anota els dubtes per a compartir-los al grup.\n\nNo són apunts oficials ni material d’una assignatura real."),"demo/note2":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nAntes de programar\n1. Escribe el problema con tus palabras.\n2. Define entradas y salidas.\n3. Prueba un caso pequeño a mano.\n4. Divide el problema en pasos.\n5. Piensa qué debería pasar si no hay datos.\n\nMaterial ilustrativo de la demo.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nAbans de programar\n1. Escriu el problema amb les teues paraules.\n2. Definix entrades i eixides.\n3. Prova un cas menut a mà.\n4. Dividix el problema en passos.\n5. Pensa què hauria de passar si no hi ha dades.\n\nMaterial il·lustratiu de la demo.")};
+ const texts:Record<string,string>={"demo/showcase-apuntes":l("ENTRECLASES · ESQUEMA DE EJEMPLO\n\nMacro, tema 3\n1. Oferta y demanda agregadas.\n2. Qué mueve cada curva.\n3. Tres ejemplos con números.\n\nNo es material oficial de ninguna asignatura.","ENTRECLASES · ESQUEMA D’EXEMPLE\n\nMacro, tema 3\n1. Oferta i demanda agregades.\n2. Què mou cada corba.\n3. Tres exemples amb números.\n\nNo és material oficial de cap assignatura."),"demo/note1":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nEstadística: por dónde empezar\n1. Identifica la población y la muestra.\n2. Clasifica las variables.\n3. Resume los datos con tablas y gráficos.\n4. Compara media, mediana y dispersión.\n5. Anota las dudas para compartirlas en el grupo.\n\nNo son apuntes oficiales ni material de una asignatura real.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nEstadística: per on començar\n1. Identifica la població i la mostra.\n2. Classifica les variables.\n3. Resumix les dades amb taules i gràfics.\n4. Compara mitjana, mediana i dispersió.\n5. Anota els dubtes per a compartir-los al grup.\n\nNo són apunts oficials ni material d’una assignatura real."),"demo/note2":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nAntes de programar\n1. Escribe el problema con tus palabras.\n2. Define entradas y salidas.\n3. Prueba un caso pequeño a mano.\n4. Divide el problema en pasos.\n5. Piensa qué debería pasar si no hay datos.\n\nMaterial ilustrativo de la demo.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nAbans de programar\n1. Escriu el problema amb les teues paraules.\n2. Definix entrades i eixides.\n3. Prova un cas menut a mà.\n4. Dividix el problema en passos.\n5. Pensa què hauria de passar si no hi ha dades.\n\nMaterial il·lustratiu de la demo.")};
  const files=new Map<string,Blob>(Object.entries(texts).map(([key,value])=>[key,new Blob([value],{type:"text/plain;charset=utf-8"})]));
  data.notes.forEach(note=>{note.file_size=files.get(note.file_path)!.size;});
  let chats:Message[]=[{id:"message1",thread_id:"thread-paula",sender_id:"demo-paula",body:l("¡Ey! He montado un café en Benimaclet. ¿Te vienes? ☕","Ei! He muntat un café a Benimaclet. Vens? ☕"),created_at:ago(1)}];
  const urls=new Set<string>(), id=()=>crypto.randomUUID(), stamp=()=>new Date().toISOString();
+ // What the database would hand a viewer: own pieces, then by audience.
+ const visibleTo=(viewer:string)=>{
+  const campusOf=(who:string)=>data.profiles.find(p=>p.user_id===who)?.campus;
+  return (piece:ShowcaseItem)=>piece.owner_id===viewer||piece.audience==="everyone"
+   ||(piece.audience==="campus"&&campusOf(piece.owner_id)===campusOf(viewer))
+   ||(piece.audience==="contacts"&&data.threads.some(t=>(t.user_a===piece.owner_id&&t.user_b===viewer)||(t.user_b===piece.owner_id&&t.user_a===viewer)))
+   ||(piece.audience==="chosen"&&piece.viewers.includes(viewer));
+ };
  return {
-  async read(){return structuredClone({...data,wallet:coins.snapshot()});},
+  async read(){return structuredClone({...data,showcase:data.showcase.filter(visibleTo(demoUserId)),wallet:coins.snapshot()});},
   // The demo keeps the picture in the tab: an object URL that lives as long as
   // the visit, so nothing of yours is ever uploaded from the example profile.
   async saveFace(kind:FaceKind,image:Blob|null){
@@ -135,6 +163,41 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
   async messages(threadId){return structuredClone(chats.filter(m=>m.thread_id===threadId));},
   // In the demo a file never leaves the browser: it is shown from an object URL for this visit only.
   async sendMessage(threadId,body,file){const media=file?validateChatMedia(file):null;requireText(body,media?0:1,2000);if(!data.threads.some(t=>t.id===threadId))throw{code:"validation"};chats.push({id:id(),thread_id:threadId,sender_id:demoUserId,body:body.trim(),...(file&&media?{media_path:file.name,media_kind:media.kind,media_url:URL.createObjectURL(file)}:{}),created_at:stamp()});},
+  async saveShowcaseFrame(frame){if(!showcaseFrames.includes(frame))throw{code:"validation"};data.profiles[0]={...data.profiles[0],showcase_frame:frame};return structuredClone(data.profiles[0]);},
+  async addShowcaseItem(input,file){
+   validateShowcase(input);
+   const needsFile=input.kind==="story"||input.kind==="media"||input.kind==="file";
+   if(needsFile!==!!file)throw{code:"validation"};
+   if(data.showcase.filter(p=>p.owner_id===demoUserId).length>=showcaseLimits.pieces)throw{code:"validation"};
+   let media_path:string|null=null,media_kind:ShowcaseItem["media_kind"]=null,media_url:string|undefined;
+   if(file){
+    const media=await showcaseMedia(input.kind,file);media_kind=media.kind;
+    if(media.kind==="pdf"){media_path="demo/"+id();files.set(media_path,file);}
+    else{media_url=URL.createObjectURL(file);urls.add(media_url);media_path=media_url;}
+   }
+   const piece:ShowcaseItem={id:id(),owner_id:demoUserId,kind:input.kind,title:input.title.trim(),body:input.body.trim(),url:input.kind==="link"?input.url:null,media_path,media_kind,media_url,audience:input.audience,viewers:input.audience==="chosen"?[...input.viewers]:[],position:0,created_at:stamp()};
+   data.showcase.unshift(piece);return structuredClone(piece);
+  },
+  async updateShowcaseItem(pieceId,patch){
+   const index=data.showcase.findIndex(p=>p.id===pieceId&&p.owner_id===demoUserId);if(index<0)throw{code:"validation"};
+   const next={...data.showcase[index],...patch};
+   validateShowcase({kind:next.kind,title:next.title,body:next.body,url:next.url??undefined,audience:next.audience,viewers:next.viewers});
+   next.title=next.title.trim();next.body=next.body.trim();if(next.audience!=="chosen")next.viewers=[];
+   data.showcase[index]=next;return structuredClone(next);
+  },
+  async removeShowcaseItem(item){
+   if(item.owner_id!==demoUserId)throw{code:"validation"};
+   const piece=data.showcase.find(p=>p.id===item.id);if(!piece)return;
+   if(piece.media_url?.startsWith("blob:")){URL.revokeObjectURL(piece.media_url);urls.delete(piece.media_url);}
+   if(piece.media_path)files.delete(piece.media_path);
+   data.showcase=data.showcase.filter(p=>p.id!==item.id);
+  },
+  async openShowcaseFile(item){
+   const file=item.media_path?files.get(item.media_path):undefined;
+   if(file){const url=URL.createObjectURL(file);urls.add(url);return url;}
+   if(item.media_url)return item.media_url;
+   throw{code:"invalid_file"};
+  },
   dispose(){urls.forEach(url=>URL.revokeObjectURL(url));urls.clear();files.clear();chats=[];}
  };
 }

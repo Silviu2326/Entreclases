@@ -1,0 +1,100 @@
+/* The showcase: a shop window on the profile. Everything below is scoped to
+   .sc, and the three finishes only move the variables. */
+.sc { container-type:inline-size; --sc-frame:#8a5a2b; --sc-frame-2:#5e3a17; --sc-back:#f3ead8; --sc-back-2:#e4d6ba; --sc-shelf:#a2703a; --sc-shelf-edge:#5c3a14; --sc-ink:#2a172e; --sc-muted:#6e6357; --sc-tag:#f6e7c8; --sc-tag-ink:#4a3418; --sc-glass:rgba(255,255,255,.30); --sc-accent:#8a5a2b; --sc-card:#fffdf7; --sc-card-line:#e2d6bf; --sc-tools:rgba(0,0,0,.035); padding:20px; }
+.sc-cristal { --sc-frame:#141216; --sc-frame-2:#2b2630; --sc-back:#1f1a24; --sc-back-2:#2a2331; --sc-shelf:#6a6172; --sc-shelf-edge:#0d0b0f; --sc-ink:#f6f2ee; --sc-muted:#b9b0bd; --sc-tag:#f6f2ee; --sc-tag-ink:#141216; --sc-glass:rgba(255,255,255,.16); --sc-accent:#d9c7a3; --sc-card:#2b2530; --sc-card-line:#443c4b; --sc-tools:rgba(255,255,255,.05); }
+.sc-neon { --sc-frame:#1a1122; --sc-frame-2:#2a1c36; --sc-back:#160d1e; --sc-back-2:#1f1329; --sc-shelf:#e1ff3e; --sc-shelf-edge:#7f9418; --sc-ink:#f9f7f1; --sc-muted:#c3b9cc; --sc-tag:#e1ff3e; --sc-tag-ink:#1a1122; --sc-glass:rgba(225,255,62,.09); --sc-accent:#e1ff3e; --sc-card:#22162d; --sc-card-line:#3b2a4a; --sc-tools:rgba(255,255,255,.05); }
+
+.sc-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+.sc-head h2 { font-size:22px; letter-spacing:-.03em; margin:4px 0 6px; }
+.sc-frames { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:16px; }
+.sc-swatch { display:flex; gap:10px; align-items:center; text-align:left; padding:10px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-paper); color:var(--u-ink); font:inherit; cursor:pointer; }
+.sc-swatch.is-on { border-color:var(--u-blue); box-shadow:0 0 0 2px var(--u-blue); }
+.sc-swatch strong { display:block; font-size:13px; } .sc-swatch small { display:block; font-size:11px; color:var(--u-muted); line-height:1.35; }
+.sc-swatch-chip { width:36px; height:36px; border-radius:7px; flex-shrink:0; border:5px solid; }
+.sc-swatch-madera .sc-swatch-chip { border-color:#8a5a2b; background:#f3ead8; }
+.sc-swatch-cristal .sc-swatch-chip { border-color:#141216; background:linear-gradient(135deg,#2a2331,#4a4152 55%,#2a2331); }
+.sc-swatch-neon .sc-swatch-chip { border-color:#1a1122; background:#160d1e; box-shadow:inset 0 0 0 2px #e1ff3e, inset 0 0 10px #e1ff3e; }
+
+/* The window itself: a thick frame, a pane with a reflection, an awning on
+   top and a sill at the bottom. The pieces stand on shelves inside. */
+.sc-window { position:relative; margin-top:18px; padding:28px 18px 0; border:14px solid var(--sc-frame); border-radius:10px; background:linear-gradient(180deg,var(--sc-back),var(--sc-back-2)); color:var(--sc-ink); box-shadow:inset 0 0 0 2px var(--sc-frame-2), inset 0 30px 60px -30px rgba(0,0,0,.35); overflow:hidden; }
+.sc-madera .sc-window { border-image:repeating-linear-gradient(94deg,#8a5a2b 0 7px,#764a20 7px 10px,#9a6a37 10px 18px,#83552a 18px 21px) 14; }
+.sc-cristal .sc-window { box-shadow:inset 0 0 0 1px #8b7a55, inset 0 40px 80px -40px rgba(255,255,255,.28); }
+.sc-neon .sc-window { box-shadow:0 0 0 2px var(--sc-accent), 0 0 28px rgba(225,255,62,.45), inset 0 0 0 2px var(--sc-frame-2), inset 0 0 60px rgba(225,255,62,.08); }
+.sc-awning { position:absolute; inset:0 0 auto 0; height:14px; background:repeating-linear-gradient(90deg,var(--sc-accent) 0 22px,transparent 22px 44px); opacity:.6; }
+.sc-cristal .sc-awning { height:2px; background:linear-gradient(90deg,transparent,var(--sc-accent),transparent); opacity:.8; }
+.sc-neon .sc-awning { height:3px; background:var(--sc-accent); opacity:1; box-shadow:0 0 14px var(--sc-accent); }
+.sc-glass { position:absolute; inset:0; pointer-events:none; z-index:2; background:linear-gradient(115deg,transparent 28%,var(--sc-glass) 40%,transparent 50%,transparent 58%,var(--sc-glass) 64%,transparent 70%); }
+.sc-sill { height:14px; margin:18px -18px 0; background:linear-gradient(180deg,var(--sc-shelf),var(--sc-shelf-edge)); box-shadow:0 -6px 12px -6px rgba(0,0,0,.45); }
+.sc-window .u-muted { color:var(--sc-muted); }
+
+.sc-shelves { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:26px 18px; position:relative; z-index:1; }
+.sc-piece { position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:12px; }
+/* Each piece stands on its own length of shelf; side by side they read as one. */
+.sc-piece::after { content:""; position:absolute; left:-9px; right:-9px; bottom:0; height:11px; background:linear-gradient(180deg,var(--sc-shelf),var(--sc-shelf-edge)); border-radius:2px; box-shadow:0 7px 12px -4px rgba(0,0,0,.5); }
+.sc-neon .sc-piece::after { box-shadow:0 0 14px rgba(225,255,62,.55); height:4px; }
+/* A glass ledge: a light along the top edge is what makes it read as a shelf. */
+.sc-cristal .sc-piece::after, .sc-cristal .sc-sill { box-shadow:0 7px 12px -4px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.4); }
+.sc-tag { position:absolute; top:-9px; left:12px; z-index:3; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; background:var(--sc-tag); color:var(--sc-tag-ink); font-size:10px; font-weight:750; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px 4px 6px; border-radius:3px; box-shadow:0 2px 4px rgba(0,0,0,.3); }
+.sc-tag::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--sc-tag-ink); opacity:.45; }
+.sc-tag svg { width:12px; height:12px; } .sc-tag-audience { margin-left:3px; opacity:.75; }
+.sc-neon .sc-tag { box-shadow:0 0 12px rgba(225,255,62,.6); }
+.sc-piece-card { position:relative; background:var(--sc-card); border:1px solid var(--sc-card-line); border-radius:8px 8px 4px 4px; box-shadow:0 10px 18px -10px rgba(0,0,0,.55); overflow:hidden; color:var(--sc-ink); }
+.sc-piece-card p { margin:0; }
+
+.sc-video { position:relative; aspect-ratio:16/9; background:#000; }
+.sc-video img, .sc-video iframe { width:100%; height:100%; object-fit:cover; display:block; border:0; }
+.sc-play { position:relative; width:100%; height:100%; padding:0; border:0; background:#000; cursor:pointer; }
+.sc-play-badge { position:absolute; inset:0; display:grid; place-items:center; }
+.sc-play-badge span { width:54px; height:54px; border-radius:50%; background:var(--sc-accent); color:var(--sc-tag-ink); display:grid; place-items:center; box-shadow:0 8px 20px rgba(0,0,0,.45); transition:transform 150ms; }
+.sc-play:hover .sc-play-badge span { transform:scale(1.07); }
+.sc-caption { padding:11px 13px; font-size:13px; line-height:1.45; } .sc-caption strong { display:block; letter-spacing:-.01em; } .sc-caption p { margin-top:4px; color:var(--sc-muted); }
+.sc-link { display:block; padding:16px 14px; color:inherit; text-decoration:none; }
+.sc-link-host { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--sc-muted); } .sc-link-host svg { width:13px; height:13px; }
+.sc-link strong { display:block; margin:8px 0 4px; font-size:15px; letter-spacing:-.02em; overflow-wrap:anywhere; } .sc-link p { font-size:13px; color:var(--sc-muted); }
+.sc-link-open { display:inline-flex; align-items:center; gap:5px; margin-top:12px; font-size:12px; font-weight:650; color:var(--sc-accent); } .sc-link-open svg { width:13px; height:13px; }
+/* A note is a paper sheet pinned slightly off square; neighbours lean the other way. */
+.sc-note { position:relative; display:block; width:100%; min-height:150px; padding:20px 14px 14px; text-align:left; background:#fff8dc; color:#2a172e; border:0; border-radius:2px; font:inherit; cursor:pointer; transform:rotate(-1.3deg); box-shadow:0 8px 14px -8px rgba(0,0,0,.5); }
+.sc-piece-odd .sc-note { transform:rotate(1.1deg); background:#f2f7ff; }
+.sc-note strong { display:block; margin-bottom:6px; font-size:15px; letter-spacing:-.02em; }
+.sc-note p { font-size:13px; line-height:1.45; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.sc-pin { position:absolute; top:-7px; right:22px; width:14px; height:14px; border-radius:50%; background:#c0392b; box-shadow:0 2px 3px rgba(0,0,0,.4), inset -2px -2px 3px rgba(0,0,0,.25); }
+.sc-note-full { white-space:pre-wrap; line-height:1.55; font-size:15px; }
+.sc-piece-story .sc-piece-card { max-width:200px; margin:0 auto; }
+.sc-story, .sc-media { margin:0; }
+.sc-story img, .sc-story video { aspect-ratio:9/16; width:100%; max-height:290px; object-fit:cover; display:block; }
+.sc-media img, .sc-media video { aspect-ratio:4/3; width:100%; object-fit:cover; display:block; }
+.sc-story figcaption, .sc-media figcaption { padding:10px 12px; font-size:13px; line-height:1.4; } .sc-story figcaption strong, .sc-media figcaption strong { display:block; }
+.sc-story figcaption span, .sc-media figcaption span { color:var(--sc-muted); }
+.sc-media-missing { display:grid; place-items:center; aspect-ratio:4/3; color:var(--sc-muted); } .sc-media-missing svg { width:34px; height:34px; }
+.sc-file { padding:16px 14px; display:grid; gap:12px; } .sc-file > svg { width:36px; height:36px; color:var(--sc-accent); }
+.sc-file strong { display:block; font-size:15px; letter-spacing:-.02em; } .sc-file p { margin-top:4px; font-size:13px; color:var(--sc-muted); }
+.sc-piece-tools { display:flex; align-items:center; gap:4px; padding:8px 8px 8px 10px; border-top:1px solid var(--sc-card-line); background:var(--sc-tools); }
+.sc-piece-tools select { flex:1; min-width:0; min-height:34px; font:inherit; font-size:12px; border-radius:6px; border:1px solid var(--sc-card-line); background:var(--sc-card); color:var(--sc-ink); padding:0 8px; }
+.sc-piece-tools .u-icon-button { width:34px; height:34px; color:var(--sc-muted); }
+/* The shared buttons carry the page ink; on the two dark finishes they need the window ink. */
+.sc-cristal .sc-piece-card .u-secondary, .sc-neon .sc-piece-card .u-secondary { color:var(--sc-ink); border-color:var(--sc-card-line); background:transparent; }
+.sc-cristal .sc-piece-card .u-secondary:hover, .sc-neon .sc-piece-card .u-secondary:hover { background:rgba(255,255,255,.07); color:var(--sc-ink); }
+.sc-cristal .sc-piece-tools .u-icon-button, .sc-neon .sc-piece-tools .u-icon-button { color:var(--sc-ink); opacity:.65; }
+.sc-cristal .sc-piece-tools .u-icon-button:hover, .sc-neon .sc-piece-tools .u-icon-button:hover { opacity:1; background:rgba(255,255,255,.08); color:var(--sc-ink); }
+.sc-empty { position:relative; z-index:1; text-align:center; padding:36px 12px 34px; } .sc-empty svg { width:30px; height:30px; color:var(--sc-accent); }
+.sc-empty h3 { font-size:18px; margin:10px 0 4px; letter-spacing:-.02em; } .sc-empty p { color:var(--sc-muted); font-size:13px; }
+.sc-foot { margin-top:12px; }
+
+.sc-kinds { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
+.sc-kind { display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 6px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-paper); color:var(--u-ink); font:inherit; font-size:12px; font-weight:650; cursor:pointer; }
+.sc-kind svg { width:18px; height:18px; color:var(--u-muted); } .sc-kind.is-on { border-color:var(--u-blue); box-shadow:0 0 0 2px var(--u-blue); } .sc-kind.is-on svg { color:var(--u-blue); }
+.sc-kind-help { display:flex; align-items:center; gap:7px; } .sc-kind-help svg { width:14px; height:14px; flex-shrink:0; }
+.sc-file-field span { display:block; font-size:13px; font-weight:600; margin-bottom:6px; } .sc-file-field input { display:block; width:100%; font:inherit; font-size:13px; } .sc-file-field small { display:block; margin-top:6px; }
+.sc-people { border:1px solid var(--u-line); border-radius:10px; padding:12px; margin:0; } .sc-people legend { font-size:13px; font-weight:650; padding:0 6px; }
+.sc-people-list { display:grid; gap:6px; max-height:260px; overflow-y:auto; }
+.sc-people-list label { display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:8px; cursor:pointer; } .sc-people-list label.is-on { background:#eee6f0; }
+.sc-people-list input { position:absolute; opacity:0; width:1px; height:1px; } .sc-people-list label:has(input:focus-visible) { outline:3px solid var(--u-blue); outline-offset:2px; }
+.sc-people-list strong { display:block; font-size:13px; } .sc-people-list small { display:block; font-size:11px; color:var(--u-muted); } .sc-people-list > label > svg { margin-left:auto; width:16px; height:16px; color:var(--u-blue); }
+
+/* Columns follow the width of the window itself, so the same vitrine fits the
+   profile page, a phone, and the narrow dialog where a visitor opens it. */
+@container (max-width:720px) { .sc-shelves { grid-template-columns:repeat(2,minmax(0,1fr)); } .sc-frames { grid-template-columns:1fr; } }
+@container (max-width:460px) { .sc-shelves { grid-template-columns:1fr; } .sc-window { padding:24px 12px 0; border-width:10px; } .sc-sill { margin-inline:-12px; } .sc-head { flex-direction:column; } }
+@media (max-width:760px) { .sc-kinds { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:440px) { .sc { padding:14px; } }

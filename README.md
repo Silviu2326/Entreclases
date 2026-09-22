@@ -120,6 +120,14 @@ La demo navegable sigue compilada en `/demo/` y `/va/demo/`, pero ya no se enlaz
 
 El código está en `components/community/` y `lib/community/`, con estilos adaptables en `app/community.css`. Las migraciones de comunidad y Storage preparan datos reales protegidos por RLS. Ver [activación y alcance de la comunidad](docs/community-setup.md).
 
+## El escaparate
+
+Cada perfil tiene un escaparate: una vitrina dibujada como la de una tienda (marco, cristal con reflejo, marquesina y baldas) donde se apoyan las piezas. Tres acabados que el dueño elige con un toque y se guardan en `universe_profiles.showcase_frame`: **madera**, **cristal** (laca negra y vidrio) y **neón** (tinta y luz lima). Cinco tipos de pieza: enlace (YouTube se reconoce y se reproduce dentro, con `youtube-nocookie` y solo tras pulsar), nota, historia (foto o clip en vertical con pie), foto o vídeo, y apuntes (PDF con la misma validación que Campus).
+
+Cada pieza lleva su audiencia: todo el campus verificado, solo mi campus, solo con quien he hablado (conversación privada abierta), solo las personas que elijo (hasta 50), o solo yo. La decide PostgreSQL fila a fila (`universe_showcase_visible`, migración `202609250026`), y el archivo que hay detrás de una pieza solo se puede firmar si la fila es visible para quien lo pide: sin fila, sin enlace. El bucket `universe-showcase` es privado, como los demás.
+
+Código en `components/community/showcase.tsx` y `showcase.css`; vocabulario y lectura de enlaces en `lib/community/showcase.ts`. La demo siembra piezas con las cinco audiencias para que se vea qué recibe un visitante y qué no. Hasta aplicar la migración, la app carga sin vitrina y los botones que escribirían en ella lo dicen en lugar de fallar.
+
 ## ClasiCoins
 
 La landing y la aplicación explican y aplican ClasiCoins, una moneda interna para incentivar la participación: 20 de bienvenida, −10 al crear un evento, −5 al abrir un hilo, +3 por la primera inscripción en un evento ajeno y +2 por la primera respuesta en un hilo ajeno. Hay límites diarios y un registro propio de movimientos. No se compran, venden ni convierten en dinero. [Reglas y despliegue](docs/unicoins.md).
