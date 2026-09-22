@@ -128,6 +128,12 @@ Cada pieza lleva su audiencia: todo el campus verificado, solo mi campus, solo c
 
 Código en `components/community/showcase.tsx` y `showcase.css`; vocabulario y lectura de enlaces en `lib/community/showcase.ts`. La demo siembra piezas con las cinco audiencias para que se vea qué recibe un visitante y qué no. Hasta aplicar la migración, la app carga sin vitrina y los botones que escribirían en ella lo dicen en lugar de fallar.
 
+## Tu espacio
+
+Sobre el escaparate, el perfil entero se personaliza desde «Personalizar mi espacio»: qué bloques se ven y en qué orden (lo oculto tampoco lo ve quien pase por el perfil), uno de diez fondos fijos dibujados en CSS (cuaderno, corcho, cielo, Turia, Malvarrosa, noche, pizarra, lima, terrazo y papel), y stickers pegados en la portada. Hay ocho de serie en `public/stickers/` y se puede subir una imagen propia: el recorte del fondo se hace en el navegador (`lib/community/cutout.ts`, relleno desde los bordes por color, con un pixel de suavizado), sin modelo ni servicio externo, y sirve para fondos lisos; el resultado es un webp con transparencia de como mucho 512 KB en el bucket privado `universe-stickers`. En «Decorar la portada» los stickers se arrastran y se giran, escalan, traen delante o despegan.
+
+El espacio viaja como un JSON en `universe_profiles.space` (la forma la comprueba la app; la columna la acota) y los stickers en `universe_stickers`, con tope de doce por persona impuesto por un trigger. Migración `202609260027`. Código en `components/community/space.tsx`; vocabulario en `lib/community/space.ts`.
+
 ## ClasiCoins
 
 La landing y la aplicación explican y aplican ClasiCoins, una moneda interna para incentivar la participación: 20 de bienvenida, −10 al crear un evento, −5 al abrir un hilo, +3 por la primera inscripción en un evento ajeno y +2 por la primera respuesta en un hilo ajeno. Hay límites diarios y un registro propio de movimientos. No se compran, venden ni convierten en dinero. [Reglas y despliegue](docs/unicoins.md).

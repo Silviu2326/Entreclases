@@ -2,11 +2,12 @@ import { emptyWallet, type CoinWallet } from "./unicoins";
 import type { Taste } from "./tastes";
 import type { FaceKind } from "./images";
 import type { ShowcaseAudience, ShowcaseFrame, ShowcaseKind, ShowcaseMediaKind } from "./showcase";
+import type { BuiltinSticker, ProfileSpace, StickerPlacement } from "./space";
 export type View = "home" | "explore" | "projects" | "magazine" | "plans" | "groups" | "campus" | "people" | "messages" | "mailbox" | "profile" | "unicoins" | "discover";
 export const views: View[] = ["home", "explore", "projects", "magazine", "plans", "groups", "campus", "people", "messages", "mailbox", "profile", "unicoins", "discover"];
 export const relationshipStatuses = ["single", "in_relationship", "seeing_someone", "complicated", "prefer_not_to_say"] as const;
 export type RelationshipStatus = typeof relationshipStatuses[number];
-export type Profile = { account_kind?: "university" | "guest"; user_id: string; name: string; university: string; campus: string; degree: string; year: number; bio: string; interests: string[]; color: number; avatar_url?: string; relationship_status?: RelationshipStatus; favorites: Taste[]; picks: string[]; banner_url?: string; showcase_frame?: ShowcaseFrame; created_at: string };
+export type Profile = { account_kind?: "university" | "guest"; user_id: string; name: string; university: string; campus: string; degree: string; year: number; bio: string; interests: string[]; color: number; avatar_url?: string; relationship_status?: RelationshipStatus; favorites: Taste[]; picks: string[]; banner_url?: string; showcase_frame?: ShowcaseFrame; space?: unknown; created_at: string };
 export type ProfileInput = Pick<Profile, "name" | "campus" | "degree" | "year" | "bio" | "interests" | "color" | "favorites" | "picks"> & { relationship_status: RelationshipStatus };
 // The editable half of a profile, for the blocks that save one field at a time.
 export const profileInput = (profile: Profile): ProfileInput => ({ name: profile.name, campus: profile.campus, degree: profile.degree, year: profile.year, bio: profile.bio, interests: profile.interests, color: profile.color, favorites: profile.favorites, picks: profile.picks, relationship_status: profile.relationship_status ?? "prefer_not_to_say" });
@@ -26,10 +27,12 @@ export type Thread = { id: string; user_a: string; user_b: string; created_at: s
 export type ShowcaseItem = { id: string; owner_id: string; kind: ShowcaseKind; title: string; body: string; url?: string | null; media_path?: string | null; media_kind?: ShowcaseMediaKind | null; media_url?: string; audience: ShowcaseAudience; viewers: string[]; position: number; created_at: string };
 export type ShowcaseInput = { kind: ShowcaseKind; title: string; body: string; url?: string; audience: ShowcaseAudience; viewers: string[] };
 export type ShowcasePatch = Partial<Pick<ShowcaseItem, "title" | "body" | "audience" | "viewers" | "position">>;
+/* A sticker on a cover. `url` is never stored: shipped ones resolve to a file of the app, uploaded ones are signed per read. */
+export type Sticker = StickerPlacement & { id: string; owner_id: string; path: string; url?: string; created_at: string };
 /* `media_url` is never stored: the repository fills it with a short-lived signed link. */
 export type Message = { id: string; thread_id: string; sender_id: string; body: string; media_path?: string | null; media_kind?: "image" | "video" | null; media_url?: string; created_at: string };
-export type CommunityData = { wallet: CoinWallet; profiles: Profile[]; posts: Post[]; comments: Comment[]; likes: Like[]; signals: Signal[]; groups: Group[]; groupMembers: GroupMember[]; plans: Plan[]; planMembers: PlanMember[]; notes: Note[]; threads: Thread[]; showcase: ShowcaseItem[] };
-export const emptyCommunity = (): CommunityData => ({ wallet: emptyWallet(), profiles: [], posts: [], comments: [], likes: [], signals: [], groups: [], groupMembers: [], plans: [], planMembers: [], notes: [], threads: [], showcase: [] });
+export type CommunityData = { wallet: CoinWallet; profiles: Profile[]; posts: Post[]; comments: Comment[]; likes: Like[]; signals: Signal[]; groups: Group[]; groupMembers: GroupMember[]; plans: Plan[]; planMembers: PlanMember[]; notes: Note[]; threads: Thread[]; showcase: ShowcaseItem[]; stickers: Sticker[] };
+export const emptyCommunity = (): CommunityData => ({ wallet: emptyWallet(), profiles: [], posts: [], comments: [], likes: [], signals: [], groups: [], groupMembers: [], plans: [], planMembers: [], notes: [], threads: [], showcase: [], stickers: [] });
 export type PlanInput = Pick<Plan, "title" | "description" | "place" | "meeting_point" | "starts_at" | "capacity">;
 export type GroupInput = Pick<Group, "name" | "description" | "category" | "campus" | "is_private">;
 export type NoteInput = Pick<Note, "title" | "subject" | "description" | "campus">;
@@ -58,6 +61,10 @@ export interface CommunityRepository {
   updateShowcaseItem(id: string, patch: ShowcasePatch): Promise<ShowcaseItem>;
   removeShowcaseItem(item: ShowcaseItem): Promise<void>;
   openShowcaseFile(item: ShowcaseItem): Promise<string>;
+  saveSpace(space: ProfileSpace): Promise<Profile>;
+  addSticker(source: Blob | BuiltinSticker, placement: StickerPlacement): Promise<Sticker>;
+  moveSticker(id: string, placement: StickerPlacement): Promise<Sticker>;
+  removeSticker(sticker: Sticker): Promise<void>;
   dispose(): void;
 }
 export const campuses = ["Tarongers", "Blasco Ibáñez", "Vera", "Burjassot-Paterna", "Otra sede en Valencia"] as const;

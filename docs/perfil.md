@@ -113,3 +113,7 @@ cambios de la demo duran lo que dure la visita.
 ## El escaparate
 
 Debajo de la tarjeta de presentación. Es la única sección del perfil con acabado propio (madera, cristal o neón) y con visibilidad por pieza. Quien mira el perfil de otra persona (desde Gente o desde «Tu gente») ve la vitrina con las piezas que la base de datos le deja ver; el dueño ve además el selector de acabado, la audiencia de cada pieza y el botón de quitar. Lo que hay que saber para operarlo está en la sección «El escaparate» del README.
+
+## Tu espacio
+
+«Personalizar mi espacio» abre un panel con tres pestañas: bloques (mostrar u ocultar, subir o bajar), fondo (diez fijos) y stickers (de serie o una imagen propia con el fondo recortado en el móvil). «Decorar la portada» activa el arrastre sobre la portada. Quien mira el perfil de otra persona ve su fondo, sus stickers y solo los bloques que esa persona no ha ocultado, en su orden.

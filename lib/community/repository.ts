@@ -1,8 +1,9 @@
 import type { CoinWallet } from "./unicoins";
 import { getAuthClient } from "../auth/client";
-import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Message, type ShowcaseItem } from "./types";
+import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Message, type ShowcaseItem, type Sticker } from "./types";
 import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
 import { isStoredPiece, showcaseFrames } from "./showcase";
+import { builtinStickerUrl, builtinStickers, isStoredSticker, stickerLimits, validatePlacement, validateSpace, type BuiltinSticker } from "./space";
 import { faceLimits, isStoredFace, type FaceKind } from "./images";
 
 export function createCommunityRepository(userId: string): CommunityRepository {
@@ -44,6 +45,20 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    return rows.map(row=>isStoredPiece(row.media_path)?{...row,media_url:links.get(row.media_path as string)}:row);
   }catch{return rows;}
  };
+ // The space ships with its own migration too. Stickers that ship with the app
+ // point at a file of the app; uploaded ones are signed like a face.
+ let spaceColumns=false;
+ const signStickers=async(rows:Sticker[])=>{
+  const withBuiltin=rows.map(row=>row.path.startsWith("builtin:")?{...row,url:builtinStickerUrl(row.path.slice(8) as BuiltinSticker)}:row);
+  const paths=[...new Set(withBuiltin.map(row=>row.path).filter(isStoredSticker))];
+  if(!paths.length)return withBuiltin;
+  try{
+   const signed=await client.storage.from("universe-stickers").createSignedUrls(paths,3600);
+   if(signed.error)return withBuiltin;
+   const links=new Map((signed.data??[]).filter(item=>item.signedUrl&&item.path).map(item=>[item.path as string,item.signedUrl as string]));
+   return withBuiltin.map(row=>isStoredSticker(row.path)?{...row,url:links.get(row.path)}:row);
+  }catch{return withBuiltin;}
+ };
  const signFaces=async(rows:Profile[])=>{
   const paths=[...new Set(rows.flatMap(row=>[row.avatar_url,row.banner_url]).filter(isStoredFace) as string[])];
   if(!paths.length)return rows;
@@ -72,7 +87,7 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    const wallet=results[6].data as CoinWallet|null;
    if(!wallet||!Number.isInteger(wallet.balance)||wallet.balance<0||!Array.isArray(wallet.transactions))throw {code:"not_configured"};
    data.wallet=wallet;
-   const profileRows=results[0].data as Profile[];if(profileRows.length){tasteColumns=Object.hasOwn(profileRows[0],"favorites");faceColumns=Object.hasOwn(profileRows[0],"banner_url");showcaseColumns=Object.hasOwn(profileRows[0],"showcase_frame");}data.profiles=await signFaces(withTastes(profileRows));data.posts=results[1].data as Post[];data.groups=results[2].data as Group[];data.plans=results[3].data as Plan[];data.notes=results[4].data as Note[];data.threads=results[5].data as Thread[];
+   const profileRows=results[0].data as Profile[];if(profileRows.length){tasteColumns=Object.hasOwn(profileRows[0],"favorites");faceColumns=Object.hasOwn(profileRows[0],"banner_url");showcaseColumns=Object.hasOwn(profileRows[0],"showcase_frame");spaceColumns=Object.hasOwn(profileRows[0],"space");}data.profiles=await signFaces(withTastes(profileRows));data.posts=results[1].data as Post[];data.groups=results[2].data as Group[];data.plans=results[3].data as Plan[];data.notes=results[4].data as Note[];data.threads=results[5].data as Thread[];
    if(sharedGroupToken){
     const shared=check(await client.rpc("universe_shared_group",{share_uuid:sharedGroupToken}));
     const group=(Array.isArray(shared)?shared[0]:shared) as Group|undefined;
@@ -96,6 +111,7 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    data.signals=await related<Signal>("universe_post_signals","post_id",data.posts.map(p=>p.id),"post_id","user_id").catch(()=>[]);
    // Same for the showcase: the rows that come back are exactly the ones this member may see.
    data.showcase=showcaseColumns?await (async()=>{try{const rows=check(await client.from("universe_showcase").select("*").order("position").order("created_at",{ascending:false}).limit(400));return await signPieces((rows??[]) as ShowcaseItem[]);}catch{return [];}})():[];
+   data.stickers=spaceColumns?await (async()=>{try{const rows=check(await client.from("universe_stickers").select("*").order("z").order("created_at").limit(2400));return await signStickers((rows??[]) as Sticker[]);}catch{return [];}})():[];
    const referenced=new Set([userId,...data.posts.map(p=>p.author_id),...data.comments.map(p=>p.author_id),...data.plans.map(p=>p.creator_id),...planMembers.map(p=>p.user_id),...groupMembers.map(p=>p.user_id),...data.notes.map(n=>n.author_id),...data.threads.flatMap(t=>[t.user_a,t.user_b])]);
    data.profiles.forEach(p=>referenced.delete(p.user_id));const missing=[...referenced];
    for(let i=0;i<missing.length;i+=200){const result=check(await client.from("universe_profiles").select("*").in("user_id",missing.slice(i,i+200)));data.profiles.push(...await signFaces(withTastes(result as Profile[])));}
@@ -205,6 +221,37 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    const result=check(await client.storage.from("universe-showcase").createSignedUrl(item.media_path as string,60,item.media_kind==="pdf"?{download:name}:undefined));
    if(!result?.signedUrl)throw {code:"invalid_file"};
    return result.signedUrl;
+  },
+  async saveSpace(space) {
+   if(!spaceColumns)throw {code:"space_missing"};
+   validateSpace(space);
+   const saved=check(await client.from("universe_profiles").update({space}).eq("user_id",userId).select().single()) as Profile;
+   return (await signFaces(withTastes([saved])))[0];
+  },
+  async addSticker(source,placement) {
+   if(!spaceColumns)throw {code:"space_missing"};
+   validatePlacement(placement);
+   let path:string;
+   if(typeof source==="string"){ if(!builtinStickers.includes(source))throw {code:"validation"}; path=`builtin:${source}`; }
+   else {
+    if(source.size>stickerLimits.output||source.type!=="image/webp")throw {code:"invalid_image"};
+    path=`${userId}/sticker-${crypto.randomUUID()}.webp`;
+    check(await client.storage.from("universe-stickers").upload(path,source,{contentType:"image/webp",upsert:false}));
+   }
+   const result=await client.from("universe_stickers").insert({owner_id:userId,path,...placement}).select().single();
+   if(result.error){ if(isStoredSticker(path))await client.storage.from("universe-stickers").remove([path]).catch(()=>{}); throw result.error; }
+   return (await signStickers([result.data as Sticker]))[0];
+  },
+  async moveSticker(id,placement) {
+   validatePlacement(placement);
+   const saved=check(await client.from("universe_stickers").update(placement).eq("id",id).eq("owner_id",userId).select().single()) as Sticker;
+   return (await signStickers([saved]))[0];
+  },
+  async removeSticker(sticker) {
+   if(sticker.owner_id!==userId)throw {code:"validation"};
+   if(isStoredSticker(sticker.path))check(await client.storage.from("universe-stickers").remove([sticker.path]));
+   const result=await client.from("universe_stickers").delete().eq("id",sticker.id).eq("owner_id",userId);
+   if(result.error)throw {code:"note_cleanup"};
   },
   dispose() {},
  };

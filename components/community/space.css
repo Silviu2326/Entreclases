@@ -1,0 +1,70 @@
+/* The personal space of a profile: ten backgrounds, the sticker layer on the
+   cover, and the panel that sets them. Cards keep their own paper, so a dark
+   background only ever shows between them. */
+.u-my-profile.u-space { padding:16px; margin:-16px; border-radius:18px; }
+.u-profile-detail.u-space { padding:14px; margin:-14px; border-radius:14px; }
+.u-space-cuaderno { background:repeating-linear-gradient(180deg,transparent 0 27px,#c9d4ea 27px 28px), linear-gradient(90deg,transparent 38px,#e8a0a0 38px,#e8a0a0 39px,transparent 39px), #fbfaf5; }
+.u-space-corcho { background-color:#c99a5b; background-image:radial-gradient(#b5834a 1px,transparent 1.6px), radial-gradient(#dcb070 1px,transparent 1.6px), radial-gradient(#a8783f .8px,transparent 1.3px); background-size:9px 9px, 13px 13px, 7px 7px; background-position:0 0, 4px 6px, 2px 3px; }
+.u-space-cielo { background:linear-gradient(160deg,#dfe9ff,#f3e7ff 60%,#ffe9f1); }
+.u-space-turia { background:linear-gradient(160deg,#e6f1d8,#cfe3b8 55%,#bcd7a6); }
+.u-space-malvarrosa { background:linear-gradient(180deg,#fff1cf 0,#ffe6b0 44%,#c4e6ec 45%,#9fd0dc); }
+.u-space-noche { background-color:#1f1a26; background-image:radial-gradient(#ffffff55 1px,transparent 1.6px), radial-gradient(#ffffff33 .8px,transparent 1.3px); background-size:41px 47px, 23px 29px; background-position:7px 11px, 2px 5px; }
+.u-space-pizarra { background-color:#2f4a3f; background-image:repeating-linear-gradient(118deg,#ffffff08 0 3px,transparent 3px 9px), repeating-linear-gradient(32deg,#00000012 0 2px,transparent 2px 7px); }
+.u-space-lima { background:linear-gradient(160deg,#f3ffb4,#e1ff3e); }
+.u-space-terrazo { background-color:#f4efe6; background-image:radial-gradient(#d3a3a3 2px,transparent 2.6px), radial-gradient(#9fb8a6 2px,transparent 2.6px), radial-gradient(#c9b48a 1.5px,transparent 2.1px), radial-gradient(#8f9bb8 1.2px,transparent 1.8px); background-size:29px 31px, 37px 41px, 23px 29px, 31px 37px; background-position:0 0, 11px 17px, 19px 7px, 5px 23px; }
+/* Loose text in a visitor's card sits straight on the background. */
+.u-profile-detail.u-space-noche, .u-profile-detail.u-space-pizarra { color:#f6f2ee; }
+.u-profile-detail.u-space-noche .u-muted, .u-profile-detail.u-space-pizarra .u-muted, .u-profile-detail.u-space-noche .u-location, .u-profile-detail.u-space-pizarra .u-location { color:#cfc6d3; }
+.u-detail-banner { position:relative; }
+
+.sp-layer { position:absolute; inset:0; z-index:2; pointer-events:none; }
+.sp-layer.is-active { pointer-events:auto; cursor:crosshair; outline:2px dashed #ffffffb3; outline-offset:-5px; }
+.sp-layer-help { position:absolute; left:10px; top:8px; margin:0; font-size:11px; font-weight:650; background:#2a172ecc; color:#fff; padding:5px 9px; border-radius:6px; pointer-events:none; }
+.sp-layer.has-selection .sp-layer-help { opacity:0; transition:opacity .15s; }
+.sp-sticker { position:absolute; width:96px; height:96px; transform:translate(-50%,-50%) rotate(var(--sp-rot,0deg)) scale(var(--sp-scale,1)); pointer-events:none; filter:drop-shadow(0 3px 4px rgba(0,0,0,.28)); }
+.is-active .sp-sticker { pointer-events:auto; cursor:grab; touch-action:none; }
+.is-active .sp-sticker:active { cursor:grabbing; }
+.sp-sticker img { width:100%; height:100%; object-fit:contain; user-select:none; -webkit-user-drag:none; }
+.sp-sticker.is-selected { outline:2px solid #fff; outline-offset:2px; border-radius:8px; }
+/* The toolbar counter-rotates and counter-scales, so it always reads upright and at one size. */
+.sp-tools { position:absolute; left:50%; top:100%; margin-top:8px; transform:translateX(-50%) rotate(calc(-1 * var(--sp-rot,0deg))) scale(calc(1 / var(--sp-scale,1))); transform-origin:top center; display:flex; gap:2px; padding:3px; border-radius:9px; background:#2a172e; box-shadow:0 8px 20px rgba(0,0,0,.35); z-index:5; }
+.sp-tools-above .sp-tools { top:auto; bottom:100%; margin:0 0 8px; transform-origin:bottom center; }
+.community-surface .sp-tools .u-icon-button { width:30px; height:30px; color:#fff; border-radius:6px; }
+.community-surface .sp-tools .u-icon-button:hover { background:#ffffff22; color:#fff; }
+.sp-tools svg { width:15px; height:15px; }
+
+.sp-section { display:grid; gap:12px; margin-top:14px; }
+.sp-subhead { font-size:13px; font-weight:750; letter-spacing:.02em; margin-top:6px; }
+.sp-blocks { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.sp-blocks li { display:flex; align-items:center; gap:8px; padding:6px 6px 6px 10px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-paper); }
+.sp-blocks li.is-hidden { opacity:.62; }
+.sp-blocks label { display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer; }
+.sp-blocks label input { position:absolute; opacity:0; width:1px; height:1px; }
+.sp-blocks label:has(input:focus-visible) { outline:3px solid var(--u-blue); outline-offset:2px; border-radius:6px; }
+.sp-blocks label svg { width:17px; height:17px; color:var(--u-blue); flex-shrink:0; } .sp-blocks li.is-hidden label svg { color:var(--u-muted); }
+.sp-blocks label span { font-size:14px; font-weight:650; } .sp-blocks label small { margin-left:auto; font-size:11px; color:var(--u-muted); }
+.sp-block-move { display:flex; gap:2px; } .sp-block-move .u-icon-button { width:34px; height:34px; }
+
+.sp-bgs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+.sp-bg { position:relative; aspect-ratio:1; border:1px solid var(--u-line); border-radius:12px; padding:0; cursor:pointer; overflow:hidden; }
+.sp-bg.u-space-papel { background-color:#fbfaf5; }
+.sp-bg.is-on { box-shadow:0 0 0 3px var(--u-blue); border-color:var(--u-blue); }
+.sp-bg-name { position:absolute; inset:auto 4px 4px; display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; font-weight:700; background:#fffefaee; color:var(--u-ink); border-radius:6px; padding:3px 4px; }
+.sp-bg-name svg { width:12px; height:12px; color:var(--u-blue); }
+.sp-builtins { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.sp-builtin { display:grid; justify-items:center; gap:4px; padding:10px 6px 8px; border:1px solid var(--u-line); border-radius:12px; background:var(--u-paper); font:inherit; font-size:11px; font-weight:650; color:var(--u-ink); cursor:pointer; }
+.sp-builtin:hover:not(:disabled) { border-color:var(--u-blue); } .sp-builtin:disabled { opacity:.5; cursor:not-allowed; }
+.sp-builtin img { width:52px; height:52px; }
+.sp-upload { display:grid; gap:10px; padding:12px; border:1px dashed var(--u-line); border-radius:12px; }
+.sp-upload input[type=file] { font:inherit; font-size:13px; }
+.sp-check { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer; } .sp-check svg { width:15px; height:15px; color:var(--u-blue); }
+.sp-range { display:grid; gap:4px; font-size:12px; color:var(--u-muted); } .sp-range input { width:100%; }
+/* A checkerboard is the honest way to show what became transparent. */
+.sp-preview { margin:0; display:grid; justify-items:start; gap:6px; }
+.sp-preview img { width:160px; height:160px; object-fit:contain; border-radius:10px; background:repeating-conic-gradient(#e8e4dc 0 25%,#fbfaf5 0 50%) 0 0/16px 16px; }
+.sp-preview figcaption { font-size:12px; color:var(--u-muted); }
+.sp-placed { list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+.sp-placed li { display:flex; align-items:center; gap:4px; padding:4px 4px 4px 8px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-paper); }
+.sp-placed img { width:36px; height:36px; object-fit:contain; }
+.u-profile-top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+@media (max-width:560px) { .sp-bgs { grid-template-columns:repeat(3,minmax(0,1fr)); } .sp-builtins { grid-template-columns:repeat(3,minmax(0,1fr)); } .u-my-profile.u-space { padding:12px; margin:-12px; } }

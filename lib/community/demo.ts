@@ -1,9 +1,10 @@
 import { createDemoWallet } from "./demo-unicoins";
 import { emptyWallet } from "./unicoins";
 import type { Locale } from "../i18n/routes";
-import type { CommunityRepository, CommunityData, Message, Profile, RelationshipStatus, ShowcaseItem } from "./types";
+import type { CommunityRepository, CommunityData, Message, Profile, RelationshipStatus, ShowcaseItem, Sticker } from "./types";
 import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
 import { showcaseFrames, showcaseLimits, type ShowcaseFrame } from "./showcase";
+import { builtinStickerUrl, builtinStickers, defaultSpace, stickerLimits, validatePlacement, validateSpace, type ProfileSpace } from "./space";
 import { localTaste, type Taste } from "./tastes";
 import { faceLimits, type FaceKind } from "./images";
 
@@ -90,6 +91,12 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
    {id:"plan-project",creator_id:demoUserId,title:l("Ideas en una servilleta","Idees en un tovalló"),description:l("Una hora para contar ese proyecto que lleva meses en tu cabeza.","Una hora per a contar eixe projecte que fa mesos que tens al cap."),place:"Campus de Vera · Ágora",meeting_point:l("Bajo el reloj del Ágora.","Davall del rellotge de l’Àgora."),starts_at:later(121),capacity:6,created_at:ago(20)}
   ],planMembers:[{plan_id:"plan-coffee",user_id:"demo-paula"},{plan_id:"plan-coffee",user_id:"demo-marc"},{plan_id:"plan-turia",user_id:"demo-marc"},{plan_id:"plan-turia",user_id:demoUserId},{plan_id:"plan-beach",user_id:"demo-laia"},{plan_id:"plan-albufera",user_id:"demo-aina"},{plan_id:"plan-project",user_id:demoUserId}],
   notes:[{id:"note1",author_id:"demo-laia",title:l("Estadística. Guía para empezar.","Estadística. Guia per a començar."),subject:l("Estadística","Estadística"),description:l("Un esquema de ejemplo para organizar la asignatura.","Un esquema d’exemple per a organitzar l’assignatura."),campus:"Blasco Ibáñez",file_name:"guia-estadistica-ejemplo.txt",file_path:"demo/note1",file_size:0,created_at:ago(8)},{id:"note2",author_id:"demo-nico",title:l("Antes de programar","Abans de programar"),subject:l("Programación","Programació"),description:l("Lista de ejemplo para pensar un problema antes de escribir código.","Llista d’exemple per a pensar un problema abans d’escriure codi."),campus:"Vera",file_name:"guia-programacion-ejemplo.txt",file_path:"demo/note2",file_size:0,created_at:ago(26)}],
+  // Stickers on the covers: two on Álex's, one on Paula's, all shipped ones.
+  stickers:[
+   {id:"st-alex-cafe",owner_id:demoUserId,path:"builtin:cafe",url:builtinStickerUrl("cafe"),x:13,y:34,scale:1.1,rotation:-8,z:1,created_at:ago(100)},
+   {id:"st-alex-hola",owner_id:demoUserId,path:"builtin:hola",url:builtinStickerUrl("hola"),x:85,y:26,scale:1,rotation:6,z:2,created_at:ago(99)},
+   {id:"st-paula-planta",owner_id:"demo-paula",path:"builtin:planta",url:builtinStickerUrl("planta"),x:88,y:66,scale:1.2,rotation:0,z:1,created_at:ago(80)},
+  ] as Sticker[],
   // The showcases. Álex owns four; the others cover every audience so the demo
   // shows what a viewer is and is not handed. Álex has chatted with Paula and
   // shares a campus with Marc; Laia chose Álex by hand.
@@ -111,6 +118,8 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
  };
  const frameById:Record<string,ShowcaseFrame>={[demoUserId]:"madera","demo-paula":"cristal","demo-marc":"cristal","demo-laia":"madera","demo-nico":"neon","demo-aina":"neon"};
  data.profiles.forEach(p=>{p.showcase_frame=frameById[p.user_id]??"madera";});
+ const spaceById:Record<string,ProfileSpace>={[demoUserId]:{...defaultSpace(),background:"cuaderno"},"demo-paula":{...defaultSpace(),background:"cielo"},"demo-nico":{...defaultSpace(),background:"noche",hidden:["picks"]}};
+ data.profiles.forEach(p=>{p.space=spaceById[p.user_id]??defaultSpace();});
  const coins=createDemoWallet(data.planMembers.filter(m=>m.user_id===demoUserId).map(m=>m.plan_id),data.comments.filter(m=>m.author_id===demoUserId).map(m=>m.post_id));
  const texts:Record<string,string>={"demo/showcase-apuntes":l("ENTRECLASES · ESQUEMA DE EJEMPLO\n\nMacro, tema 3\n1. Oferta y demanda agregadas.\n2. Qué mueve cada curva.\n3. Tres ejemplos con números.\n\nNo es material oficial de ninguna asignatura.","ENTRECLASES · ESQUEMA D’EXEMPLE\n\nMacro, tema 3\n1. Oferta i demanda agregades.\n2. Què mou cada corba.\n3. Tres exemples amb números.\n\nNo és material oficial de cap assignatura."),"demo/note1":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nEstadística: por dónde empezar\n1. Identifica la población y la muestra.\n2. Clasifica las variables.\n3. Resume los datos con tablas y gráficos.\n4. Compara media, mediana y dispersión.\n5. Anota las dudas para compartirlas en el grupo.\n\nNo son apuntes oficiales ni material de una asignatura real.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nEstadística: per on començar\n1. Identifica la població i la mostra.\n2. Classifica les variables.\n3. Resumix les dades amb taules i gràfics.\n4. Compara mitjana, mediana i dispersió.\n5. Anota els dubtes per a compartir-los al grup.\n\nNo són apunts oficials ni material d’una assignatura real."),"demo/note2":l("ENTRECLASE · DOCUMENTO DE EJEMPLO\n\nAntes de programar\n1. Escribe el problema con tus palabras.\n2. Define entradas y salidas.\n3. Prueba un caso pequeño a mano.\n4. Divide el problema en pasos.\n5. Piensa qué debería pasar si no hay datos.\n\nMaterial ilustrativo de la demo.","ENTRECLASE · DOCUMENT D’EXEMPLE\n\nAbans de programar\n1. Escriu el problema amb les teues paraules.\n2. Definix entrades i eixides.\n3. Prova un cas menut a mà.\n4. Dividix el problema en passos.\n5. Pensa què hauria de passar si no hi ha dades.\n\nMaterial il·lustratiu de la demo.")};
  const files=new Map<string,Blob>(Object.entries(texts).map(([key,value])=>[key,new Blob([value],{type:"text/plain;charset=utf-8"})]));
@@ -198,6 +207,18 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
    if(item.media_url)return item.media_url;
    throw{code:"invalid_file"};
   },
+  async saveSpace(space){validateSpace(space);data.profiles[0]={...data.profiles[0],space:structuredClone(space)};return structuredClone(data.profiles[0]);},
+  async addSticker(source,placement){
+   validatePlacement(placement);
+   if(data.stickers.filter(s=>s.owner_id===demoUserId).length>=stickerLimits.count)throw{message:"STICKER_LIMIT"};
+   let path:string,url:string;
+   if(typeof source==="string"){if(!builtinStickers.includes(source))throw{code:"validation"};path="builtin:"+source;url=builtinStickerUrl(source);}
+   else{if(source.size>stickerLimits.output||source.type!=="image/webp")throw{code:"invalid_image"};url=URL.createObjectURL(source);urls.add(url);path=url;}
+   const sticker:Sticker={id:id(),owner_id:demoUserId,path,url,...placement,created_at:stamp()};
+   data.stickers.push(sticker);return structuredClone(sticker);
+  },
+  async moveSticker(stickerId,placement){validatePlacement(placement);const index=data.stickers.findIndex(s=>s.id===stickerId&&s.owner_id===demoUserId);if(index<0)throw{code:"validation"};data.stickers[index]={...data.stickers[index],...placement};return structuredClone(data.stickers[index]);},
+  async removeSticker(sticker){if(sticker.owner_id!==demoUserId)throw{code:"validation"};const found=data.stickers.find(s=>s.id===sticker.id);if(found?.url?.startsWith("blob:")){URL.revokeObjectURL(found.url);urls.delete(found.url);}data.stickers=data.stickers.filter(s=>s.id!==sticker.id);},
   dispose(){urls.forEach(url=>URL.revokeObjectURL(url));urls.clear();files.clear();chats=[];}
  };
 }
