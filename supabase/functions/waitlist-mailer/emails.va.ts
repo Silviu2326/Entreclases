@@ -24,8 +24,6 @@ Preferisc una llista xicoteta de gent que vol estar-hi, a una llista enorme de g
 
 Demà a les nou et conte per què vaig muntar això. Té a vore amb una taula de la cafeteria de Tarongers i amb com d’idiota em vaig sentir un dijous.
 
-Silviu
-
 P.D. Si el correu amb què t’has apuntat no és el de la teua universitat, tin a mà el bo. Només passen els comptes universitaris de València i qui porte una invitació d’algú de dins.`,
  },
  {
@@ -50,9 +48,7 @@ Això és el que vull arreglar. No amb més contingut. Amb un lloc on el normal 
 
 Es diu Entreclases. Comença a les universitats de València.
 
-Demà a les nou: per què això no és una altra xarxa social, encara que ho parega.
-
-Silviu`,
+Demà a les nou: per què això no és una altra xarxa social, encara que ho parega.`,
  },
  {
   subject: "«Una altra xarxa social». Sí, ja.",
@@ -73,8 +69,6 @@ Per això no hi ha mur infinit, ni comptes recomanats, ni un algoritme decidint 
 Hi ha gent del teu campus. Plans amb hora i lloc. Apunts. I un botó per a dir que hi vas.
 
 Demà et conte el dels plans, que és el cor de tot això.
-
-Silviu
 
 P.D. No et promet vint amics nous. Et promet una excusa per a dir «hola» sense que siga rar. La resta la fas tu, que per a això ja eres major.`,
  },
@@ -98,9 +92,7 @@ Pots proposar el que vulgues: estudiar junts abans d’un parcial, una volta pel
 
 O pots no proposar res i apuntar-te al que ja hi ha. També val. Quasi tothom comença així.
 
-Demà: per què et demanaré el correu de la uni, i per què això és una bona notícia per a tu.
-
-Silviu`,
+Demà: per què et demanaré el correu de la uni, i per què això és una bona notícia per a tu.`,
  },
  {
   subject: "No és per a tothom. Eixa és la gràcia.",
@@ -120,9 +112,7 @@ Ara, l’excepció. Cada compte universitari verificat pot convidar una persona 
 
 I qui entra convidat no pot convidar ningú més. Es talla ahí. Si no, la cadena es menja la idea en un mes.
 
-Demà et parle de les ClasiCoins, que és la part que més em discuteixen.
-
-Silviu`,
+Demà et parle de les ClasiCoins, que és la part que més em discuteixen.`,
  },
  {
   subject: "Et cobraré per publicar",
@@ -146,9 +136,7 @@ Perquè publicar coste alguna cosa. El que no costa res s’ompli de soroll. Mir
 
 Si et quedes sense monedes, la manera d’aconseguir-ne més no és pagar. És ajudar algú.
 
-Demà: el que ve després del 28.
-
-Silviu`,
+Demà: el que ve després del 28.`,
  },
  {
   subject: "El que encara no t’he contat",
@@ -166,9 +154,7 @@ No és un tauler de «busque programador gratis per a la meua idea milionària»
 
 I hi ha una tercera data de la qual encara no puc parlar. Està a la portada, per si la vols vore.
 
-Demà l’últim de la sèrie. Et conte exactament què fer el dia que entres.
-
-Silviu`,
+Demà l’últim de la sèrie. Et conte exactament què fer el dia que entres.`,
  },
  {
   subject: "Això és el que fas el primer dia",
@@ -191,8 +177,6 @@ I si el correu amb què t’has apuntat a esta llista no és universitari, deman
 {{site}}
 
 Ens veiem dins.
-
-Silviu
 
 P.D. T’ho dic clar: els primers dies són els que decidixen si un lloc així s’ompli o es queda en res. Un pla buit no convenç ningú. Preferisc que hi sigues.`,
  },

@@ -23,8 +23,6 @@ Prefiero una lista pequeña de gente que quiere estar, a una lista enorme de gen
 
 Mañana a las nueve te cuento por qué monté esto. Tiene que ver con una mesa de la cafetería de Tarongers y con lo idiota que me sentí un jueves.
 
-Silviu
-
 P.D. Si el correo con el que te has apuntado no es el de tu universidad, ten a mano el bueno. Solo pasan las cuentas universitarias de Valencia y quien traiga una invitación de alguien de dentro.`,
  },
  {
@@ -49,9 +47,7 @@ Eso es lo que quiero arreglar. No con más contenido. Con un sitio donde lo norm
 
 Se llama Entreclases. Empieza en las universidades de Valencia.
 
-Mañana a las nueve: por qué esto no es otra red social, aunque lo parezca.
-
-Silviu`,
+Mañana a las nueve: por qué esto no es otra red social, aunque lo parezca.`,
  },
  {
   subject: "«Otra red social». Sí, ya.",
@@ -72,8 +68,6 @@ Por eso no hay muro infinito, ni cuentas recomendadas, ni un algoritmo decidiend
 Hay gente de tu campus. Planes con hora y sitio. Apuntes. Y un botón para decir que vas.
 
 Mañana te cuento lo de los planes, que es el corazón de todo esto.
-
-Silviu
 
 P.D. No te voy a prometer veinte amigos nuevos. Te prometo una excusa para decir «hola» sin que sea raro. El resto lo haces tú, que para eso eres mayorcito.`,
  },
@@ -97,9 +91,7 @@ Puedes proponer lo que quieras: estudiar juntos antes de un parcial, una vuelta 
 
 O puedes no proponer nada y apuntarte a lo que ya hay. También vale. Casi todo el mundo empieza así.
 
-Mañana: por qué te voy a pedir el correo de la uni, y por qué eso es una buena noticia para ti.
-
-Silviu`,
+Mañana: por qué te voy a pedir el correo de la uni, y por qué eso es una buena noticia para ti.`,
  },
  {
   subject: "No es para todo el mundo. Esa es la gracia.",
@@ -119,9 +111,7 @@ Ahora, la excepción. Cada cuenta universitaria verificada puede invitar a una p
 
 Y quien entra invitado no puede invitar a nadie más. Se corta ahí. Si no, la cadena se come la idea en un mes.
 
-Mañana te hablo de las ClasiCoins, que es la parte que más me discuten.
-
-Silviu`,
+Mañana te hablo de las ClasiCoins, que es la parte que más me discuten.`,
  },
  {
   subject: "Te voy a cobrar por publicar",
@@ -145,9 +135,7 @@ Para que publicar cueste algo. Lo que no cuesta nada se llena de ruido. Mira el 
 
 Si te quedas sin monedas, la manera de conseguir más no es pagar. Es ayudar a alguien.
 
-Mañana: lo que viene después del 28.
-
-Silviu`,
+Mañana: lo que viene después del 28.`,
  },
  {
   subject: "Lo que no te he contado todavía",
@@ -165,9 +153,7 @@ No es un tablón de «busco programador gratis para mi idea millonaria». Tienes
 
 Y hay una tercera fecha de la que todavía no puedo hablar. Está en la portada, por si quieres verla.
 
-Mañana el último de la serie. Te cuento exactamente qué hacer el día que entres.
-
-Silviu`,
+Mañana el último de la serie. Te cuento exactamente qué hacer el día que entres.`,
  },
  {
   subject: "Esto es lo que haces el primer día",
@@ -190,8 +176,6 @@ Y si el correo con el que te apuntaste a esta lista no es universitario, pídele
 {{site}}
 
 Nos vemos dentro.
-
-Silviu
 
 P.D. Te lo digo claro: los primeros días son los que deciden si un sitio así se llena o se queda en nada. Un plan vacío no convence a nadie. Prefiero que estés.`,
  },

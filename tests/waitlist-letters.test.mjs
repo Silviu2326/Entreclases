@@ -10,13 +10,16 @@ const { letterFor, render } = load('supabase/functions/waitlist-mailer/render.ts
 const ORIGIN = 'https://www.entreclases.com', AWAY = 'https://ref.functions.supabase.co/waitlist-mailer';
 const TOKEN = '11111111-2222-4333-8444-555555555555';
 
-test('Every step has a letter in both languages, signed and long enough to be a letter', () => {
+test('Every step has a letter in both languages, unsigned and long enough to be a letter', () => {
  for (const language of ['es', 'va']) {
   for (let step = 0; step <= 7; step++) {
    const letter = letterFor(language, step);
    assert.ok(letter, `${language} paso ${step}`);
    assert.ok(letter.subject.length > 8 && letter.subject.length <= 60, `asunto de ${language}/${step}: ${letter.subject.length} caracteres`);
-   assert.ok(letter.body.trimEnd().endsWith('Silviu') || letter.body.includes('\nSilviu\n'), `${language}/${step} va firmado`);
+   // Las cartas no van firmadas: el remitente ya dice quién escribe.
+   assert.ok(!/Silviu/.test(letter.body + letter.subject), `${language}/${step} sin firma`);
+   assert.ok(!/\n\n\n/.test(letter.body), `${language}/${step} sin huecos dobles donde estaba la firma`);
+   assert.match(letter.body.trimEnd(), /[.!?»]$/, `${language}/${step} cierra en una frase acabada`);
    assert.ok(letter.body.length > 400, `${language}/${step} tiene cuerpo`);
   }
   assert.equal(letterFor(language, 8), null, 'no hay un octavo paso');
