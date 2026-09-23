@@ -10,12 +10,16 @@ PUB = pathlib.Path(r"C:\Users\usuario\Downloads\universe-proyecto-v8\universe\pu
 REC = (OUT / "_recursos").as_uri()
 VOICE = "RwzBDEn5f6FIgpAjH9YN"
 FPS = 30
+TEMPO = float(os.environ.get("VOZ_TEMPO", "1"))  # >1 acelera la locución sin cambiar el tono
 name, dest = sys.argv[1], OUT / sys.argv[2]
 only = sys.argv[3] if len(sys.argv) > 3 else None  # "preview:1.0,2.5" para capturas sueltas
 
 def tts(text):
     vdir = HERE / "voz"; vdir.mkdir(exist_ok=True)
     f = vdir / (hashlib.sha1(text.encode()).hexdigest()[:12] + ".mp3")
+    if not f.exists() and os.environ.get("SIN_VOZ"):
+        # Sin clave: duración estimada para revisar la imagen; el mp3 se genera al render final.
+        return None, 0.065 * len(text) + 0.4
     if not f.exists():
         body = {"text": text, "model_id": "eleven_multilingual_v2",
                 "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": True}}
@@ -23,7 +27,7 @@ def tts(text):
             data=json.dumps(body).encode(), headers={"xi-api-key": os.environ["XI_KEY"], "content-type": "application/json", "accept": "audio/mpeg"})
         with urllib.request.urlopen(req) as r: f.write_bytes(r.read())
     dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(f)]).decode())
-    return f, dur
+    return f, dur / TEMPO
 
 src = (HERE / name).read_text(encoding="utf-8")
 css = (HERE / "base.css").read_text(encoding="utf-8") + (HERE / "video.css").read_text(encoding="utf-8")
@@ -42,7 +46,8 @@ with sync_playwright() as pw:
     for i, (text, mn) in enumerate(zip(voices, mins)):
         lead = 0.35
         if text:
-            f, d = tts(text); clips.append((f, t + lead))
+            f, d = tts(text)
+            if f: clips.append((f, t + lead))
             dur = max(mn, lead + d + 0.55)
         else:
             dur = mn
@@ -69,9 +74,12 @@ built.unlink()
 dest.parent.mkdir(parents=True, exist_ok=True)
 cmd = ["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", str(frames / "f%05d.jpg")]
 for f, _ in clips: cmd += ["-i", str(f)]
-parts = [f"[{k + 1}]adelay={int(at * 1000)}:all=1[a{k}]" for k, (_, at) in enumerate(clips)]
-mix = "".join(f"[a{k}]" for k in range(len(clips)))
-fc = ";".join(parts) + f";{mix}amix=inputs={len(clips)}:normalize=0,apad,atrim=0:{total},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100[a]"
+if clips:
+    parts = [f"[{k + 1}]atempo={TEMPO},adelay={int(at * 1000)}:all=1[a{k}]" for k, (_, at) in enumerate(clips)]
+    mix = "".join(f"[a{k}]" for k in range(len(clips)))
+    fc = ";".join(parts) + f";{mix}amix=inputs={len(clips)}:normalize=0,apad,atrim=0:{total},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100[a]"
+else:  # revisión sin voz: pista muda para que el archivo sea válido en cualquier reproductor
+    fc = f"anullsrc=r=44100:cl=stereo,atrim=0:{total}[a]"
 cmd += ["-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(dest)]
 subprocess.run(cmd, check=True)
