@@ -19,6 +19,12 @@ El backoffice real se puede abrir en `/backoffice/` y en `/va/backoffice/`. La d
 
 Las acciones de la demo no afectan a usuarios reales. En la ruta real, las decisiones se validan en Supabase, se guardan en la base de datos y dejan un registro de auditoría.
 
+### Panel privado de altas
+
+La sección Altas de /backoffice/?view=waitlist muestra el total de personas apuntadas, activas, nuevas hoy, nuevas en los últimos siete días y el último registro. Solo devuelve cifras agregadas mediante universe_waitlist_snapshot; nunca expone correos al navegador. Se accede con una sesión autenticada cuyo rol sea support, moderator o admin, por lo que no se usa una contraseña compartida ni un enlace secreto reutilizable.
+
+Desde esa sección puedes activar avisos del dispositivo. En móvil, abre el panel en el navegador, inicia sesión y pulsa Activar avisos. Esta primera versión avisa mientras el panel está abierto; los avisos en segundo plano requieren conectar un proveedor Web Push y sus claves VAPID.
+
 ### Activar el acceso real
 
 La migración está en `supabase/migrations/202609210015_backoffice.sql` y también se incluye en `supabase/setup.sql`. Hay que aplicarla en el proyecto Supabase después de las migraciones anteriores. Después se concede el primer rol desde el editor SQL, usando el correo de una cuenta que ya tenga perfil universitario:
@@ -286,3 +292,4 @@ Antes de conectarlo habría que probar su precisión con ejemplos representativo
 - [Propuestas de revista](revista-propuestas.md).
 - [Voz editorial de Entre líneas](entre-lineas-voz-editorial.md).
 - [Reglas de ClasiCoins](unicoins.md).
+

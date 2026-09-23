@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle, ArrowUpRight, BarChart3, Check, ChevronRight, CircleDollarSign,
   ClipboardList, FileText, Flag, LayoutDashboard, Newspaper, Pause, Play,
-  Search, Settings2, ShieldCheck, Sparkles, Users, X,
+  Search, Settings2, ShieldCheck, Sparkles, Users, UserPlus, Bell, X,
 } from "lucide-react";
 import { createBackofficeDemo } from "@/lib/backoffice/demo";
-import { readAnalytics, readBackoffice, runBackofficeCommand, type BackofficeCommand, type BackofficeData } from "@/lib/backoffice/client";
+import { readAnalytics, readBackoffice, readWaitlistSnapshot, runBackofficeCommand, type BackofficeCommand, type BackofficeData } from "@/lib/backoffice/client";
 import { loadBackofficeSession, persistBackofficeAction, type BackofficeAction } from "@/lib/backoffice/repository";
-import type { AnalyticsSnapshot } from "@/lib/backoffice/types";
+import type { AnalyticsSnapshot, WaitlistSnapshot } from "@/lib/backoffice/types";
 import "./backoffice.css";
 
-type Section = "overview" | "analytics" | "moderation" | "editorial" | "people" | "coins" | "settings";
+type Section = "overview" | "analytics" | "waitlist" | "moderation" | "editorial" | "people" | "coins" | "settings";
 type CaseItem = { id: string | number; type: string; title: string; detail: string; time: string; priority: "Alta" | "Media" | "Baja"; state: "Pendiente" | "En revisión" | "Resuelto" };
 type Proposal = { id: string | number; title: string; author: string; section: string; state: "En revisión" | "Aceptada" | "Rechazada"; age: string };
 
@@ -32,6 +32,7 @@ const proposalsSeed: Proposal[] = [
 const nav: { id: Section; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "overview", label: "Inicio", icon: LayoutDashboard },
   { id: "analytics", label: "Analítica", icon: BarChart3 },
+  { id: "waitlist", label: "Altas", icon: UserPlus },
   { id: "moderation", label: "Moderación", icon: ShieldCheck },
   { id: "editorial", label: "Entre líneas", icon: Newspaper },
   { id: "people", label: "Personas", icon: Users },
@@ -108,13 +109,18 @@ function restoreDemoGames() {
 
 export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
   const demoSnapshot = useMemo(() => createBackofficeDemo(), []);
-  const [section, setSection] = useState<Section>("overview");
+  const [section, setSection] = useState<Section>(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("view") === "waitlist") return "waitlist";
+    return "overview";
+  });
   const [cases, setCases] = useState(restoreDemoCases);
   const [proposals, setProposals] = useState(restoreDemoProposals);
   const demoMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
   const [accessError, setAccessError] = useState<string | null>(null);
   const [serverData, setServerData] = useState<BackofficeData | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsSnapshot | null>(null);
+  const [waitlist, setWaitlist] = useState<WaitlistSnapshot | null>(null);
+  const [waitlistError, setWaitlistError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [busyAction, setBusyAction] = useState<string | null>(null);
@@ -132,6 +138,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       return;
     }
     void readAnalytics().then(setAnalytics).catch(() => undefined);
+    void readWaitlistSnapshot().then(setWaitlist).catch(error => setWaitlistError(String(error?.message ?? error?.code ?? "No se pudo cargar la lista.")));
     void readBackoffice().then(data => {
       setServerData(data);
       const nextCases = serverCases(data);
@@ -188,7 +195,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       <div className="bo-sidebar-foot"><div className="bo-user"><span>AT</span><div><strong>Álex Torres</strong><small>Administrador</small></div></div><a href="/demo/?view=explore">Volver a la aplicación <ArrowUpRight size={15} /></a></div>
     </aside>
     <main className="bo-main">
-      <header className="bo-topbar"><div><p className="bo-breadcrumb">ENTRECLASE <ChevronRight size={14} /> BACKOFFICE</p><h1>{section === "overview" ? text.title : nav.find(item => item.id === section)?.label}</h1><p className="bo-subtitle">{section === "overview" ? text.sub : section === "moderation" ? "Casos, denuncias y decisiones de convivencia." : section === "editorial" ? "Propuestas y ediciones de Entre líneas." : "Una vista operativa de la comunidad."}</p></div><div className="bo-top-actions"><span className="bo-demo-pill"><Sparkles size={15} />{demoMode ? text.demo : "Sesión operativa"}</span><button className="bo-avatar" aria-label="Cuenta de administrador">AT</button></div></header>
+      <header className="bo-topbar"><div><p className="bo-breadcrumb">ENTRECLASE <ChevronRight size={14} /> BACKOFFICE</p><h1>{section === "overview" ? text.title : nav.find(item => item.id === section)?.label}</h1><p className="bo-subtitle">{section === "overview" ? text.sub : section === "moderation" ? "Casos, denuncias y decisiones de convivencia." : section === "editorial" ? "Propuestas y ediciones de Entre líneas." : section === "waitlist" ? "El crecimiento de la comunidad, con acceso solo para ti." : "Una vista operativa de la comunidad."}</p></div><div className="bo-top-actions"><span className="bo-demo-pill"><Sparkles size={15} />{demoMode ? text.demo : "Sesión operativa"}</span><button className="bo-avatar" aria-label="Cuenta de administrador">AT</button></div></header>
       {demoMode && <div className="bo-demo-banner"><AlertTriangle size={16} /><span><strong>Datos de demostración.</strong> Las acciones cambian esta visita y no afectan a usuarios reales.</span></div>}
       <div className="bo-content">
         <label className="bo-search"><Search size={18} /><span className="sr-only">{text.search}</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder={text.search} /></label>
@@ -196,6 +203,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
         {feedback && <div className={`bo-feedback bo-feedback-${feedback.kind}`} role={feedback.kind === "error" ? "alert" : "status"}>{feedback.text}<button onClick={() => setFeedback(null)} aria-label="Cerrar aviso"><X size={14} /></button></div>}
         {section === "overview" && <Overview pending={pending} cases={cases} proposals={proposals} games={games} snapshot={serverData ?? demoSnapshot} onNavigate={setSection} />}
         {section === "analytics" && <AnalyticsPanel data={analytics} />}
+        {section === "waitlist" && <WaitlistPanel data={waitlist} error={waitlistError} demoMode={demoMode} />}
         {section === "moderation" && <Moderation items={filteredCases} onResolve={resolveCase} busyAction={busyAction} />}
         {section === "editorial" && <Editorial items={filteredProposals} onState={setProposalState} busyAction={busyAction} />}
         {section === "people" && <People query={query} people={serverData?.people} />}
@@ -215,6 +223,45 @@ function Overview({ pending, cases, proposals, games, snapshot, onNavigate }: { 
   </>;
 }
 
+function WaitlistPanel({ data, error, demoMode }: { data: WaitlistSnapshot | null; error: string | null; demoMode: boolean }) {
+  const [notifyEnabled, setNotifyEnabled] = useState(() => typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted" && localStorage.getItem("entreclases-waitlist-notifications") === "on");
+  const [notifyMessage, setNotifyMessage] = useState("");
+  const knownTotal = useRef<number | null>(data?.total ?? null);
+  useEffect(() => {
+    if (data) knownTotal.current = data.total;
+  }, [data]);
+  useEffect(() => {
+    if (demoMode || !notifyEnabled) return;
+    const timer = window.setInterval(() => {
+      void readWaitlistSnapshot().then(next => {
+        if (knownTotal.current !== null && next.total > knownTotal.current && "Notification" in window && Notification.permission === "granted") {
+          new Notification("Nueva alta en Entreclases", { body: "Hay una persona nueva en la lista de espera." });
+        }
+        knownTotal.current = next.total;
+      }).catch(() => undefined);
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, [demoMode, notifyEnabled]);
+  const shown = data ?? (demoMode ? { total: 184, active: 178, new_today: 12, new_last_7_days: 47, last_signup_at: "2026-09-22T10:30:00.000Z", sources: [{ source: "landing", total: 142 }, { source: "roadmap", total: 42 }] } : null);
+  async function enableNotifications() {
+    if (typeof window === "undefined" || !("Notification" in window)) { setNotifyMessage("Este navegador no admite avisos de escritorio."); return; }
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") { setNotifyMessage("Los avisos están bloqueados. Puedes activarlos desde los ajustes del navegador."); return; }
+    localStorage.setItem("entreclases-waitlist-notifications", "on"); setNotifyEnabled(true);
+    setNotifyMessage("Avisos activados en este dispositivo.");
+    new Notification("Entreclases · avisos privados", { body: "Te avisaremos cuando se detecte una nueva alta mientras el panel esté abierto." });
+  }
+  if (!shown) return <section className="bo-detail"><div className={"bo-feedback bo-feedback-" + (error ? "error" : "loading")} role={error ? "alert" : "status"}>{error ? "No se han podido cargar las altas. Aplica la migración 202609260026_waitlist_snapshot en Supabase." : <><span className="bo-spinner" />Cargando las altas…</>}</div></section>;
+  const lastSignup = shown.last_signup_at ? new Date(shown.last_signup_at).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" }) : "Todavía no hay registros";
+  return <section className="bo-detail">
+    <div className="bo-detail-intro"><span className="bo-eyebrow">ACCESO PRIVADO · LISTA DE ESPERA</span><h2>Cuánta gente está esperando entrar.</h2><p>Solo se muestran cifras agregadas. Los correos siguen ocultos y nunca viajan al navegador.</p></div>
+    <div className="bo-metrics bo-waitlist-metrics"><Metric label="Apuntadas" value={shown.total} detail="registros acumulados" tone="lime" icon={Users} /><Metric label="Activas" value={shown.active} detail="sin darse de baja" tone="blue" icon={UserPlus} /><Metric label="Esta semana" value={shown.new_last_7_days} detail="nuevas en 7 días" tone="lavender" icon={BarChart3} /><Metric label="Hoy" value={shown.new_today} detail="nuevas desde medianoche" tone="coral" icon={Bell} /></div>
+    <div className="bo-columns">
+      <section className="bo-panel"><PanelHeading eyebrow="RITMO" title="Última alta" action="Actualizar" onClick={() => window.location.reload()} /><div className="bo-waitlist-last"><strong>{lastSignup}</strong><span>La cifra se actualiza al recargar el panel.</span></div><div className="bo-analytics-list">{shown.sources.map(item => <div className="bo-analytics-row" key={item.source}><strong>{item.source === "roadmap" ? "Hoja de ruta" : "Portada"}</strong><span>{item.total} registros</span></div>)}</div></section>
+      <section className="bo-panel bo-notify-panel"><div className="bo-panel-heading"><div><span className="bo-eyebrow">AVISOS · SOLO TÚ</span><h3>Llévatelo al móvil</h3></div><Bell size={18} /></div><p>Activa el aviso de este dispositivo para recibir una notificación cuando el panel detecte actividad mientras está abierto.</p><button className={"bo-notify-button " + (notifyEnabled ? "is-on" : "")} onClick={enableNotifications} disabled={notifyEnabled}><Bell size={16} />{notifyEnabled ? "Avisos activados" : "Activar avisos"}</button>{notifyMessage && <small role="status">{notifyMessage}</small>}<span className="bo-notify-note">Para avisos aunque el panel esté cerrado, configura también el correo privado de Resend en la Edge Function.</span></section>
+    </div>
+  </section>;
+}
 function AnalyticsPanel({ data }: { data: AnalyticsSnapshot | null }) {
   if (!data) return <section className="bo-detail"><div className="bo-feedback bo-feedback-loading" role="status"><span className="bo-spinner" />Cargando analítica…</div></section>;
   const minutes = Math.floor(data.avg_active_seconds / 60);

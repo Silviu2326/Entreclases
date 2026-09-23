@@ -1,5 +1,5 @@
 import { getAuthClient } from "@/lib/auth/client";
-import type { AnalyticsSnapshot, BackofficeRole, BackofficeSnapshot, JsonObject, RestrictionKind } from "./types";
+import type { AnalyticsSnapshot, BackofficeRole, BackofficeSnapshot, JsonObject, RestrictionKind, WaitlistSnapshot } from "./types";
 
 export type BackofficeData = BackofficeSnapshot & {
   submissions: Array<Record<string, unknown>>;
@@ -48,6 +48,23 @@ export async function runBackofficeCommand(request: BackofficeCommand): Promise<
   return assertPayload(result.data);
 }
 
+
+export async function readWaitlistSnapshot(): Promise<WaitlistSnapshot> {
+  const result = await getAuthClient().rpc("universe_waitlist_snapshot", { p_days: 7 });
+  if (result.error) throw result.error;
+  const value = (result.data ?? {}) as Partial<WaitlistSnapshot> & { sources?: unknown };
+  return {
+    total: Number(value.total ?? 0),
+    active: Number(value.active ?? 0),
+    new_today: Number(value.new_today ?? 0),
+    new_last_7_days: Number(value.new_last_7_days ?? 0),
+    last_signup_at: value.last_signup_at ? String(value.last_signup_at) : null,
+    sources: Array.isArray(value.sources) ? value.sources.map(item => {
+      const row = item as Record<string, unknown>;
+      return { source: String(row.source ?? "landing"), total: Number(row.total ?? 0) };
+    }) : [],
+  };
+}
 
 export async function readAnalytics(days = 30): Promise<AnalyticsSnapshot> {
   const result = await getAuthClient().rpc("universe_analytics_snapshot", { p_days: days });

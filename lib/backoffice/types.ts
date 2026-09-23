@@ -125,6 +125,15 @@ export type BackofficeMetrics = {
   upcoming_plans: number;
 };
 
+export type WaitlistSnapshot = {
+  total: number;
+  active: number;
+  new_today: number;
+  new_last_7_days: number;
+  last_signup_at: string | null;
+  sources: Array<{ source: string; total: number }>;
+};
+
 export type AnalyticsSnapshot = {
   period_days: number;
   sessions: number;
