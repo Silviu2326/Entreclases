@@ -6,11 +6,18 @@ import { PGlite } from '@electric-sql/pglite';
 const db = new PGlite(); after(() => db.close());
 await db.exec("create role anon;create role authenticated;");
 await db.exec(await readFile(new URL('../supabase/migrations/202609230020_waitlist.sql', import.meta.url), 'utf8'));
+await db.exec(await readFile(new URL('../supabase/migrations/202609260028_waitlist_blog_source.sql', import.meta.url), 'utf8'));
 
 async function asVisitor(role, query) {
  await db.exec('set role ' + role);
  try { return await db.query(query); } finally { await db.exec('reset role'); }
 }
+
+test('The blog is an admitted origin; anything else is not', async () => {
+ await asVisitor('anon', "insert into public.universe_waitlist(email,locale,source) values('lector@alumni.uv.es','es','blog')");
+ await assert.rejects(asVisitor('anon', "insert into public.universe_waitlist(email,locale,source) values('otro@alumni.uv.es','es','instagram')"), /check constraint/);
+ await db.query("delete from public.universe_waitlist where email='lector@alumni.uv.es'");
+});
 
 test('A visitor can leave one address and nothing else', async () => {
  for (const role of ['anon', 'authenticated']) {

@@ -6,13 +6,17 @@ import type { Locale } from "../i18n/routes";
 // Auth may still be closed while the list collects addresses: a reachable
 // project with the waitlist migration applied is all this needs.
 export const waitlistConfigured = supabaseConfigured;
-export type WaitlistSource = "landing" | "roadmap";
+export type WaitlistSource = "landing" | "roadmap" | "blog";
 export type WaitlistResult = "saved" | "unavailable" | "failed";
 
 export async function joinWaitlist(email: string, locale: Locale, source: WaitlistSource): Promise<WaitlistResult> {
  if (!waitlistConfigured) return "unavailable";
  try {
-  const { error } = await getPublicClient().from("universe_waitlist").insert({ email: normalizeEmail(email), locale, source });
+  const client = getPublicClient(), row = { email: normalizeEmail(email), locale, source };
+  let { error } = await client.from("universe_waitlist").insert(row);
+  // Until migration 202609260028 admits the blog as an origin, the server
+  // rejects it (23514). The address still matters more than its origin.
+  if (error?.code === "23514" && source === "blog") ({ error } = await client.from("universe_waitlist").insert({ ...row, source: "landing" }));
   // A repeated address is already on the list; answering the same way for both
   // keeps the form from telling a stranger who signed up.
   if (!error || error.code === "23505") return "saved";
