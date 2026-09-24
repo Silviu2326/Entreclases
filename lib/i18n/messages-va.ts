@@ -1,6 +1,7 @@
 // Original Valencian copy. Spanish source strings are the stable lookup keys.
 export const valencianMessages: Record<string, string> = {
   "Roadmap": "Full de ruta",
+  "Blog": "Blog",
   "Dejar mi correo": "Deixar el meu correu",
   "Ver el roadmap": "Veure el full de ruta",
   "El registro aún no está abierto. Déjanos tu correo y te avisamos en cuanto abra.": "El registre encara no està obert. Deixa’ns el teu correu i t’avisem quan òbriga.",

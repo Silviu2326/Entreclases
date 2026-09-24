@@ -14,6 +14,7 @@ const links = [
   { href: "#unicoins", label: "ClasiCoins" },
   { href: "#acceso", label: "Quién puede entrar" },
   { href: "#dudas", label: "Las dudas" },
+  { href: "/blog/", label: "Blog" },
   { href: "/roadmap/", label: "Roadmap" },
   { href: "/registro/", label: "Crear mi cuenta" },
 ];

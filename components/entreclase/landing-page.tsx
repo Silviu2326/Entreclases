@@ -35,6 +35,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             <a className="nav-link" href="#campus">{tr("Tu campus")}</a>
             <a className="nav-link" href="#unicoins">ClasiCoins</a>
             <a className="nav-link" href="#dudas">{tr("Dudas")}</a>
+            <Link className="nav-link" href={localPath(locale, "blog")}>Blog</Link>
             <Link className="nav-link" href={localPath(locale, "roadmap")}>{locale === "va" ? "Full de ruta" : "Roadmap"}</Link>
             <Button asChild className="entreclase-button nav-button">
               <LaunchAction locale={locale} compact target="#entrar"/>
@@ -130,7 +131,7 @@ export function LandingPage({ locale = "es" }: { locale?: Locale }) {
             </div>
             <footer className="site-footer">
               <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, volver al inicio")}>entreclases</a>
-              <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}><a href="#vida">{tr("La vida dentro")}</a><a href="#dudas">{tr("Dudas")}</a><Link href={localPath(locale, "roadmap")}>{locale === "va" ? "Full de ruta" : "Roadmap"}</Link></nav>
+              <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}><a href="#vida">{tr("La vida dentro")}</a><a href="#dudas">{tr("Dudas")}</a><Link href={localPath(locale, "blog")}>Blog</Link><Link href={localPath(locale, "roadmap")}>{locale === "va" ? "Full de ruta" : "Roadmap"}</Link></nav>
               <LegalLinks locale={locale} /><p>{tr("Nos vemos fuera.")}</p>
             </footer>
           </div>

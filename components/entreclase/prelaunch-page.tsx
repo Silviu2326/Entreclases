@@ -29,6 +29,7 @@ export function PrelaunchPage({ locale = "es" }: { locale?: Locale }) {
     <nav className="header-inner" aria-label={tr("Navegación principal")}>
      <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, inicio")}>entreclases</a>
      <div className="header-links">
+      <Link className="nav-link" href={localPath(locale, "blog")}>Blog</Link>
       <Link className="nav-link" href={localPath(locale, "roadmap")}>{t("Las tres fechas", "Les tres dates")}</Link>
       <a className="entreclase-button nav-button prelaunch-nav-button" href="#entrar">{t("Apuntarme", "Apuntar-me")}</a>
      </div>
@@ -106,6 +107,7 @@ export function PrelaunchPage({ locale = "es" }: { locale?: Locale }) {
       <footer className="site-footer">
        <a className="wordmark" href="#inicio" aria-label={tr("Entreclases, volver al inicio")}>entreclases</a>
        <nav className="footer-links" aria-label={tr("Enlaces del pie de página")}>
+        <Link href={localPath(locale, "blog")}>{t("Blog: vida universitaria en Valencia", "Blog: vida universitària a València")}</Link>
         <Link href={localPath(locale, "roadmap")}>{t("Las tres fechas", "Les tres dates")}</Link>
         <Link href={localPath(locale, "login")}>{t("Ya tengo cuenta", "Ja tinc compte")}</Link>
        </nav>
