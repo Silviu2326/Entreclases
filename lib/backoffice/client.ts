@@ -81,3 +81,17 @@ export async function readAnalytics(days = 30): Promise<AnalyticsSnapshot> {
     daily: Array.isArray(value.daily) ? value.daily.map(item => ({ day: String(item.day ?? ""), sessions: Number(item.sessions ?? 0), members: Number(item.members ?? 0), active_seconds: Number(item.active_seconds ?? 0) })) : [],
   };
 }
+
+export type PendingWarmup = { id: string; game: string; content: { title?: [string, string]; options?: [string, string][]; results: [string, string][] }; model: string | null; created_at: string };
+
+/** Rondas de calentamiento que ha propuesto la IA y esperan revisión. */
+export async function readPendingWarmups(): Promise<PendingWarmup[]> {
+  const result = await getAuthClient().rpc("universe_warmups_pending");
+  if (result.error) throw result.error;
+  return Array.isArray(result.data) ? result.data as PendingWarmup[] : [];
+}
+
+export async function reviewWarmup(id: string, approve: boolean): Promise<void> {
+  const result = await getAuthClient().rpc("universe_warmup_review", { p_id: id, p_approve: approve });
+  if (result.error) throw result.error;
+}

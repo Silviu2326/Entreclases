@@ -5,6 +5,8 @@ import { requireText, showcaseMedia, validateChatMedia, validateGroup, validateP
 import { isStoredPiece, showcaseFrames } from "./showcase";
 import { builtinStickerUrl, builtinStickers, isStoredSticker, stickerLimits, validatePlacement, validateSpace, type BuiltinSticker } from "./space";
 import { faceLimits, isStoredFace, type FaceKind } from "./images";
+import { toNoteStudy } from "./study";
+import { approvedWarmups, hasWarmupPool } from "./games/warmups";
 
 export function createCommunityRepository(userId: string): CommunityRepository {
  const signedMedia=new Map<string,{url:string;until:number}>();
@@ -71,6 +73,19 @@ export function createCommunityRepository(userId: string): CommunityRepository {
     banner_url:isStoredFace(row.banner_url)?links.get(row.banner_url as string):row.banner_url}));
   }catch{return rows;}
  };
+ // Estudiar con un apunte. La función de Supabase responde con un código de error
+ // propio; si no está desplegada, la pantalla lo dice en vez de fallar sin más.
+ async function invokeStudy(body:Record<string,string>) {
+  const result=await client.functions.invoke("note-study",{body});
+  if(!result.error)return result.data as Record<string,unknown>;
+  const context=(result.error as {context?:unknown}).context;
+  if(context instanceof Response){
+   if(context.status===404)throw {code:"study_missing"};
+   const payload=await context.json().catch(()=>null) as {error?:string}|null;
+   throw {message:payload?.error??"STUDY_UNAVAILABLE"};
+  }
+  throw {message:"STUDY_UNAVAILABLE"};
+ }
  return {
   async read(sharedGroupToken?: string) {
    const results=await Promise.all([
@@ -154,6 +169,16 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    if(result.error) { await client.storage.from("universe-notes").remove([path]);throw result.error; }
   },
   async downloadNote(note) { const result=check(await client.storage.from("universe-notes").createSignedUrl(note.file_path,60,{download:note.file_name}));if(!result?.signedUrl)throw {code:"invalid_file"};return result.signedUrl; },
+  async readStudy(noteId) {
+   const result=await client.from("universe_note_study").select("note_id,status,content").eq("note_id",noteId).maybeSingle();
+   if(result.error){if(["PGRST205","42P01"].includes(result.error.code))throw {code:"study_missing"};throw result.error;}
+   return toNoteStudy(result.data);
+  },
+  async prepareStudy(noteId) { const study=toNoteStudy(await invokeStudy({action:"prepare",note:noteId}) as {status?:unknown;content?:unknown});if(!study)throw {message:"STUDY_UNAVAILABLE"};return study; },
+  // Las rondas de calentamiento aprobadas. Sin la migración o sin ninguna, las de siempre.
+  async warmups(game) { if(!hasWarmupPool(game))return [];const result=await client.from("universe_warmups").select("id,content").eq("game",game).order("reviewed_at",{ascending:false}).limit(60);return result.error?[]:approvedWarmups(game,result.data??[]); },
+  async meetGamesOpen() { const result=await client.rpc("universe_meet_games_open");if(result.error){if(["PGRST202","42883"].includes(result.error.code))return false;throw result.error;}return result.data===true; },
+  async askNote(noteId,question) { const data=await invokeStudy({action:"ask",note:noteId,question});if(typeof data.answer!=="string"||!data.answer)throw {message:"STUDY_UNAVAILABLE"};return data.answer; },
   async removeNote(note) {
    if(note.author_id!==userId) throw {code:"validation"};
    // Storage API removes the actual object. Retain metadata on a storage failure

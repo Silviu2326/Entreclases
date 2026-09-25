@@ -97,9 +97,11 @@ El estado se conserva mientras dure la pestaña, también al pasar de un juego a
 
 ## Cuentas reales
 
-Las pantallas llaman a `universe_play_v2`, una función de Supabase **que todavía no existe**. Mientras no exista, las cuentas reales ven el aviso de «todavía no está activado» con un enlace a la demo.
+Las pantallas llaman a `universe_play_v2`, de la migración `202609270031_play_v2.sql`. Sirve con cuentas reales **Dos verdades y una trola, El jurado del campus y Hay hueco**: destinatario comprobado en el servidor, anonimato aplicado en la proyección, mínimo de ocho personas, soluciones y recuentos ocultos, tiempo y límites llevados por el servidor, y una lista de bloqueos común. Las pruebas están en `tests/play-v2.test.mjs`.
 
-Qué hace falta para activarlas está en `docs/juegos/08-servidor.md`. En resumen: una tabla nueva con destinatario, anonimato, estado propio de cada juego y fechas; la proyección que filtra por destinatario y oculta lo que debe estar oculto; el tiempo llevado por el servidor; los límites de ritmo; una lista de bloqueos común a los siete juegos; y un panel de moderación, que es requisito previo para activar Sin dar la cara y La cita.
+Los otros cuatro juegos siguen solo en la demo: con cuentas reales ven el aviso de «todavía no está activado» con un enlace a ella.
+
+Lo pendiente está en `docs/juegos/08-servidor.md`: tiempo real, avisos al Buzón, panel de moderación (requisito previo para Sin dar la cara y La cita), plazos de conservación y los cuatro juegos restantes.
 
 La función antigua `universe_play`, de la migración `202609190007_social_games.sql`, corresponde a los juegos anteriores. No sirve para el diseño nuevo y conviene sustituirla, no ampliarla.
 

@@ -4,9 +4,26 @@ Qué falta para que los siete juegos funcionen con cuentas reales, no solo en la
 
 ## Dónde estamos
 
-Las siete experiencias están construidas y son jugables **en la demo**. La pantalla de cada juego llama a `universe_play_v2`, una función de Supabase que todavía no existe. Mientras no exista, las cuentas reales ven el aviso de «todavía no está activado» con un enlace a la demo, que es lo que ya pasaba antes.
+Las siete experiencias son jugables **en la demo**. Con cuentas reales, la migración `202609270031_play_v2.sql` crea `universe_play_v2` y sirve ya **Dos verdades y una trola, El jurado del campus y Hay hueco**. Los otros cuatro responden «todavía no está activado» con un enlace a la demo.
 
-La función actual, `universe_play`, de la migración `202609190007_social_games.sql`, corresponde a los juegos antiguos: una sola tabla de salas con campos genéricos y siete juegos compartiendo el mismo formato. No sirve para el diseño nuevo y **no debe ampliarse**; conviene sustituirla.
+Qué cubre la migración 031:
+
+- Tablas nuevas: `universe_game_items` (destinatario, anonimato, estado en JSON, inicio y cierre), `universe_game_moves`, una sola lista de bloqueos `universe_game_blocks`, denuncias y registro de actividad. Nadie las lee directamente.
+- Requisitos 1, 2, 3, 4, 6, 7 y 8 para los tres juegos. El destinatario guarda la sede, la carrera y el curso del autor al crear, para que no se amplíe después. El tiempo se lee del reloj en cada consulta; `universe_game_sweep()` marca lo terminado y borra el chat de los huecos a las 24 horas, y se programa con `pg_cron`.
+- Los textos y errores salen en español o valenciano según el idioma que manda la pantalla.
+- Pruebas en `tests/play-v2.test.mjs`.
+
+Pendiente:
+
+- Tiempo real y avisos al Buzón. La tarea programada existe, pero todavía no escribe avisos.
+- Panel de moderación: las denuncias se guardan en `universe_game_reports` y solo se consultan desde Supabase.
+- El caso de la semana se marca a mano (`state.weekly`); no hay pantalla para el equipo.
+- Plazos de conservación, salvo el chat de Hay hueco.
+- Las pantallas de Dos verdades y El jurado enseñan sus botones de demo también a cuentas reales; el servidor los rechaza.
+- Retirar `universe_play` y sus tablas cuando nadie las use.
+- Defiende lo indefendible, Sin dar la cara, ¿Me lío? y La cita.
+
+La función antigua, `universe_play`, de la migración `202609190007_social_games.sql`, corresponde a los juegos anteriores: una sola tabla de salas con campos genéricos y siete juegos compartiendo el mismo formato. No sirve para el diseño nuevo y **no debe ampliarse**.
 
 ## Lo que cambia respecto al modelo actual
 

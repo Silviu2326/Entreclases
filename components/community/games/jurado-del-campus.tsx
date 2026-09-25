@@ -166,7 +166,7 @@ function ArgColumn({ g, view, side, label, list, act, busy }: { g: Game<State>; 
       </li>)}
       {!sorted.length && <li className="g-muted">{g.t("Nadie ha argumentado este lado todavía.", "Ningú ha argumentat este costat encara.")}</li>}
     </ul>
-    <Action secondary disabled={busy} onClick={() => void act("demoArgue", { side })}>{g.t("Demo: nuevo argumento", "Demo: nou argument")}</Action>
+    {g.demo && <Action secondary disabled={busy} onClick={() => void act("demoArgue", { side })}>{g.t("Demo: nuevo argumento", "Demo: nou argument")}</Action>}
   </div>;
 }
 

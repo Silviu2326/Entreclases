@@ -141,3 +141,7 @@ El espacio viaja como un JSON en `universe_profiles.space` (la forma la comprueb
 ## ClasiCoins
 
 La landing y la aplicación explican y aplican ClasiCoins, una moneda interna para incentivar la participación: 20 de bienvenida, −10 al crear un evento, −5 al abrir un hilo, +3 por la primera inscripción en un evento ajeno y +2 por la primera respuesta en un hilo ajeno. Hay límites diarios y un registro propio de movimientos. No se compran, venden ni convierten en dinero. [Reglas y despliegue](docs/unicoins.md).
+
+## IA
+
+«Estudiar con estos apuntes» (resumen, tarjetas, test y preguntas sobre un PDF) y los calentamientos del juego del día usan GPT-6 Luna desde Edge Functions de Supabase. ¿Me lío? y La cita se abren cuando el campus llega a 150 perfiles. Puesta en marcha, cupos y coste: [docs/ia.md](docs/ia.md).

@@ -1,0 +1,31 @@
+/* Estudiar con un apunte. Prefijo ns-. */
+.ns { display:grid; gap:18px; min-height:220px; }
+.ns .u-chips { flex-wrap:wrap; }
+.ns-error { background:#fff0ee; color:#8a2317; border-radius:8px; padding:10px 12px; font-size:13px; }
+.ns-notice { display:flex; gap:8px; align-items:flex-start; font-size:11px; color:var(--u-muted); border-top:1px solid var(--u-line); padding-top:12px; }
+.ns-notice svg { width:14px; height:14px; flex:none; margin-top:2px; }
+.ns-row { display:flex; flex-wrap:wrap; gap:8px; }
+.ns-summary { display:grid; gap:10px; padding-left:22px; font-size:14px; list-style:decimal; }
+.ns-summary li::marker { color:var(--u-muted); font-weight:700; }
+.ns-cards { display:grid; gap:12px; }
+.ns-card { display:grid; gap:14px; align-content:center; min-height:200px; padding:24px; text-align:left; border:1px solid var(--u-line); border-radius:14px; background:var(--u-paper); cursor:pointer; }
+.ns-card strong { font-size:19px; line-height:1.35; letter-spacing:-.01em; }
+.ns-card-back { background:#f4ffd0; border-color:#d9ec8a; }
+.ns-card-back strong { font-size:16px; font-weight:550; }
+.ns-hint { font-size:11px; color:var(--u-muted); }
+.ns-quiz { display:grid; gap:14px; }
+.ns-quiz h3 { font-size:18px; line-height:1.35; }
+.ns-options { display:grid; gap:8px; }
+.ns-option { display:flex; gap:10px; align-items:center; text-align:left; padding:12px 14px; min-height:44px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-paper); font-size:14px; cursor:pointer; }
+.ns-option:hover:not(:disabled) { border-color:var(--u-ink); }
+.ns-option:disabled { cursor:default; }
+.ns-option svg { width:16px; height:16px; flex:none; }
+.ns-right { background:#f4ffd0; border-color:#9fbf1f; }
+.ns-wrong { background:#fff0ee; border-color:#e3a197; }
+.ns-why { font-size:13px; background:#f6f3f5; border-radius:10px; padding:12px 14px; }
+.ns-result { display:grid; gap:14px; justify-items:start; padding:12px 0; }
+.ns-result strong { font-size:24px; letter-spacing:-.02em; }
+.ns-ask { display:grid; gap:10px; justify-items:start; }
+.ns-ask .u-field { width:100%; }
+.ns-answer { width:100%; white-space:pre-wrap; font-size:14px; background:#f6f3f5; border-radius:10px; padding:14px; }
+@media (max-width:760px) { .ns-card { min-height:170px; padding:18px; }.ns-card strong { font-size:17px; } }
