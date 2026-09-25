@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 import { Dialog } from "radix-ui";
 
-import { Newspaper, ArrowUpRight, BookOpen, CalendarDays, ChevronRight, Compass, Home, MapPin, Mail, Menu, MessageCircle, Search, Users, UserRound, X, LogOut, Sparkles, ArrowRight } from "lucide-react";
+import { Newspaper, ArrowUpRight, CalendarDays, ChevronRight, Compass, Home, MapPin, Mail, Menu, MessageCircle, Search, X, LogOut, Sparkles, ArrowRight } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 
@@ -67,8 +67,17 @@ const Magazine=dynamic(()=>import("./magazine").then(m=>m.Magazine),{loading:Scr
 const Explore=dynamic(()=>import("./explore").then(m=>m.Explore),{loading:ScreenLoading});
 const MailboxPage=dynamic(()=>import("./mailbox").then(m=>m.MailboxPage),{loading:ScreenLoading});
 
-const navigation:{view:View;Icon:typeof Home}[]=[{view:"home",Icon:Home},{view:"plans",Icon:CalendarDays},{view:"groups",Icon:Users},{view:"campus",Icon:BookOpen},{view:"projects",Icon:Sparkles},{view:"student",Icon:GraduationCap},{view:"explore",Icon:Compass},{view:"magazine",Icon:Newspaper},{view:"messages",Icon:MessageCircle},{view:"profile",Icon:UserRound}];
-const mobileNavigation=navigation.filter(item=>["home","plans","projects","messages","profile"].includes(item.view));
+/* Cinco puertas, todo lo demás dentro de ellas. Las secciones secundarias siguen
+   teniendo rutas propias para los enlaces profundos, pero no compiten con la
+   navegación principal. */
+const navigation:{view:View;Icon:typeof Home}[]=[
+ {view:"home",Icon:Home},
+ {view:"explore",Icon:Compass},
+ {view:"messages",Icon:MessageCircle},
+ {view:"magazine",Icon:Newspaper},
+ {view:"student",Icon:GraduationCap},
+];
+const mobileNavigation=navigation;
 
 export function CommunityShell({navigating=false,headingRef,query,setQuery,notice,dismissNotice}:{navigating?:boolean;headingRef:RefObject<HTMLHeadingElement|null>;query:string;setQuery:(q:string)=>void;notice:{text:string;error:boolean}|null;dismissNotice:()=>void;onRefresh:()=>Promise<void>}){
 
@@ -81,8 +90,9 @@ export function CommunityShell({navigating=false,headingRef,query,setQuery,notic
 
  const navigate=(v:View)=>{setDrawer(false);go(v);};
 
- const exploreViews:View[]=["explore","people","discover"];
- const isCurrent=(candidate:View)=>candidate==="explore"?exploreViews.includes(view):view===candidate;
+ const exploreViews:View[]=["explore","plans","campus","people","discover","projects"];
+ const messagesViews:View[]=["messages","groups"];
+ const isCurrent=(candidate:View)=>candidate==="explore"?exploreViews.includes(view):candidate==="messages"?messagesViews.includes(view):view===candidate;
 
  const nav=<><Link className="u-brand" href={localPath(locale,"home")}>entreclases<span aria-hidden="true">&#10035;</span></Link><span className="u-campus-stamp"><span/>Val&#232;ncia &#183; {c("campus")}</span><nav aria-label={c("navigation")}>{navigation.map(({view:v,Icon})=><button key={v} onClick={()=>navigate(v)} className={isCurrent(v)?"active":""} aria-current={isCurrent(v)?"page":undefined}><Icon aria-hidden="true"/>{c(v)}{isCurrent(v)&&<span className="u-nav-dot"/>}</button>)}</nav>{!demo&&<div className="u-sidebar-bottom"><button className="u-logout" onClick={()=>void logout()} disabled={leaving}><LogOut aria-hidden="true"/>{c("logout")}</button>{logoutError&&<p role="alert" className="u-small">{logoutError}</p>}</div>}</>;
 

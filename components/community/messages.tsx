@@ -11,7 +11,7 @@ import "./charlas.css";
    side by side; when there is no room for both, the switch decides which one
    fills the column. Arriving with a conversation open starts on the chats. */
 export function Messages(){
- const {c,locale,data,me,threadId}=useCommunity();
+ const {c,locale,data,me,threadId,go}=useCommunity();
  const t=(es:string,va:string)=>locale==="va"?va:es;
  const [mode,setMode]=useState<"forum"|"chats">(threadId?"chats":"forum"),[search,setSearch]=useState("");
  /* "Hablarlo entre dos" opens a conversation from inside a thread: follow it to the chats. */
@@ -63,7 +63,10 @@ export function Messages(){
    <button type="button" role="tab" aria-selected={mode==="forum"} className={mode==="forum"?"active":""} onClick={()=>setMode("forum")}><MessageSquareText aria-hidden="true"/>{c("openTalk")}</button>
    <button type="button" role="tab" aria-selected={mode==="chats"} className={mode==="chats"?"active":""} onClick={()=>setMode("chats")}><MessageCircle aria-hidden="true"/>{c("betweenTwo")}</button>
   </div>
-  <div className="u-charlas-forum">
+  <section className="ch-communities" aria-labelledby="ch-communities-title">
+   <div className="ch-communities-heading"><div><p className="ch-kicker">{t("DONDE TAMBIÉN SE HABLA","ON TAMBÉ ES PARLA")}</p><h2 id="ch-communities-title">{t("Tus comunidades, aquí al lado.","Les teues comunitats, ací al costat.")}</h2></div><button type="button" onClick={()=>go("groups")}>{t("Ver todas","Vore-les totes")}<ArrowDown aria-hidden="true"/></button></div>
+   <div className="ch-communities-list">{data.groups.slice(0,4).map(group=><button type="button" key={group.id} onClick={()=>go("messages",{groupId:group.id})}><span className={`ch-community-mark ch-community-mark-${group.category}`} aria-hidden="true"/><span><strong>{group.name}</strong><small>{group.description}</small></span><ArrowDown aria-hidden="true"/></button>)}</div>
+  </section>  <div className="u-charlas-forum">
    <p className="ch-kicker"><strong>{c("openTalk")}</strong>{c("openTalkHelp")}</p>
    {hot&&heat(hot.id)>0&&!search&&<article className="ch-hot" aria-label={c("threadOfDay")}>
     <p className="ch-hot-label"><Flame aria-hidden="true"/>{c("threadOfDay")}</p>
