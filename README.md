@@ -22,6 +22,10 @@ Quien se apunta antes de la apertura empieza con 50 ClasiCoins en lugar de 20. L
 
 `/roadmap/` y `/va/full-de-ruta/` publican las tres fechas: apertura en Valencia el 28 de septiembre de 2026, sección de Proyectos el 12 de octubre (dos semanas después) y un anuncio el 26 de octubre, último lunes del mes. Los textos y las fechas están en `lib/launch/roadmap.ts`; la página está en `components/entreclase/roadmap-page.tsx` y es la única página, junto a la portada, que se declara indexable.
 
+## IA
+
+«Estudiar con estos apuntes» (resumen, tarjetas, test y preguntas sobre un PDF) y los calentamientos del juego del día usan GPT-6 Luna desde Edge Functions de Supabase. ¿Me lío? y La cita se abren cuando el campus llega a 150 perfiles. Puesta en marcha, cupos y coste: [docs/ia.md](docs/ia.md).
+
 ## Lista de correo del prelanzamiento
 
 El formulario de la portada y el del roadmap guardan la dirección en `public.universe_waitlist` (migración `202609230020_waitlist.sql`). Admite correo universitario o personal, y avisa de que el día de la apertura sigue haciendo falta una cuenta universitaria o una invitación. La tabla solo concede `insert` de tres columnas a `anon`: nadie puede leer, editar ni borrar la lista desde el navegador, y se consulta con una clave de servidor.

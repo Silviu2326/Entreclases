@@ -10,9 +10,11 @@ import { Attendance, CreatePlanModal, mapUrl, PlaceGame, planHereEmpty } from ".
 import { GameHub } from "./games";
 import { ExploreOpening } from "./explore-opening";
 import { ExploreWeekly } from "./explore-weekly";
-import { enabledGames, languageIndex } from "@/lib/community/games/catalog";
+import { languageIndex } from "@/lib/community/games/catalog";
 import { kindLabels, placeKinds, spotOf, WEEK_MS, type PlaceKind, type PlanPeriod } from "@/lib/community/places";
 import { openingOfDay } from "@/lib/community/games/openings";
+import { playableGames } from "@/lib/community/games/gate";
+import { useMeetGamesOpen } from "./meet-gate";
 import { ProjectTeaser } from "./projects";
 import { MagazineTeaser } from "./magazine";
 import "./explore.css";
@@ -21,7 +23,7 @@ export function Explore() {
   const { locale, query } = useCommunity();
   const t = (es: string, va: string) => locale === "va" ? va : es;
   // El mismo juego que anuncia Inicio, todo el día: la tarjeta de allí promete este banner.
-  const opening = openingOfDay(enabledGames.map(game => game.id));
+  const opening = openingOfDay(playableGames(useMeetGamesOpen() === true));
   // Inicio manda aquí con el id de la sección en el hash: el mapa a los planes, las cifras a su sección.
   useEffect(() => {
     const id = window.location.hash.slice(1);

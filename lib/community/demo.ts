@@ -7,6 +7,7 @@ import { showcaseFrames, showcaseLimits, type ShowcaseFrame } from "./showcase";
 import { builtinStickerUrl, builtinStickers, defaultSpace, stickerLimits, validatePlacement, validateSpace, type ProfileSpace } from "./space";
 import { localTaste, type Taste } from "./tastes";
 import { faceLimits, type FaceKind } from "./images";
+import { demoAnswer, demoNoteStudy } from "./study";
 
 export const demoUserId = "demo-alex";
 export function createDemoRepository(locale: Locale): CommunityRepository {
@@ -125,6 +126,7 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
  const files=new Map<string,Blob>(Object.entries(texts).map(([key,value])=>[key,new Blob([value],{type:"text/plain;charset=utf-8"})]));
  data.notes.forEach(note=>{note.file_size=files.get(note.file_path)!.size;});
  let chats:Message[]=[{id:"message1",thread_id:"thread-paula",sender_id:"demo-paula",body:l("¡Ey! He montado un café en Benimaclet. ¿Te vienes? ☕","Ei! He muntat un café a Benimaclet. Vens? ☕"),created_at:ago(1)}];
+ const studied=new Set<string>();
  const urls=new Set<string>(), id=()=>crypto.randomUUID(), stamp=()=>new Date().toISOString();
  // What the database would hand a viewer: own pieces, then by audience.
  const visibleTo=(viewer:string)=>{
@@ -167,6 +169,12 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
   async joinGroup(groupId,join,shareToken){const group=data.groups.find(g=>g.id===groupId);if(!group)throw{code:"validation"};if(join&&group.is_private&&!data.groupMembers.some(m=>m.group_id===groupId&&m.user_id===demoUserId)&&shareToken!==group.share_token)throw{message:"PRIVATE_GROUP_INVITE_REQUIRED"};if(!join&&group.creator_id===demoUserId)throw{code:"validation"};data.groupMembers=data.groupMembers.filter(m=>m.group_id!==groupId||m.user_id!==demoUserId);if(join)data.groupMembers.push({group_id:groupId,user_id:demoUserId});},
   async uploadNote(input,file){requireText(input.title,3,100);requireText(input.subject,2,100);await validatePdf(file);const key=id();files.set(key,file);data.notes.unshift({...input,id:key,author_id:demoUserId,file_name:file.name,file_path:key,file_size:file.size,created_at:stamp()});},
   async downloadNote(note){const file=files.get(note.file_path);if(!file)throw{code:"invalid_file"};const url=URL.createObjectURL(file);urls.add(url);return url;},
+  // En la demo la IA no se llama: preparar un apunte da el estudio de ejemplo y dura esta visita.
+  async readStudy(noteId){return studied.has(noteId)?demoNoteStudy(locale):null;},
+  async prepareStudy(noteId){if(!data.notes.some(n=>n.id===noteId))throw{message:"STUDY_NOT_FOUND"};await new Promise(done=>setTimeout(done,900));studied.add(noteId);return demoNoteStudy(locale);},
+  async meetGamesOpen(){return true;},
+  async warmups(){return [];},
+  async askNote(noteId,question){requireText(question,3,400);if(!studied.has(noteId))throw{message:"STUDY_NOT_READY"};await new Promise(done=>setTimeout(done,600));return demoAnswer(locale);},
   async removeNote(note){if(note.author_id!==demoUserId)throw{code:"validation"};data.notes=data.notes.filter(n=>n.id!==note.id);files.delete(note.file_path);},
   async openThread(peerId){if(peerId===demoUserId||!data.profiles.some(p=>p.user_id===peerId))throw{message:"PEER_UNAVAILABLE"};let thread=data.threads.find(t=>t.user_a===peerId||t.user_b===peerId);if(!thread){thread={id:id(),user_a:demoUserId,user_b:peerId,created_at:stamp()};data.threads.unshift(thread);}return thread.id;},
   async messages(threadId){return structuredClone(chats.filter(m=>m.thread_id===threadId));},

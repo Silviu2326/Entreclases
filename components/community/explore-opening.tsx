@@ -7,6 +7,7 @@ import { openings } from "@/lib/community/games/openings";
 import { useWarmupChoice } from "@/lib/community/games/warmup";
 import type { GameKind } from "@/lib/community/games/types";
 import { useCommunity } from "./context";
+import { useWarmupOfDay } from "./warmup-pool";
 import { GameLink } from "./games";
 
 // Each warm-up round borrows the mechanic of its game, so no two banners look alike.
@@ -79,7 +80,10 @@ export const marks: Record<GameKind, ComponentType<{ "aria-hidden"?: boolean }>>
 // entre las dos pantallas durante el día (useWarmupChoice).
 export function WarmupCard({ game, heading = "h2", className = "" }: { game: GameKind; heading?: "h2" | "h3"; className?: string }) {
   const { locale } = useCommunity();
-  const language = languageIndex(locale), card = openings[game].card;
+  const language = languageIndex(locale), base = openings[game].card;
+  // Una ronda aprobada en el backoffice sustituye a la de siempre; el resto de la tarjeta no cambia.
+  const approved = useWarmupOfDay(game);
+  const card = { ...base, title: approved?.title ?? base.title, options: approved?.options ?? base.options, results: approved?.results ?? base.results };
   const [choice, choose] = useWarmupChoice(game);
   const Mini = minis[game], Mark = marks[game], Heading = heading;
   return <div className={`ex-first-game ex-warmup ex-warmup-${game}${className ? ` ${className}` : ""}`}><div className="ex-first-game-head"><span>{card.label[language]}</span><Mark aria-hidden/></div><Heading>{card.title[language]}</Heading><p>{card.prompt[language]}</p><Mini options={card.options.map(option => option[language])} choice={choice} choose={choose} language={language}/><div className="ex-practice-result" role="status">{choice === null ? card.idle[language] : card.results[choice]?.[language] ?? card.idle[language]}</div><GameLink id={game}>{card.cta[language]}<ArrowUpRight /></GameLink></div>;

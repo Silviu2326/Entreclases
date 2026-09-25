@@ -45,13 +45,14 @@ export function useGame<S>(kind: GameKind): Game<S> {
 
   const request = useCallback(async (command: string, input: Record<string, unknown> = {}) => {
     if (demo) return demoPlay(kind, worldRef.current, command, input) as S;
-    const { data: result, error: failure } = await getAuthClient().rpc("universe_play_v2", { p_game: kind, p_command: command, p_input: input });
+    // The server has no locale of its own: it answers labels and errors in the one we send.
+    const { data: result, error: failure } = await getAuthClient().rpc("universe_play_v2", { p_game: kind, p_command: command, p_input: { ...input, locale } });
     if (failure) {
       if (failure.code === "PGRST202" || failure.code === "42883") throw new SetupRequiredError("Estas experiencias todavía no están activadas para cuentas reales. Puedes jugarlas en la demo.");
       throw new Error(failure.message || "No se ha podido guardar. Inténtalo de nuevo.");
     }
     return result as S;
-  }, [demo, kind]);
+  }, [demo, kind, locale]);
 
   const refresh = useCallback(async () => {
     if (lock.current) return;

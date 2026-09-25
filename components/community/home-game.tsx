@@ -2,8 +2,10 @@
 
 import { useMemo } from "react";
 import { ArrowUpRight, CalendarDays, MessageCircle } from "lucide-react";
-import { enabledGames, gameById, languageIndex } from "@/lib/community/games/catalog";
+import { gameById, languageIndex } from "@/lib/community/games/catalog";
 import { madridDay, openingOfDay } from "@/lib/community/games/openings";
+import { playableGames } from "@/lib/community/games/gate";
+import { useMeetGamesOpen } from "./meet-gate";
 import { blindRoundLabel, useNow } from "@/lib/community/games/schedule";
 import { demoSummaries } from "@/lib/community/games/summary";
 import { buildWorld } from "@/lib/community/games/world";
@@ -21,7 +23,7 @@ function dayFrom(now: Date, days: number) { return new Date(Date.parse(`${madrid
 export function GameOfDay() {
   const { c, locale, demo, data, me, go } = useCommunity();
   const language = languageIndex(locale);
-  const ids = enabledGames.map(game => game.id);
+  const ids = playableGames(useMeetGamesOpen() === true);
   const id = openingOfDay(ids);
   const game = gameById(id);
   // Solo la demo sabe qué juegos te esperan; con cuenta real no se muestra nada.

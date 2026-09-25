@@ -10,9 +10,10 @@ import { createBackofficeDemo } from "@/lib/backoffice/demo";
 import { readAnalytics, readBackoffice, readWaitlistSnapshot, runBackofficeCommand, type BackofficeCommand, type BackofficeData } from "@/lib/backoffice/client";
 import { loadBackofficeSession, persistBackofficeAction, type BackofficeAction } from "@/lib/backoffice/repository";
 import type { AnalyticsSnapshot, WaitlistSnapshot } from "@/lib/backoffice/types";
+import { WarmupsPanel } from "./warmups-panel";
 import "./backoffice.css";
 
-type Section = "overview" | "analytics" | "waitlist" | "moderation" | "editorial" | "people" | "coins" | "settings";
+type Section = "overview" | "analytics" | "waitlist" | "moderation" | "editorial" | "warmups" | "people" | "coins" | "settings";
 type CaseItem = { id: string | number; type: string; title: string; detail: string; time: string; priority: "Alta" | "Media" | "Baja"; state: "Pendiente" | "En revisión" | "Resuelto" };
 type Proposal = { id: string | number; title: string; author: string; section: string; state: "En revisión" | "Aceptada" | "Rechazada"; age: string };
 
@@ -35,6 +36,7 @@ const nav: { id: Section; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "waitlist", label: "Altas", icon: UserPlus },
   { id: "moderation", label: "Moderación", icon: ShieldCheck },
   { id: "editorial", label: "Entre líneas", icon: Newspaper },
+  { id: "warmups", label: "Calentamientos", icon: Sparkles },
   { id: "people", label: "Personas", icon: Users },
   { id: "coins", label: "ClasiCoins", icon: CircleDollarSign },
   { id: "settings", label: "Configuración", icon: Settings2 },
@@ -195,7 +197,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       <div className="bo-sidebar-foot"><div className="bo-user"><span>AT</span><div><strong>Álex Torres</strong><small>Administrador</small></div></div><a href="/demo/?view=explore">Volver a la aplicación <ArrowUpRight size={15} /></a></div>
     </aside>
     <main className="bo-main">
-      <header className="bo-topbar"><div><p className="bo-breadcrumb">ENTRECLASE <ChevronRight size={14} /> BACKOFFICE</p><h1>{section === "overview" ? text.title : nav.find(item => item.id === section)?.label}</h1><p className="bo-subtitle">{section === "overview" ? text.sub : section === "moderation" ? "Casos, denuncias y decisiones de convivencia." : section === "editorial" ? "Propuestas y ediciones de Entre líneas." : section === "waitlist" ? "El crecimiento de la comunidad, con acceso solo para ti." : "Una vista operativa de la comunidad."}</p></div><div className="bo-top-actions"><span className="bo-demo-pill"><Sparkles size={15} />{demoMode ? text.demo : "Sesión operativa"}</span><button className="bo-avatar" aria-label="Cuenta de administrador">AT</button></div></header>
+      <header className="bo-topbar"><div><p className="bo-breadcrumb">ENTRECLASE <ChevronRight size={14} /> BACKOFFICE</p><h1>{section === "overview" ? text.title : nav.find(item => item.id === section)?.label}</h1><p className="bo-subtitle">{section === "overview" ? text.sub : section === "moderation" ? "Casos, denuncias y decisiones de convivencia." : section === "editorial" ? "Propuestas y ediciones de Entre líneas." : section === "warmups" ? "Lo que propone la IA, antes de que lo vea nadie." : section === "waitlist" ? "El crecimiento de la comunidad, con acceso solo para ti." : "Una vista operativa de la comunidad."}</p></div><div className="bo-top-actions"><span className="bo-demo-pill"><Sparkles size={15} />{demoMode ? text.demo : "Sesión operativa"}</span><button className="bo-avatar" aria-label="Cuenta de administrador">AT</button></div></header>
       {demoMode && <div className="bo-demo-banner"><AlertTriangle size={16} /><span><strong>Datos de demostración.</strong> Las acciones cambian esta visita y no afectan a usuarios reales.</span></div>}
       <div className="bo-content">
         <label className="bo-search"><Search size={18} /><span className="sr-only">{text.search}</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder={text.search} /></label>
@@ -206,6 +208,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
         {section === "waitlist" && <WaitlistPanel data={waitlist} error={waitlistError} demoMode={demoMode} />}
         {section === "moderation" && <Moderation items={filteredCases} onResolve={resolveCase} busyAction={busyAction} />}
         {section === "editorial" && <Editorial items={filteredProposals} onState={setProposalState} busyAction={busyAction} />}
+        {section === "warmups" && <WarmupsPanel demoMode={demoMode} />}
         {section === "people" && <People query={query} people={serverData?.people} />}
         {section === "coins" && <Coins />}
         {section === "settings" && <Settings games={games} onToggle={toggleGame} busyAction={busyAction} />}

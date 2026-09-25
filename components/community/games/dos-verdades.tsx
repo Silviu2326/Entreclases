@@ -114,7 +114,7 @@ function Screen({ g, state }: { g: Game<State>; state: State }) {
       <section className="g-stack">
         <GameHead title={t("Mis rondas", "Les meues rondes")} />
         {!state.mine.length && <Nothing title={t("Aún no has creado ninguna", "Encara no has creat cap")} body={t("Crea tu primera ronda de tres frases.", "Crea la teua primera ronda de tres frases.")} />}
-        {state.mine.map(round => <MyRoundCard key={round.id} round={round} t={t} busy={g.busy} onDemoPlay={() => void g.act("demoPlay", { round: round.id })} />)}
+        {state.mine.map(round => <MyRoundCard key={round.id} round={round} t={t} busy={g.busy} onDemoPlay={g.demo ? () => void g.act("demoPlay", { round: round.id }) : undefined} />)}
       </section>
 
       {(groupState.length > 0 || launchable.length > 0) && <section className="g-stack">
@@ -146,7 +146,7 @@ function RoundCard({ round, person, onGuess, onChat, busy, t }: { round: TruthRo
   </div>;
 }
 
-function MyRoundCard({ round, t, busy, onDemoPlay }: { round: TruthRound; t: (es: string, va: string) => string; busy: boolean; onDemoPlay: () => void }) {
+function MyRoundCard({ round, t, busy, onDemoPlay }: { round: TruthRound; t: (es: string, va: string) => string; busy: boolean; onDemoPlay?: () => void }) {
   const active = isActive(round);
   return <div className="g-truth-round g-truth-mine">
     <div className="g-row" style={{ justifyContent: "space-between" }}>
@@ -160,7 +160,7 @@ function MyRoundCard({ round, t, busy, onDemoPlay }: { round: TruthRound; t: (es
         <Bar label={card.lie ? t("La trola", "La mentida") : t("Verdad", "Veritat")} share={card.share ?? 0} total={round.playedCount} accent={card.lie} />
       </div>)}
     </div>
-    {active && <Action secondary onClick={onDemoPlay} disabled={busy}>{t("Demo: que alguien juegue tu ronda", "Demo: que algú jugue la teua ronda")}</Action>}
+    {active && onDemoPlay && <Action secondary onClick={onDemoPlay} disabled={busy}>{t("Demo: que alguien juegue tu ronda", "Demo: que algú jugue la teua ronda")}</Action>}
   </div>;
 }
 
