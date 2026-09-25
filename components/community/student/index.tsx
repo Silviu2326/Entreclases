@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpenCheck, CalendarRange, Calculator, Check, ClipboardCheck, Heart, Landmark, MapPin, Search, Sparkles, Users, X } from "lucide-react";
 import { languageIndex, toolBySlug, toolPath, type ToolGroup, type ToolKind } from "@/lib/community/student/catalog";
 import { tools } from "./catalog";
-import { SubjectsWorkspace } from "./subjects";
+import { LearningCenter } from "./learning-center";
 import { matches, useCommunity } from "../context";
 import "./student.css";
 import "./student-hub.css";
@@ -59,6 +59,7 @@ function StudentDesk() {
   const { locale, demo } = useCommunity();
   const language = languageIndex(locale);
   const [search, setSearch] = useState("");
+  const [focused,setFocused] = useState(false);
   const [filter, setFilter] = useState<ToolGroup | "all">("all");
   const open = useOpenTool();
   const active = open ? tools.find(tool => tool.id === open) : undefined;
@@ -69,11 +70,12 @@ function StudentDesk() {
   const organize = listed.filter(tool=>tool.group==="organize");
   const campus = listed.filter(tool=>tool.group==="campus");
   return <div className="st-hub">
-    <header className="st-desk-heading">
+    <header className="st-desk-heading" hidden={focused}>
       <div><h2>{language ? "La teua taula." : "Tu mesa."}<em>{language ? "Al teu ritme." : "A tu ritmo."}</em></h2><p>{language ? "Apunts més clars. La setmana en ordre. I un poc d’aire." : "Apuntes más claros. La semana en orden. Y un poco de aire."}</p></div>
       <span className="st-desk-note" aria-hidden="true">{language ? "vinga," : "vamos,"}<br/>{language ? "a poc a poc" : "poco a poco"}<svg viewBox="0 0 100 30"><path d="M4 21Q26 -1 26 17T48 19Q69 6 96 6"/></svg></span>
     </header>
-    <SubjectsWorkspace />
+    <LearningCenter onFocusChange={setFocused}/>
+    <div className="lc-tools-wrap" hidden={focused}>
     <div className="st-desk-toolbar">
       <div className="st-desk-filters" role="group" aria-label={language?"Tipus de ferramenta":"Tipo de herramienta"}>{filters.map(item=><button type="button" key={item.id} aria-pressed={filter===item.id} aria-controls="student-tools" onClick={()=>setFilter(item.id)}>{item.label[language]}</button>)}</div>
       <div className="st-desk-search"><Search aria-hidden="true"/><label className="sr-only" htmlFor="student-search">{language?"Buscar ferramenta":"Buscar herramienta"}</label><input id="student-search" type="search" placeholder={language?"Buscar ferramenta":"Buscar herramienta"} value={search} onChange={e=>setSearch(e.target.value)} autoComplete="off"/>{search&&<button type="button" aria-label={language?"Netejar cerca":"Limpiar búsqueda"} onClick={()=>setSearch("")}><X/></button>}</div>
@@ -85,7 +87,8 @@ function StudentDesk() {
       {campus.length>0&&<section className="st-desk-campus" aria-label={language?"Llocs per a estudiar":"Sitios para estudiar"}>{campus.map(renderCard)}</section>}
       {listed.length===0&&<div className="st-desk-empty"><Search aria-hidden="true"/><h3>{language?"No trobem eixa ferramenta.":"No encontramos esa herramienta."}</h3><p>{language?"Prova amb «apunts», «notes» o «setmana».":"Prueba con «apuntes», «notas» o «semana»."}</p><button type="button" className="st-button" onClick={()=>{setSearch("");setFilter("all");}}>{language?"Vore totes les ferramentes":"Ver todas las herramientas"}<ArrowRight/></button></div>}
     </div>
-    <p className="st-desk-signoff">{language?"Un pas cada vegada també compta.":"Un paso cada vez también cuenta."}<Heart aria-hidden="true"/></p>
+    </div>
+    <p className="st-desk-signoff" hidden={focused}>{language?"Un pas cada vegada també compta.":"Un paso cada vez también cuenta."}<Heart aria-hidden="true"/></p>
   </div>;
 }
 

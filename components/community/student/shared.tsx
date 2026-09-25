@@ -3,9 +3,10 @@ import { useCallback, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { languageIndex, toolById, toolPath, type ToolKind } from "@/lib/community/student/catalog";
-import { storageKey } from "@/lib/community/student/storage";
+import { storageKey, useStoreStatus } from "@/lib/community/student/storage";
 import { useCommunity } from "../context";
 import "./student.css";
+import { StudySync } from "./study-sync";
 
 /** Lo que recibe cada herramienta: idioma, modo, quién soy y la clave de su almacén local. */
 export function useTool(id: ToolKind) {
@@ -18,7 +19,8 @@ export function useTool(id: ToolKind) {
 
 /** Marco común: cabecera con vuelta al hub, y el aviso de que el estado vive en este navegador. */
 export function ToolShell({ id, children, aside, local = true }: { id: ToolKind; children: ReactNode; aside?: ReactNode; local?: boolean }) {
-  const { locale, demo, t, entry, language } = useTool(id);
+  const { locale, demo, t, entry, language, key } = useTool(id);
+  const status = useStoreStatus(key);
   return (
     <div className={`st-shell st-shell-${id}`}>
       <div className="st-head">
@@ -30,7 +32,7 @@ export function ToolShell({ id, children, aside, local = true }: { id: ToolKind;
         {aside}
       </div>
       {children}
-      {local && <p className="st-local-note">{t("Lo que guardes aquí se queda en este navegador. Cambiar de dispositivo lo empieza de cero.", "El que guardes ací es queda en este navegador. Canviar de dispositiu ho comença de zero.")}</p>}
+      {local && <StudySync storeKey={key} status={status}/>}
     </div>
   );
 }
