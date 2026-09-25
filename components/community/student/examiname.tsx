@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ClipboardCheck, Copy, RotateCcw, CheckCircle2, XCircle } from "lucide-react";
 import { ToolShell, Panel, Stat, Notice, useTool } from "./shared";
@@ -32,22 +33,24 @@ function levelTone(level: TopicLevel): "good" | "plain" | "bad" {
 
 export default function Examiname() {
   const { t, locale, demo, me, key } = useTool("exam");
+  const params = useSearchParams();
+  const requestedDocs = (params.get("docs") ?? "").split(",").filter(Boolean);
   const notesKey = notesStoreKey({ demo, userId: me.user_id });
   const { docs } = useNotesStore(notesKey);
   const [history, setHistory] = useToolStore<History>(key, emptyHistory);
 
   const [step, setStep] = useState<Step>("setup");
-  const [excluded, setExcluded] = useState<Set<string>>(new Set());
-  const included = docs.filter(doc => !excluded.has(doc.id));
-  const toggle = (id: string) => setExcluded(current => {
-    const next = new Set(current);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    return next;
+  const [selectedDocIds, setSelectedDocIds] = useState<string[] | null>(null);
+  const defaultDocIds = requestedDocs.length ? requestedDocs : docs.map(doc => doc.id);
+  const included = docs.filter(doc => (selectedDocIds ?? defaultDocIds).includes(doc.id));
+  const toggle = (id: string) => setSelectedDocIds(current => {
+    const next = current ?? defaultDocIds;
+    return next.includes(id) ? next.filter(docId => docId !== id) : [...next, id];
   });
 
-  const [count, setCount] = useState<5 | 10 | 20>(10);
+  const [count, setCount] = useState<5 | 10 | 20>(() => params.get("count") === "5" ? 5 : 10);
   const [kind, setKind] = useState<QuizKind>("test");
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(() => params.get("subject") ?? "");
   const [asking, setAsking] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [setupError, setSetupError] = useState<string | null>(null);
@@ -223,7 +226,7 @@ export default function Examiname() {
                 {docs.map(doc => (
                   <li key={doc.id} className="ex-doc">
                     <label className="ex-doc-check">
-                      <input type="checkbox" checked={!excluded.has(doc.id)} onChange={() => toggle(doc.id)} />
+                      <input type="checkbox" checked={included.some(item => item.id === doc.id)} onChange={() => toggle(doc.id)} />
                       <span>{doc.name}</span>
                     </label>
                   </li>
@@ -279,3 +282,4 @@ export default function Examiname() {
     </ToolShell>
   );
 }
+

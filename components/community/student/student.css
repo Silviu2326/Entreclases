@@ -1,6 +1,6 @@
 /* Sección Estudiante: marco y primitivas compartidas. Cada herramienta añade
    sus estilos en su propio archivo, con prefijo propio (gr-, tw-, cal-, lib-, nt-, ex-). */
-.st-shell { --st-accent:#4f6828; --st-soft:#e9edcd; --st-plum:#2a172e; --st-line:#ded8df; --st-paper:#fffefa; --st-muted:#756a79; --st-lime:#e1ff3e;
+.st-shell, .st-hub { --st-accent:#4f6828; --st-soft:#e9edcd; --st-plum:#2a172e; --st-line:#ded8df; --st-paper:#fffefa; --st-muted:#756a79; --st-lime:#e1ff3e;
   display:grid; gap:20px; color:var(--st-plum); }
 .st-shell-notes, .st-shell-exam { --st-accent:#6862a6; --st-soft:#e2e5f5; }
 .st-shell-grades { --st-accent:#a36534; --st-soft:#f6e9d6; }
@@ -44,22 +44,6 @@
 .st-textarea { min-height:120px; resize:vertical; line-height:1.55; }
 .st-label { display:grid; gap:6px; font-size:12px; font-weight:700; color:var(--st-muted); }
 .st-muted { color:var(--st-muted); font-size:12px; }
-
-/* El hub */
-.st-hub { display:grid; gap:28px; }
-.st-hub-head p { margin-top:8px; color:var(--st-muted); font-size:14px; line-height:1.6; max-width:640px; }
-.st-group { display:grid; gap:14px; }
-.st-group-head h3 { font-size:17px; letter-spacing:-.03em; }
-.st-group-head p { margin-top:4px; color:var(--st-muted); font-size:13px; }
-.st-cards { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); }
-.st-card { position:relative; display:grid; gap:10px; padding:20px; border:1px solid var(--st-line); border-radius:18px; background:var(--st-paper); color:inherit; text-decoration:none; transition:transform 160ms, box-shadow 160ms; }
-.st-card:hover { transform:translateY(-2px); box-shadow:0 12px 30px #2a172e14; }
-.st-card-art { display:grid; place-items:center; width:46px; height:46px; border-radius:14px; background:var(--card-soft,#e9edcd); color:var(--card-accent,#4f6828); }
-.st-card-art svg { width:22px; height:22px; }
-.st-card strong { font-size:17px; letter-spacing:-.03em; line-height:1.15; }
-.st-card small { color:var(--st-muted); font-size:13px; line-height:1.5; }
-.st-card-effort { margin-top:4px; font-size:12px; font-weight:700; color:var(--card-accent,#4f6828); }
-.st-card-ai { position:absolute; top:16px; right:16px; padding:4px 8px; border-radius:8px; background:var(--st-plum); color:var(--st-lime); font-size:10px; font-weight:800; letter-spacing:.08em; }
 
 @media (max-width: 720px) {
   .st-panel { padding:16px; border-radius:14px; }

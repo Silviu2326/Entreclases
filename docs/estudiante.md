@@ -13,6 +13,12 @@ Vive en la vista `student` de la aplicación: `/app/?view=student` y `/demo/?vie
 | Trabajos en grupo | `trabajos-en-grupo` / `treballs-en-grup` | No | Este navegador |
 | ¿Dónde estudio? | `donde-estudio` / `on-estudie` | No | Sin estado; datos verificados en el código |
 
+### Espacio de asignaturas
+
+El hub incluye un espacio de asignaturas (components/community/student/subjects.tsx). Permite crear asignaturas, guardar la fecha del examen y vincular documentos del Tutor de apuntes. Desde una asignatura se abre Examíname con sus documentos seleccionados y una prueba breve de cinco preguntas; el resultado más reciente se muestra de vuelta en su tarjeta. Los datos se guardan en este navegador, en la clave subjects; el progreso procede del historial de Examíname.
+
+Este primer recorrido todavía no sincroniza con Supabase ni muestra citas enlazadas a páginas del documento.
+
 ## Organización
 
 Sigue el mismo patrón que los juegos (`JUEGOS.md`): un catálogo con textos y slugs, un archivo que enlaza cada entrada con su pantalla, y una pantalla por herramienta con su propio CSS.
@@ -96,3 +102,4 @@ node --experimental-strip-types --test tests/student-*.test.mjs
 - «¿Dónde estudio?» solo incluye bibliotecas verificadas en su web oficial, con la fecha de verificación y el enlace. Sin horario verificado, la tarjeta dice «Consulta el horario». Los horarios cambian en exámenes y festivos: la web oficial manda.
 - Los ejemplos precargados (una asignatura, un trabajo) son ilustrativos y no usan personas reales.
 - Ninguna herramienta muestra cifras de uso ni «N estudiantes aquí» hasta que existan. El hueco está previsto en «¿Dónde estudio?».
+
