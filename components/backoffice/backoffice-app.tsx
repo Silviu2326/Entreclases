@@ -140,7 +140,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       return;
     }
     void readAnalytics().then(setAnalytics).catch(() => undefined);
-    void readWaitlistSnapshot().then(setWaitlist).catch(error => setWaitlistError(String(error?.message ?? error?.code ?? "No se pudo cargar la lista.")));
+    void readWaitlistSnapshot().then(setWaitlist).catch(error => setWaitlistError(/401|403|ACCESS_REQUIRED|permission|auth|session/i.test(String(error?.message ?? error?.code ?? "")) ? "Necesitas una cuenta de administración para consultar las altas." : String(error?.message ?? error?.code ?? "No se pudo cargar la lista.")));
     void readBackoffice().then(data => {
       setServerData(data);
       const nextCases = serverCases(data);
@@ -150,7 +150,7 @@ export function BackofficeApp({ locale = "es" }: { locale?: "es" | "va" }) {
       setHydrated(true);
     }).catch(error => {
       const message = String(error?.code ?? error?.message ?? "");
-      setAccessError(/ACCESS_REQUIRED|permission|not configured|auth|session|jwt|PGRST301/i.test(message) ? "Necesitas iniciar sesión con una cuenta de administración para entrar aquí." : "No hemos podido cargar el backoffice. Revisa la conexión e inténtalo de nuevo.");
+      setAccessError(/ACCESS_REQUIRED|permission|not configured|auth|session|jwt|PGRST301|\b401\b|\b403\b/i.test(message) ? "Necesitas iniciar sesión con una cuenta de administración para entrar aquí." : "No hemos podido cargar el backoffice. Revisa la conexión e inténtalo de nuevo.");
       setHydrated(true);
     });
   }, []);

@@ -1,0 +1,40 @@
+/* «¿Qué necesito en el final?» — todo con el prefijo gr-. */
+.gr-toolbar { display: flex; justify-content: flex-end; }
+
+.gr-subject { gap: 16px; }
+.gr-subject-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.gr-subject-head input { flex: 1 1 220px; font-weight: 800; font-size: 16px; }
+.gr-confirm { display: inline-flex; align-items: center; gap: 8px; }
+
+.gr-templates { row-gap: 8px; }
+
+.gr-table { display: grid; gap: 8px; }
+.gr-head { display: grid; grid-template-columns: 1.6fr .7fr .7fr .7fr 36px; gap: 8px; padding: 0 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--st-muted); }
+.gr-row { display: grid; grid-template-columns: 1.6fr .7fr .7fr .7fr 36px; gap: 8px; align-items: center; }
+.gr-cell { min-width: 0; }
+.gr-remove-part { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 0; border-radius: 10px; background: transparent; color: var(--st-muted); cursor: pointer; }
+.gr-remove-part:hover { background: var(--st-soft); color: var(--st-plum); }
+.gr-remove-part svg { width: 16px; height: 16px; }
+
+.gr-input-error { border-color: #c23b57; background: #faedf0; }
+.gr-input-warn { border-color: #a36534; background: #f6e9d6; }
+
+.gr-add-part { justify-self: start; }
+
+.gr-targets { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.gr-target-button { min-width: 44px; padding: 0 12px; }
+.gr-target-on { background: var(--st-plum); color: var(--st-lime); }
+.gr-target-note { font-size: 13px; color: var(--st-muted); line-height: 1.55; }
+
+.gr-copy-row { display: flex; justify-content: flex-end; }
+
+@media (max-width: 640px) {
+  .gr-head { display: none; }
+  .gr-row { grid-template-columns: 1fr; gap: 6px; padding: 12px; border: 1px solid var(--st-line); border-radius: 12px; }
+  .gr-cell { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .gr-cell::before { content: attr(data-label); flex: 0 0 auto; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--st-muted); }
+  .gr-cell input { flex: 1 1 auto; min-width: 0; }
+  .gr-remove-cell { justify-content: flex-end; }
+  .gr-copy-row { justify-content: stretch; }
+  .gr-copy-row button { width: 100%; }
+}

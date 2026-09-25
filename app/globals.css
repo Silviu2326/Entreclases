@@ -805,3 +805,5 @@ html[lang="ca-ES-valencia"] .story-time { font-size: clamp(80px, 10.3vw, 165px);
 .prelaunch-coins strong{color:var(--highlight)}
 .prelaunch-coins-rule{font-size:15px!important;color:#cfc9d4}
 .prelaunch-signup .signup-inner{padding-block:clamp(32px,3.6vw,54px);border-top:1px solid #ffffff1f}
+
+.waitlist-honeypot{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.waitlist-honeypot input{position:absolute;left:-10000px}

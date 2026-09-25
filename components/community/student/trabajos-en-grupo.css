@@ -1,0 +1,56 @@
+/* Trabajos en grupo: styles specific to this tool, on top of student.css. */
+
+.tw-list-actions { display:flex; justify-content:flex-end; }
+.tw-cards { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); }
+.tw-card { display:grid; gap:10px; padding:18px; border:1px solid var(--st-line); border-radius:16px; background:var(--st-paper); text-align:left; cursor:pointer; font:inherit; color:inherit; }
+.tw-card:hover { border-color:var(--st-accent); }
+.tw-card-title { font-size:16px; font-weight:800; letter-spacing:-.02em; }
+.tw-card-subject { color:var(--st-muted); font-size:13px; }
+.tw-card-bar { height:8px; border-radius:999px; background:var(--st-soft); overflow:hidden; }
+.tw-card-bar > span { display:block; height:100%; background:var(--st-accent); border-radius:999px; }
+.tw-card-foot { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--st-muted); }
+.tw-due { font-weight:700; }
+.tw-due-warn { color:#7a4f1f; }
+.tw-due-bad { color:#8e2544; }
+
+.tw-detail-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:12px; }
+.tw-detail-title h3 { font-size:19px; letter-spacing:-.03em; }
+.tw-detail-title p { margin-top:2px; color:var(--st-muted); font-size:13px; }
+.tw-progress { height:10px; border-radius:999px; background:var(--st-soft); overflow:hidden; }
+.tw-progress > span { display:block; height:100%; background:var(--st-accent); border-radius:999px; transition:width 200ms; }
+
+.tw-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.tw-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 8px 6px 12px; border-radius:999px; background:var(--st-soft); font-size:13px; font-weight:700; }
+.tw-chip button { display:grid; place-items:center; width:20px; height:20px; border:0; border-radius:999px; background:#fff; color:var(--st-plum); cursor:pointer; }
+.tw-chip button svg { width:12px; height:12px; }
+.tw-add-row { display:flex; gap:8px; flex-wrap:wrap; }
+.tw-add-row .st-input { flex:1; min-width:160px; }
+
+.tw-tasks { display:grid; gap:8px; }
+.tw-task { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:10px 12px; border:1px solid var(--st-line); border-radius:12px; background:var(--st-paper); }
+.tw-task-status { border:0; background:none; cursor:pointer; display:grid; place-items:center; width:26px; height:26px; padding:0; color:var(--st-accent); }
+.tw-task-status svg { width:20px; height:20px; }
+.tw-task-main { display:grid; gap:4px; min-width:0; }
+.tw-task-title { font-weight:700; font-size:14px; }
+.tw-task-title.is-done { text-decoration:line-through; color:var(--st-muted); }
+.tw-task-meta { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.tw-task-meta select, .tw-task-meta input { min-height:32px; padding:4px 8px; font-size:12px; border-radius:8px; border:1px solid var(--st-line); background:#fff; }
+.tw-task-due { font-size:12px; color:var(--st-muted); }
+.tw-task-due-bad { color:#8e2544; }
+.tw-task-remove { border:0; background:none; color:var(--st-muted); cursor:pointer; display:grid; place-items:center; width:28px; height:28px; }
+.tw-task-remove svg { width:16px; height:16px; }
+.tw-task-remove:hover { color:#8e2544; }
+.tw-task-form { display:grid; gap:8px; grid-template-columns:1fr; }
+
+.tw-brief textarea { min-height:100px; }
+.tw-proposals { display:grid; gap:6px; }
+.tw-proposal { display:flex; align-items:center; gap:10px; padding:8px 10px; border:1px solid var(--st-line); border-radius:10px; font-size:13px; }
+.tw-proposal input { width:16px; height:16px; }
+
+.tw-summary-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.tw-copied { color:var(--st-accent); font-size:12px; font-weight:700; }
+
+@media (max-width: 560px) {
+  .tw-task { grid-template-columns:auto 1fr; }
+  .tw-task-remove { grid-column:2; justify-self:end; }
+}

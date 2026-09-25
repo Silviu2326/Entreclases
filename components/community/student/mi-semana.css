@@ -1,0 +1,81 @@
+/* "Mi semana": today, the week grid, upcoming deadlines and courses. */
+.cal-today { display: grid; gap: 12px; }
+.cal-today-date { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
+.cal-today-date::first-letter { text-transform: uppercase; }
+.cal-today-list { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.cal-today-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--st-soft); }
+.cal-today-time { display: grid; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 13px; min-width: 52px; }
+.cal-today-time small { font-weight: 600; color: var(--st-muted); }
+.cal-today-body { display: grid; gap: 2px; min-width: 0; }
+.cal-today-body strong { font-size: 14px; letter-spacing: -0.01em; }
+.cal-today-body span { font-size: 12px; color: var(--st-muted); }
+.cal-today-kind { margin-left: auto; }
+
+.cal-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.cal-tab { min-height: 38px; padding: 0 14px; border: 1px solid var(--st-line); border-radius: 999px; background: #fff; color: var(--st-plum); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.cal-tab svg { width: 15px; height: 15px; }
+.cal-tab-active { background: var(--st-plum); color: var(--st-lime); border-color: var(--st-plum); }
+
+.cal-week-nav { display: flex; align-items: center; gap: 10px; justify-content: space-between; flex-wrap: wrap; }
+.cal-week-nav-buttons { display: flex; gap: 8px; }
+.cal-icon-button { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border: 1px solid var(--st-line); border-radius: 10px; background: #fff; color: var(--st-plum); cursor: pointer; }
+.cal-icon-button svg { width: 16px; height: 16px; }
+.cal-week-label { font-size: 13px; font-weight: 700; color: var(--st-muted); }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.cal-day { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--st-line); border-radius: 14px; background: #fff; min-height: 90px; }
+.cal-day-today { border-color: var(--st-accent); background: var(--st-soft); }
+.cal-day-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 11px; font-weight: 800; color: var(--st-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.cal-day-head strong { font-size: 15px; color: var(--st-plum); text-transform: none; letter-spacing: -0.02em; }
+.cal-day-classes { display: grid; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.cal-day-class { display: grid; gap: 2px; padding: 6px 8px; border-radius: 10px; border-left: 3px solid var(--cal-dot, var(--st-accent)); background: var(--st-soft); font-size: 11px; }
+.cal-day-class strong { font-size: 12px; letter-spacing: -0.01em; display: block; }
+.cal-day-empty { color: var(--st-muted); font-size: 12px; }
+
+.cal-upcoming-list, .cal-course-list { display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.cal-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--st-line); border-radius: 14px; background: #fff; }
+.cal-item-past { border-color: #e3a8bb; background: #faedf0; }
+.cal-item-today { border-color: var(--st-accent); background: var(--st-soft); }
+.cal-item-soon { border-color: #e3c48a; background: #f6e9d6; }
+.cal-item-done { opacity: 0.55; }
+.cal-item-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--cal-dot, var(--st-accent)); }
+.cal-item-body { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.cal-item-body strong { font-size: 14px; letter-spacing: -0.01em; }
+.cal-item-body strong.cal-strike { text-decoration: line-through; }
+.cal-item-body span { font-size: 12px; color: var(--st-muted); }
+.cal-item-actions { display: flex; gap: 6px; flex: none; }
+.cal-item-actions button { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border: 1px solid var(--st-line); border-radius: 10px; background: #fff; color: var(--st-plum); cursor: pointer; }
+.cal-item-actions button svg { width: 15px; height: 15px; }
+
+.cal-form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); align-items: end; }
+.cal-form-wide { grid-column: 1 / -1; }
+.cal-form-submit { grid-column: 1 / -1; justify-self: start; }
+
+.cal-ics-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+.cal-course { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--st-line); border-radius: 14px; background: #fff; }
+.cal-course-head { display: flex; align-items: center; gap: 10px; }
+.cal-course-dot { width: 14px; height: 14px; border-radius: 50%; flex: none; background: var(--cal-dot, var(--st-accent)); }
+.cal-course-head strong { flex: 1; font-size: 15px; letter-spacing: -0.02em; }
+.cal-course-slots { display: grid; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.cal-course-slot { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 10px; background: var(--st-soft); font-size: 12px; }
+.cal-course-slot span { flex: 1; }
+
+.cal-colors { display: flex; gap: 8px; flex-wrap: wrap; }
+.cal-color-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; background: var(--cal-dot); padding: 0; }
+.cal-color-swatch-on { border-color: var(--st-plum); }
+
+.cal-color-0 { --cal-dot: #4f6828; }
+.cal-color-1 { --cal-dot: #2a6f8d; }
+.cal-color-2 { --cal-dot: #a36534; }
+.cal-color-3 { --cal-dot: #8c527e; }
+.cal-color-4 { --cal-dot: #6862a6; }
+.cal-color-5 { --cal-dot: #4d8077; }
+.cal-color-6 { --cal-dot: #b1483f; }
+
+.cal-empty { display: grid; gap: 10px; text-align: left; }
+
+@media (max-width: 720px) {
+  .cal-grid { grid-template-columns: 1fr; }
+  .cal-day { min-height: 0; }
+}

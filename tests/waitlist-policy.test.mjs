@@ -57,7 +57,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..'), require = c
 function load(relative) { let filename = resolve(root, relative); if (!extname(filename)) filename = ['.tsx', '.ts'].map(ext => filename + ext).find(existsSync); if (cache.has(filename)) return cache.get(filename).exports; const m = { exports: {} }; cache.set(filename, m); const code = ts.transpileModule(readFileSync(filename, 'utf8'), { fileName: filename, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText; new Function('require', 'module', 'exports', code)(path => path.startsWith('@/') ? load(path.slice(2)) : path.startsWith('.') ? load(resolve(dirname(filename), path)) : require(path), m, m.exports); return m.exports; }
 
 let sent, answer;
-cache.set(resolve(root, 'lib/auth/client.ts'), { exports: { getPublicClient: () => ({ from: (table) => ({ insert: (row) => { sent = { table, row }; return Promise.resolve(answer); } }) }) } });
+cache.set(resolve(root, 'lib/auth/client.ts'), { exports: { getPublicClient: () => ({ rpc: (fn, params) => { sent = { fn, params }; return Promise.resolve(answer); } }) } });
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://project.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_' + 'x'.repeat(24);
 
@@ -67,7 +67,7 @@ test('The form writes the address the migration expects and never invents a succ
 
  answer = { error: null };
  assert.equal(await joinWaitlist('  Paula@Alumni.UV.es ', 'va', 'roadmap'), 'saved');
- assert.deepEqual(sent, { table: 'universe_waitlist', row: { email: 'paula@alumni.uv.es', locale: 'va', source: 'roadmap' } });
+ assert.deepEqual(sent, { fn: 'universe_join_waitlist', params: { p_email: 'paula@alumni.uv.es', p_locale: 'va', p_source: 'roadmap' } });
 
  // A repeated address answers exactly like a new one: the form never reveals who signed up.
  answer = { error: { code: '23505' } };

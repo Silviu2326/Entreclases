@@ -7,7 +7,7 @@ Cada carpeta de día tiene todo lo necesario para subirlo. Abre su `PUBLICAR.md`
 | [22-09](22-09/PUBLICAR.md) mar | Anuncio ya publicado: fijarlo | Vídeo anuncio con voz (28 s) | 5 · encuesta, cuenta atrás, enlace |
 | [23-09](23-09/PUBLICAR.md) mié | Reel «Sales de clase» con voz + portada | El mismo Reel | 4 · encuesta de 3 opciones, enlace |
 | [24-09](24-09/PUBLICAR.md) jue | Carrusel de 7 «Qué puedes hacer» | Carrusel en vídeo con voz (23 s) | 6 · encuesta de 4 opciones, una historia por sección, enlace |
-| [25-09](25-09/PUBLICAR.md) vie | Reel de las cuatro situaciones con voz + portada | El mismo Reel | 4 · caja de preguntas, plantilla de respuestas, enlace |
+| [25-09](25-09/PUBLICAR.md) vie | Vídeo de los juegos: ¿Me lío? y La cita empieza hablando (Reel de las cuatro situaciones, de reserva) | El mismo vídeo | 4 · caja de preguntas, plantilla de respuestas, enlace |
 | [26-09](26-09/PUBLICAR.md) sáb | Carrusel de 8 «No tienes que conocer a nadie» | Carrusel en vídeo con voz (31 s) | 4 · quiz, respuesta, enlace |
 | [27-09](27-09/PUBLICAR.md) dom | Carrusel FAQ de 7 | FAQ en vídeo con voz (45 s) | 6 · cuenta atrás, FAQ, caja de preguntas, enlace |
 | [28-09](28-09/PUBLICAR.md) lun | Carrusel de lanzamiento de 4 | Vídeo de lanzamiento con voz (28 s) | 6 + 1 grabada ese día · encuesta, enlaces |

@@ -7,21 +7,23 @@ import type { Locale } from "../i18n/routes";
 // project with the waitlist migration applied is all this needs.
 export const waitlistConfigured = supabaseConfigured;
 export type WaitlistSource = "landing" | "roadmap" | "blog";
-export type WaitlistResult = "saved" | "unavailable" | "failed";
+export type WaitlistResult = "saved" | "unavailable" | "rate_limited" | "failed";
 
 export async function joinWaitlist(email: string, locale: Locale, source: WaitlistSource): Promise<WaitlistResult> {
  if (!waitlistConfigured) return "unavailable";
  try {
-  const client = getPublicClient(), row = { email: normalizeEmail(email), locale, source };
-  let { error } = await client.from("universe_waitlist").insert(row);
-  // Until migration 202609260028 admits the blog as an origin, the server
-  // rejects it (23514). The address still matters more than its origin.
-  if (error?.code === "23514" && source === "blog") ({ error } = await client.from("universe_waitlist").insert({ ...row, source: "landing" }));
-  // A repeated address is already on the list; answering the same way for both
-  // keeps the form from telling a stranger who signed up.
+   const client = getPublicClient();
+  const { error } = await client.rpc("universe_join_waitlist", {
+   p_email: normalizeEmail(email),
+   p_locale: locale,
+   p_source: source,
+  });
+  // A repeated address deliberately returns the same success response. The
+  // database function also owns the global throttle so direct table writes are
+  // no longer possible from an anonymous browser.
   if (!error || error.code === "23505") return "saved";
-  // The table is missing or unreachable: say so instead of pretending it saved.
-  return error.code === "42P01" || error.code === "PGRST205" ? "unavailable" : "failed";
+  if (error.code === "P0001" && /WAITLIST_RATE_LIMIT/.test(error.message ?? "")) return "rate_limited";
+  return error.code === "42P01" || error.code === "PGRST202" || error.code === "PGRST205" ? "unavailable" : "failed";
  } catch { return "unavailable"; }
 }
 

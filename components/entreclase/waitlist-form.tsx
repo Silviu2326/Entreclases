@@ -10,7 +10,7 @@ import { localPath, type Locale } from "@/lib/i18n/routes";
 import { emailError, isPersonalDomain, normalizeEmail } from "@/lib/auth/validation";
 import { joinWaitlist, waitlistMailto, type WaitlistSource } from "@/lib/launch/waitlist";
 
-type Status = "idle" | "sending" | "saved" | "unavailable" | "failed";
+type Status = "idle" | "sending" | "saved" | "unavailable" | "rate_limited" | "failed";
 
 export function WaitlistForm({ locale = "es", source = "landing" }: { locale?: Locale; source?: WaitlistSource }) {
  const va = locale === "va", t = (es: string, translated: string) => (va ? translated : es);
@@ -18,6 +18,7 @@ export function WaitlistForm({ locale = "es", source = "landing" }: { locale?: L
  const field = useId();
  const input = useRef<HTMLInputElement>(null);
  const [email, setEmail] = useState("");
+ const [website, setWebsite] = useState("");
  const [hint, setHint] = useState("");
  const [status, setStatus] = useState<Status>("idle");
  const personal = email.includes("@") && isPersonalDomain(email) && !emailError(email);
@@ -30,6 +31,16 @@ export function WaitlistForm({ locale = "es", source = "landing" }: { locale?: L
   // door, on the opening day, by the database.
   const problem = emailError(value);
   if (problem) { setHint(tr(problem)); input.current?.focus(); return; }
+  // Honeypot: real users never see or fill this field. A bot gets a harmless
+  // success response without reaching Supabase, while real traffic uses the
+  // rate-limited RPC below.
+  if (website) { setStatus("saved"); return; }
+  if (typeof window !== "undefined") {
+   const key = "entreclase:waitlist:last-submit";
+   const last = Number(window.sessionStorage.getItem(key) ?? 0);
+   if (Date.now() - last < 15_000) { setStatus("rate_limited"); return; }
+   window.sessionStorage.setItem(key, String(Date.now()));
+  }
   setHint(""); setStatus("sending");
   setStatus(await joinWaitlist(value, locale, source));
  }
@@ -56,9 +67,13 @@ export function WaitlistForm({ locale = "es", source = "landing" }: { locale?: L
     <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
    </Button>
   </div>
+  <label htmlFor={field + "-website"} className="waitlist-honeypot" aria-hidden="true">Company website
+   <input id={field + "-website"} name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} />
+  </label>
   {hint && <p id={`${field}-hint`} className="form-error" role="alert">{hint}</p>}
   {personal && !hint && <p className="waitlist-warning" role="status">{t("Vale, lo apuntamos. Para entrar el día de la apertura hará falta un correo universitario o una invitación.", "Val, ho apuntem. Per a entrar el dia de l’obertura caldrà un correu universitari o una invitació.")}</p>}
   {status === "unavailable" && <p className="form-error" role="alert">{t("La lista automática todavía no está conectada.", "La llista automàtica encara no està connectada.")}{" "}<a href={waitlistMailto(email, locale)}>{t("Apúntame por correo", "Apunteu-me per correu")}</a>.</p>}
+  {status === "rate_limited" && <p className="form-error" role="alert">{t("Espera unos segundos antes de volver a intentarlo.", "Espera uns segons abans de tornar-ho a provar.")}</p>}
   {status === "failed" && <p className="form-error" role="alert">{t("No hemos podido guardarlo. Inténtalo otra vez en un momento.", "No hem pogut guardar-ho. Torna a provar-ho en un moment.")}</p>}
   <p className="form-notice">
    {t("Correo universitario o personal. Solo lo usamos para avisarte de la apertura y puedes pedir que lo borremos.", "Correu universitari o personal. Només l’usem per a avisar-te de l’obertura i pots demanar que l’esborrem.")}{" "}

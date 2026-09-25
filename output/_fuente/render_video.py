@@ -14,20 +14,32 @@ TEMPO = float(os.environ.get("VOZ_TEMPO", "1"))  # >1 acelera la locución sin c
 name, dest = sys.argv[1], OUT / sys.argv[2]
 only = sys.argv[3] if len(sys.argv) > 3 else None  # "preview:1.0,2.5" para capturas sueltas
 
+# Expresividad de la voz: VOZ_STYLE alto y VOZ_STAB bajo dan una lectura más viva. Cambiarlos regenera las frases.
+STYLE = float(os.environ.get("VOZ_STYLE", "0.35")); STAB = float(os.environ.get("VOZ_STAB", "0.45"))
+# Aire antes y después de cada frase. Bajarlos aprieta el ritmo.
+LEAD = float(os.environ.get("VOZ_LEAD", "0.35")); TAIL = float(os.environ.get("VOZ_TAIL", "0.55"))
+
 def tts(text):
     vdir = HERE / "voz"; vdir.mkdir(exist_ok=True)
-    f = vdir / (hashlib.sha1(text.encode()).hexdigest()[:12] + ".mp3")
+    key = text if (STYLE, STAB) == (0.35, 0.45) else f"{text}|{STYLE}|{STAB}"
+    f = vdir / (hashlib.sha1(key.encode()).hexdigest()[:12] + ".mp3")
     if not f.exists() and os.environ.get("SIN_VOZ"):
         # Sin clave: duración estimada para revisar la imagen; el mp3 se genera al render final.
         return None, 0.065 * len(text) + 0.4
     if not f.exists():
         body = {"text": text, "model_id": "eleven_multilingual_v2",
-                "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": True}}
+                "voice_settings": {"stability": STAB, "similarity_boost": 0.8, "style": STYLE, "use_speaker_boost": True}}
         req = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE}?output_format=mp3_44100_128",
             data=json.dumps(body).encode(), headers={"xi-api-key": os.environ["XI_KEY"], "content-type": "application/json", "accept": "audio/mpeg"})
         with urllib.request.urlopen(req) as r: f.write_bytes(r.read())
-    dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(f)]).decode())
-    return f, dur / TEMPO
+    # ElevenLabs deja silencio en los bordes; sin él, las frases se encadenan como en una conversación.
+    trimmed = f.with_suffix(".trim.wav")
+    if not trimmed.exists():
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(f), "-af",
+            "silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.08,areverse",
+            str(trimmed)], check=True)
+    dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(trimmed)]).decode())
+    return trimmed, dur / TEMPO
 
 src = (HERE / name).read_text(encoding="utf-8")
 css = (HERE / "base.css").read_text(encoding="utf-8") + (HERE / "video.css").read_text(encoding="utf-8")
@@ -44,11 +56,11 @@ with sync_playwright() as pw:
     voices, mins = pg.evaluate("getVoices()"), pg.evaluate("getMinDurations()")
     clips, times, t = [], [], 0.0
     for i, (text, mn) in enumerate(zip(voices, mins)):
-        lead = 0.35
+        lead = LEAD
         if text:
             f, d = tts(text)
             if f: clips.append((f, t + lead))
-            dur = max(mn, lead + d + 0.55)
+            dur = max(mn, lead + d + TAIL)
         else:
             dur = mn
         if i == len(voices) - 1: dur += 1.2
