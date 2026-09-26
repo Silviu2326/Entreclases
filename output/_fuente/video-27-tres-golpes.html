@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 27/09 · Los tres golpes</title>
+<!--BASE-->
+<style>
+/* Preguntas incómodas · 2. Mismo formato que el diálogo del 26: Paula y Marc, una burbuja por réplica.
+   Aquí hay una puerta en medio: Marc llama tres veces, Paula abre. El guiño es el ritual, no la serie. */
+:root { --ink:#1c0e1f; --bub:#fff6dc; }
+html.video body { background:#fffefa; }
+#cam { position:absolute; inset:0; transform-origin:50% 60%; will-change:transform; }
+#confetti { position:absolute; inset:0; z-index:95; pointer-events:none; overflow:hidden; }
+#confetti i { position:absolute; width:22px; height:34px; border-radius:6px; opacity:0; }
+.ring { position:absolute; width:120px; height:120px; border-radius:50%; border:10px solid var(--plum); z-index:66; opacity:0; transform:scale(.2); }
+.steam { position:absolute; width:16px; height:16px; border-radius:50%; background:#2a172e33; opacity:0; }
+.spark { position:absolute; width:40px; height:40px; z-index:67; opacity:0; }
+.dust { position:absolute; width:28px; height:28px; border-radius:50%; background:#2a172e22; opacity:0; z-index:57; }
+#paper { position:absolute; inset:0; background: radial-gradient(#2a172e12 1.4px, transparent 1.6px) 0 0/34px 34px, #fffefa; }
+#paper::after { content:""; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 30%, transparent 50%, #2a172e0d 100%); }
+.scene { visibility:hidden; background:transparent; }
+#head { position:absolute; left:0; right:0; top:150px; text-align:center; z-index:80; }
+#head img { height:54px; }
+#head .tag { display:inline-block; margin-top:18px; padding:12px 26px; border-radius:999px; background:var(--plum); color:var(--lime); font-size:26px; font-weight:850; letter-spacing:.14em; }
+#prog { position:absolute; left:80px; right:80px; top:100px; height:8px; border-radius:4px; background:#2a172e1f; overflow:hidden; z-index:80; }
+#prog b { display:block; height:100%; background:var(--plum); transform-origin:left; transform:scaleX(0); }
+
+/* la puerta */
+#frame { position:absolute; left:150px; bottom:300px; width:400px; height:660px; z-index:58; perspective:1400px; }
+#frame .jamb { position:absolute; inset:-22px -22px 0 -22px; border-radius:26px 26px 0 0; background:var(--lime); box-shadow:0 30px 70px #1c0e1f22; }
+#frame .hole { position:absolute; inset:0; background:#efe6d6; border-radius:14px 14px 0 0; overflow:hidden; }
+#door { position:absolute; inset:0; border-radius:14px 14px 0 0; background:var(--plum); transform-origin:left center; z-index:63; box-shadow:inset 0 0 0 10px #3a2440; }
+#door::before { content:""; position:absolute; left:40px; right:40px; top:50px; bottom:330px; border:8px solid #4a3050; border-radius:10px; }
+#door::after { content:""; position:absolute; left:40px; right:40px; top:360px; bottom:50px; border:8px solid #4a3050; border-radius:10px; }
+#door .knob { position:absolute; right:34px; top:315px; width:34px; height:34px; border-radius:50%; background:var(--lime); box-shadow:0 4px 10px #0006; }
+.toc { position:absolute; font-family:"Caveat", cursive; font-weight:600; font-size:90px; color:var(--plum); z-index:66; opacity:0; white-space:nowrap; }
+
+/* personajes */
+.who { position:absolute; bottom:300px; width:440px; height:520px; transform-origin:50% 100%; }
+#A { left:130px; z-index:60; transform-origin:50% 100%; }   /* Paula, en el vano de la puerta */
+#B { right:40px; z-index:61; }
+.who svg { width:100%; height:100%; overflow:visible; }
+.who .arm { stroke:var(--ink); stroke-width:14; stroke-linecap:round; fill:none; }
+.who .body { fill:#fff; stroke:var(--ink); stroke-width:12; }
+.who .eye { fill:var(--ink); }
+.who .brow { stroke:var(--ink); stroke-width:9; stroke-linecap:round; fill:none; }
+.who .mouth { fill:var(--ink); }
+.who .band { fill:var(--band); }
+.who .name { position:absolute; left:50%; bottom:-70px; transform:translateX(-50%); font-size:28px; font-weight:850; letter-spacing:.06em; color:var(--plum); opacity:.6; }
+#mug { position:absolute; left:-20px; top:230px; width:120px; opacity:0; transform:rotate(-8deg); }
+#fist { position:absolute; left:-70px; top:270px; width:56px; height:56px; border-radius:50%; background:#fff; border:12px solid var(--ink); opacity:0; }
+
+/* burbujas */
+.bub { position:absolute; top:760px; width:620px; padding:38px 44px; border-radius:36px; background:var(--bub); border:6px solid var(--ink); font-size:46px; font-weight:750; line-height:1.18; letter-spacing:-0.025em; color:var(--ink); z-index:70; box-shadow:0 20px 50px #1c0e1f1f; opacity:0; }
+.bub.a { left:60px; } .bub.b { right:60px; }
+.bub::after { content:""; position:absolute; bottom:-34px; width:0; height:0; border:28px solid transparent; border-top-color:var(--ink); border-bottom:0; }
+.bub::before { content:""; position:absolute; bottom:-22px; width:0; height:0; border:22px solid transparent; border-top-color:var(--bub); border-bottom:0; z-index:1; }
+.bub.a::after { left:180px; } .bub.a::before { left:186px; }
+.bub.b::after { right:120px; } .bub.b::before { right:126px; }
+.bub .txt { display:block; } .bub .w { display:inline-block; overflow:visible; padding:0; margin:0; vertical-align:baseline; } .bub .w > i { display:inline-block; font-style:normal; will-change:transform, opacity; }
+.bub.short { width:auto; min-width:240px; }
+.bub.loud { font-size:70px; border-width:9px; }
+
+/* iconos */
+.ico { position:absolute; left:0; right:0; top:400px; height:330px; z-index:65; display:flex; justify-content:center; align-items:center; gap:18px; }
+.gcard { display:flex; align-items:center; gap:26px; background:#fff; border-radius:30px; padding:22px 30px 22px 22px; box-shadow:0 20px 50px #1c0e1f22; text-align:left; }
+.gcard img { width:170px; height:170px; border-radius:22px; object-fit:cover; }
+.gcard strong { display:block; font-size:44px; letter-spacing:-0.04em; }
+.gcard small { display:block; margin-top:6px; font-size:24px; color:var(--muted); line-height:1.3; }
+.step { display:flex; align-items:center; gap:14px; padding:18px 26px; border-radius:999px; background:#fff; box-shadow:0 16px 40px #1c0e1f1f; font-size:34px; font-weight:800; letter-spacing:-0.03em; }
+.step i { width:44px; height:44px; border-radius:50%; background:var(--plum); color:var(--lime); display:grid; place-items:center; font-size:24px; font-weight:900; font-style:normal; }
+.hcard { width:600px; background:#fff; border-radius:30px; padding:24px 30px; box-shadow:0 20px 50px #1c0e1f22; text-align:left; }
+.hcard .when { font-size:22px; font-weight:800; letter-spacing:.08em; color:#4f6828; display:flex; justify-content:space-between; }
+.hcard h4 { margin:8px 0 0; font-size:40px; font-weight:850; letter-spacing:-0.04em; }
+.hcard .foot { display:flex; justify-content:space-between; align-items:center; margin-top:18px; }
+.hcard .avs { display:flex; }
+.hcard .av { width:60px; height:60px; border-radius:50%; border:4px solid #fff; margin-left:-14px; background:#dce2ff; position:relative; overflow:visible; }
+.hcard .av:first-child { margin-left:0; }
+.hcard .av img { width:100%; height:100%; border-radius:50%; display:block; }
+.hcard .av .dot { position:absolute; right:-4px; bottom:-4px; width:22px; height:22px; border-radius:50%; background:#3cb371; border:4px solid #fff; transform:scale(0); }
+.hcard .btn { font-size:26px; padding:14px 24px; }
+#cta { position:absolute; left:80px; right:80px; top:400px; z-index:66; text-align:center; opacity:0; }
+#cta .l1 { font-size:150px; font-weight:850; letter-spacing:-0.075em; line-height:.9; }
+#cta .l2 { display:inline-block; margin-top:26px; padding:20px 34px; border-radius:20px; background:var(--plum); color:var(--lime); font-size:44px; font-weight:850; letter-spacing:-0.03em; }
+#cta .l3 { margin-top:26px; font-size:60px; font-weight:850; letter-spacing:-0.04em; }
+</style>
+</head><body>
+<div id="cam">
+<div id="paper"></div>
+<div id="prog"><b></b></div>
+<div id="head"><img src="PUB/brand/entreclase-wordmark.png" alt=""><div class="tag">PREGUNTAS INCÓMODAS · 2</div></div>
+
+<div id="frame"><div class="jamb"></div><div class="hole"></div><div id="door"><span class="knob"></span></div></div>
+<div class="ring" id="ring1" style="left:470px;top:960px"></div><div class="ring" id="ring2" style="left:500px;top:880px"></div><div class="ring" id="ring3" style="left:450px;top:800px"></div>
+<div class="dust" id="d1" style="left:520px;top:1480px"></div><div class="dust" id="d2" style="left:560px;top:1440px"></div><div class="dust" id="d3" style="left:480px;top:1500px"></div>
+<svg class="spark" id="spark" viewBox="0 0 40 40" style="left:880px;top:1120px"><path d="M20 0 L24 16 L40 20 L24 24 L20 40 L16 24 L0 20 L16 16 Z" fill="#e1ff3e" stroke="#1c0e1f" stroke-width="3"/></svg>
+<div class="toc" id="toc1" style="left:560px;top:1000px;transform:rotate(-8deg)">toc</div>
+<div class="toc" id="toc2" style="left:590px;top:900px;transform:rotate(6deg)">toc</div>
+<div class="toc" id="toc3" style="left:540px;top:800px;transform:rotate(-4deg)">TOC</div>
+
+<div class="who" id="A" style="--band:#e1ff3e">
+ <svg viewBox="0 0 440 520">
+  <path class="body" d="M70 520 V210 Q70 70 220 70 Q370 70 370 210 V520"/>
+  <rect class="band" x="70" y="392" width="300" height="46"/>
+  <path d="M112 118 Q220 20 330 118 Z" fill="#e1ff3e" stroke="#1c0e1f" stroke-width="12" stroke-linejoin="round"/>
+  <ellipse class="eye" id="A-eyeL" cx="170" cy="230" rx="11" ry="11"/><ellipse class="eye" id="A-eyeR" cx="270" cy="230" rx="11" ry="11"/>
+  <path class="brow" id="A-browL" d="M140 190 L195 200"/><path class="brow" id="A-browR" d="M300 190 L245 200"/>
+  <ellipse class="mouth" id="A-mouth" cx="220" cy="292" rx="16" ry="6"/>
+  <path class="arm" id="A-armL" d="M75 330 Q10 380 40 450"/><path class="arm" id="A-armR" d="M365 330 Q430 380 400 450"/>
+ </svg>
+ <img id="mug" src="PUB/stickers/cafe.svg" alt=""><span class="steam" id="st1" style="left:20px;top:200px"></span><span class="steam" id="st2" style="left:44px;top:190px"></span><span class="steam" id="st3" style="left:66px;top:205px"></span>
+ <span class="name">PAULA</span>
+</div>
+<div class="who" id="B" style="--band:#2a172e">
+ <svg viewBox="0 0 440 520">
+  <path class="body" d="M70 520 V210 Q70 70 220 70 Q370 70 370 210 V520"/>
+  <rect class="band" x="70" y="392" width="300" height="46"/>
+  <path d="M190 78 Q200 20 236 44 Q252 10 276 58 Q292 30 300 80 Z" fill="#2a172e"/>
+  <ellipse class="eye" id="B-eyeL" cx="170" cy="230" rx="11" ry="11"/><ellipse class="eye" id="B-eyeR" cx="270" cy="230" rx="11" ry="11"/>
+  <path class="brow" id="B-browL" d="M140 195 L195 190"/><path class="brow" id="B-browR" d="M300 195 L245 190"/>
+  <ellipse class="mouth" id="B-mouth" cx="220" cy="292" rx="18" ry="6"/>
+  <path class="arm" id="B-armL" d="M75 330 Q10 380 40 450"/><path class="arm" id="B-armR" d="M365 330 Q430 380 400 450"/>
+ </svg>
+ <span id="fist"></span>
+ <span class="name">MARC</span>
+</div>
+
+<!-- entrada -->
+<section class="scene" data-speaker="B" data-voice="" data-min="0.6" data-a="idle" data-b="idle" data-door="closed" data-enter="1"></section>
+<!-- tres golpes -->
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.75" data-a="idle" data-b="knock" data-door="closed" data-knock="1" data-sfx="knock@0.12"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.75" data-a="idle" data-b="knock" data-door="closed" data-knock="2" data-sfx="knock@0.12"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.81" data-a="idle" data-b="knock" data-door="closed" data-knock="3" data-sfx="knock@0.12"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<!-- abre -->
+<section class="scene" data-speaker="A" data-voice="¿Qué?" data-min="1.0" data-a="mug" data-b="idle" data-door="opening" data-sfx="door-open@0.05"><div class="bub a short"><span class="txt">¿Qué?</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Hay hueco." data-min="1.16" data-a="mug" data-b="point" data-door="open"><div class="bub b short"><span class="txt">Hay hueco.</span></div></section>
+<section class="scene" data-speaker="A" data-voice="¿Hueco de qué?" data-min="1.03" data-a="mugdoubt" data-b="idle" data-door="open"><div class="bub a short"><span class="txt">¿Hueco de qué?</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Un rato libre y alguien con quien compartirlo. Es un juego. Se llama así." data-min="5.77" data-a="mug" data-b="point" data-door="open" data-sfx="whoosh@0.35">
+ <div class="ico"><div class="gcard pop" data-at="0.4"><img src="PUB/images/games/hay-hueco.png" alt=""><div><strong>Hay hueco</strong><small>Un rato libre y alguien<br>con quien compartirlo.</small></div></div></div>
+ <div class="bub b"><span class="txt">Un rato libre y alguien con quien compartirlo. Es un juego. Se llama así.</span></div>
+</section>
+<section class="scene" data-speaker="A" data-voice="¿Y cómo va?" data-min="1.33" data-a="mugdoubt" data-b="idle" data-door="open"><div class="bub a short"><span class="txt">¿Y cómo va?</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Cuatro toques: café, en la cafetería, ahora, caben cuatro." data-min="4.05" data-a="mug" data-b="point" data-door="open" data-sfx="pop@0.9,pop@1.6,pop@2.3,pop@3.0">
+ <div class="ico" style="flex-wrap:wrap;gap:14px;padding:0 90px"><div class="step pop" data-at="0.9"><i>1</i>Café</div><div class="step pop" data-at="1.6"><i>2</i>Cafetería</div><div class="step pop" data-at="2.3"><i>3</i>Ahora</div><div class="step pop" data-at="3.0"><i>4</i>Caben 4</div></div>
+ <div class="bub b"><span class="txt">Cuatro toques: qué, dónde, cuándo y cuántos.</span></div>
+</section>
+<section class="scene" data-speaker="A" data-voice="¿Y no podías mandar un mensaje?" data-min="1.76" data-a="mugdoubt" data-b="idle" data-door="open"><div class="bub a"><span class="txt">¿Y no podías mandar un mensaje?</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Podía. Pero así te acuerdas." data-min="2.23" data-a="mug" data-b="wink" data-door="open"><div class="bub b short"><span class="txt">Podía. Pero así te acuerdas.</span></div></section>
+<section class="scene" data-speaker="A" data-voice="¿Y si no aparece nadie?" data-min="1.42" data-a="mugsad" data-b="idle" data-door="open"><div class="bub a short"><span class="txt">¿Y si no aparece nadie?</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Aparece. Y al llegar marca «ya estoy aquí»: punto verde. Así no buscas desconocidos por la cafetería." data-min="6.82" data-a="mug" data-b="point" data-door="open" data-sfx="whoosh@0.3,pop@2.2,pop@2.7">
+ <div class="ico"><div class="hcard pop" data-at="0.3"><div class="when"><span>CAFÉ · CAFETERÍA</span><span>empieza en 12 min</span></div><h4>Quedan 2 plazas</h4><div class="foot"><div class="avs"><span class="av"><img src="PUB/avatars/marc.svg" alt=""><span class="dot" id="dot1"></span></span><span class="av"><img src="PUB/avatars/laia.svg" alt=""><span class="dot" id="dot2"></span></span><span class="av"><img src="PUB/avatars/nico.svg" alt=""></span></div><span class="btn" id="join" data-b="Voy ✓" data-at="99">Me apunto</span></div></div></div>
+ <div class="bub b"><span class="txt">Cuando llega, marca «ya estoy aquí» y le sale un punto verde.</span></div>
+</section>
+<section class="scene" data-speaker="A" data-voice="Vale. Voy." data-min="1.3" data-a="cheer" data-b="idle" data-door="open" data-sfx="pop@0.25">
+ <div class="ico"><div class="hcard"><div class="when"><span>CAFÉ · CAFETERÍA</span><span>empieza en 12 min</span></div><h4>Queda 1 plaza</h4><div class="foot"><div class="avs"><span class="av"><img src="PUB/avatars/marc.svg" alt=""><span class="dot" style="transform:scale(1)"></span></span><span class="av"><img src="PUB/avatars/laia.svg" alt=""><span class="dot" style="transform:scale(1)"></span></span><span class="av"><img src="PUB/avatars/nico.svg" alt=""></span><span class="av"><img src="PUB/avatars/paula.svg" alt=""></span></div><span class="btn on" data-b="Voy ✓" data-at="0.4">Me apunto</span></div></div></div>
+ <div class="bub a short"><span class="txt">Vale. Voy.</span></div>
+</section>
+<!-- la puerta se cierra y vuelven los golpes -->
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.75" data-a="idle" data-b="knock" data-door="closing" data-knock="1" data-sfx="door-close@0.05,knock@0.4"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.75" data-a="idle" data-b="knock" data-door="closed" data-knock="2" data-sfx="knock@0.12"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Paula." data-min="0.79" data-a="idle" data-b="knock" data-door="closed" data-knock="3" data-sfx="knock@0.12"><div class="bub b short"><span class="txt">Paula.</span></div></section>
+<section class="scene" data-speaker="A" data-voice="¡¿Qué?!" data-min="1.1" data-a="angry" data-b="idle" data-door="slam" data-sfx="door-open@0.02"><div class="bub a short loud"><span class="txt">¡¿QUÉ?!</span></div></section>
+<section class="scene" data-speaker="B" data-voice="Que abre el veintiocho. Apúntate hoy y empiezas con cincuenta ClasiCoins en vez de veinte." data-min="5.54" data-a="mugdoubt" data-b="point" data-door="open" data-sfx="confetti@0.25">
+ <div id="cta"><div class="l1">28/09</div><div class="l2">Apúntate hoy: 50 en vez de 20</div><div class="l3">entreclases.com</div></div>
+ <div class="bub b"><span class="txt">Que abre el 28. Apúntate hoy: 50 en vez de 20.</span></div>
+</section>
+
+</div>
+<div id="confetti"></div>
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const eElastic = (x) => x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * (2 * Math.PI) / 3) + 1;
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const CONF = ["#e1ff3e", "#2a172e", "#b0432f", "#6862a6", "#4d8077"];
+const confetti = document.getElementById("confetti");
+const flakes = Array.from({ length: 70 }, (_, i) => { const el = document.createElement("i"); el.style.background = CONF[i % CONF.length]; el.style.left = `${(i * 137) % 1080}px`; confetti.appendChild(el); return { el, v: 500 + ((i * 53) % 400), r: (i * 97) % 360, ph: (i * 31) % 7 }; });
+const VOICES = { A: "eZxqQzb5CuYo3Kl6EXfZ", B: "NEtfpHpuEDBEmqdtNOyt" };
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".txt").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getVoiceIds = () => scenes.map((s) => VOICES[s.dataset.speaker] || VOICES.B);
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+window.getSfx = () => scenes.map((s) => s.dataset.sfx || "");
+
+const POSES = {
+  idle:     { L: "M75 330 Q10 380 40 450", R: "M365 330 Q430 380 400 450", bl: "M140 195 L195 190", br: "M300 195 L245 190" },
+  point:    { L: "M75 330 Q20 400 60 460", R: "M365 330 Q470 260 500 250", bl: "M140 190 L195 195", br: "M300 185 L245 195" },
+  wink:     { L: "M75 330 Q20 400 60 460", R: "M365 330 Q470 300 470 240", bl: "M140 195 L195 190", br: "M300 205 L245 205" },
+  knock:    { L: "M75 330 Q-20 330 -50 300", R: "M365 330 Q430 380 400 450", bl: "M140 195 L195 190", br: "M300 195 L245 190" },
+  mug:      { L: "M75 330 Q10 380 40 450", R: "M365 330 Q420 320 360 280", bl: "M140 195 L195 190", br: "M300 195 L245 190" },
+  mugdoubt: { L: "M75 330 Q60 420 170 400", R: "M365 330 Q420 320 360 280", bl: "M140 185 L195 205", br: "M300 205 L245 190" },
+  mugsad:   { L: "M75 330 Q40 430 100 470", R: "M365 330 Q420 320 360 280", bl: "M140 205 L195 190", br: "M300 205 L245 190" },
+  cheer:    { L: "M75 330 Q-10 250 20 170", R: "M365 330 Q450 250 420 170", bl: "M140 190 L195 180", br: "M300 190 L245 180" },
+  angry:    { L: "M75 330 Q0 300 30 250", R: "M365 330 Q440 300 410 250", bl: "M140 178 L195 205", br: "M300 178 L245 205" },
+};
+function pose(who, name, u, talking, t, other) {
+  const P = POSES[name] || POSES.idle;
+  $(`#${who}-armL`).setAttribute("d", P.L); $(`#${who}-armR`).setAttribute("d", P.R);
+  $(`#${who}-browL`).setAttribute("d", P.bl); $(`#${who}-browR`).setAttribute("d", P.br);
+  const m = $(`#${who}-mouth`);
+  if (talking) { m.setAttribute("ry", 5 + Math.abs(Math.sin(u * 19)) * 13); m.setAttribute("rx", 16 + Math.abs(Math.cos(u * 13)) * 6); }
+  else { m.setAttribute("ry", name === "mugsad" || name === "mugdoubt" ? 4 : name === "angry" ? 14 : 6); m.setAttribute("rx", name === "angry" ? 22 : 16); }
+  // parpadeo cada ~2,7 s (distinto en cada uno) y la mirada se va hacia quien habla
+  const ph = who === "A" ? 0.9 : 2.1; const cyc = (t + ph) % 2.7; const blink = cyc < 0.13 ? 1 - Math.abs(cyc / 0.13 - 0.5) * 2 : 0;
+  const look = other ? (who === "A" ? 7 : -7) : 0;
+  [["L", 170], ["R", 270]].forEach(([side, cx]) => { const e = $(`#${who}-eye${side}`); e.setAttribute("ry", 11 * (1 - blink * 0.9)); e.setAttribute("cx", cx + look); });
+  if (who === "A") $("#mug").style.opacity = name.startsWith("mug") ? 1 : 0;
+}
+
+window.render = function (t) {
+  const T = window.TIMES;
+  let current = 0;
+  scenes.forEach((s, i) => { if (t >= T[i].start) current = i; });
+  const s = scenes[current]; const { start, dur } = T[current]; const u = t - start;
+  scenes.forEach((sc, i) => { sc.style.visibility = i === current ? "visible" : "hidden"; sc.style.zIndex = 70 + i; });
+
+  const speaker = s.dataset.speaker; const talking = u > 0.12 && u < dur - 0.3;
+  pose("A", s.dataset.a, u, talking && speaker === "A", t, talking && speaker === "B"); pose("B", s.dataset.b, u, talking && speaker === "B", t, talking && speaker === "A");
+
+  // la puerta: cerrada, abriéndose, abierta, cerrándose, o de golpe
+  const state = s.dataset.door; let open = 0;
+  if (state === "open") open = 1;
+  if (state === "opening") open = eBack(p(u, 0.05, 0.6));
+  if (state === "closing") open = 1 - eInOut(p(u, 0.0, 0.35));
+  if (state === "slam") open = Math.min(1.12, eElastic(p(u, 0.05, 0.7)) * 1.05);
+  $("#door").style.transform = `rotateY(${-open * 108 + (state === "open" ? Math.sin(t * 1.6) * 1.5 : 0)}deg)`;
+  // Paula solo se ve con la puerta abierta; asoma desde dentro
+  $("#A").style.opacity = open > 0.15 ? 1 : 0;
+  const breatheA = Math.sin(t * 2.2) * 5, breatheB = Math.sin(t * 2.2 + 1.5) * 5;
+  const leanA = talking && speaker === "A" ? 3 : 0, hopA = talking && speaker === "A" ? Math.abs(Math.sin(t * 6)) * 6 : 0;
+  const swayA = Math.sin(t * 1.3) * 1.2, swayB = Math.sin(t * 1.1 + 2) * 1.2;
+  const sqA = talking && speaker === "A" ? hopA * 0.004 : 0;
+  $("#A").style.transform = `scale(.86) translateY(${breatheA - hopA + (state === "opening" ? (1 - open) * 40 : 0)}px) rotate(${leanA + swayA}deg) scale(${1 - sqA}, ${1 + sqA})`;
+  // Paula da un sorbo cuando le toca escuchar
+  const sip = (s.dataset.a || "").startsWith("mug") && !(talking && speaker === "A") ? Math.max(0, Math.sin(t * 1.4)) : 0;
+  $("#mug").style.transform = `rotate(${-8 - sip * 25}deg) translate(${sip * 70}px,${-sip * 70}px)`;
+
+  // Marc llama: se acerca a la puerta, el puño golpea y salta el «toc»
+  let knockX = 0, fistOn = 0;
+  [1, 2, 3].forEach((k) => { $(`#toc${k}`).style.opacity = 0; });
+  if (s.dataset.knock) {
+    const k = parseInt(s.dataset.knock, 10);
+    const hit = p(u, 0.1, 0.32); const pull = Math.sin(hit * Math.PI);
+    knockX = -110 - pull * 40; fistOn = 1;
+    // los toc de este golpe y los anteriores del mismo tramo quedan a la vista
+    for (let j = 1; j <= k; j++) { const el = $(`#toc${j}`); const a = j === k ? 0.18 : -1; const q = eBack(p(u, a, a + 0.3)); el.style.opacity = j === k ? p(u, a, a + 0.08) : 0.55; el.style.transform = `${el.style.transform.replace(/ ?scale\([^)]*\)/, "")} scale(${j === k ? q : 1})`; }
+  } else knockX = -110;
+  const leanB = talking && speaker === "B" ? -3 : 0, hopB = talking && speaker === "B" ? Math.abs(Math.sin(t * 6)) * 6 : 0;
+  const sqB = talking && speaker === "B" ? hopB * 0.004 : 0;
+  $("#B").style.transform = `translate(${knockX}px,${breatheB - hopB}px) rotate(${leanB + swayB}deg) scale(${(talking && speaker === "B" ? 1.03 : 1) - sqB}, ${(talking && speaker === "B" ? 1.03 : 1) + sqB})`;
+  $("#fist").style.opacity = fistOn;
+
+  // burbuja y piezas del plano
+  const bub = s.querySelector(".bub");
+  if (bub) { const y = eBack(p(u, 0.02, 0.4)); bub.style.opacity = p(u, 0.02, 0.1); const wob = s.dataset.door === "slam" ? Math.sin(u * 40) * (1 - p(u, 0, 0.6)) * 4 : 0; bub.style.transform = `translateY(${(1 - y) * 60 + Math.sin(t * 3 + 1) * 3}px) scale(${lerp(.85, 1, y)}) rotate(${wob + (1 - y) * -4 + Math.sin(t * 2.2) * 0.6}deg)`;
+    let k = 0; bub.querySelectorAll(".w > i").forEach((w) => { const a = 0.1 + k * 0.045; k++; const q = eOut(p(u, a, a + 0.28)); w.style.transform = `translateY(${(1 - q) * 22}px)`; w.style.opacity = q; }); }
+  let n = 0;
+  s.querySelectorAll(".pop").forEach((el, idx) => { const a = el.dataset.at ? parseFloat(el.dataset.at) : 0.3 + n * 0.15; n++; const y = eBack(p(u, a, a + 0.5)); el.style.opacity = String(p(u, a, a + 0.12)); const side = idx % 2 ? 1 : -1; el.style.transform = `translate(${(1 - y) * 700 * side}px,${(1 - y) * -120 + Math.sin(t * 2.2 + idx) * 5}px) scale(${lerp(.6, 1, y)}) rotate(${(1 - y) * 25 * side + Math.sin(t * 1.7 + idx) * 1.5}deg)`; });
+  if (s.querySelector("#dot1")) { $("#dot1").style.transform = `scale(${eBack(p(u, 2.2, 2.6))})`; $("#dot2").style.transform = `scale(${eBack(p(u, 2.7, 3.1))})`; }
+  s.querySelectorAll("[data-b]").forEach((b) => { const a = parseFloat(b.dataset.at); if (!b.dataset.a0) b.dataset.a0 = b.textContent; const on = u >= a || b.classList.contains("on"); b.textContent = on ? b.dataset.b : b.dataset.a0; const pr = p(u, a - 0.05, a + 0.2); b.style.transform = `scale(${pr > 0 && pr < 1 ? 1 - Math.sin(pr * Math.PI) * .12 : 1})`; });
+  if (s.querySelector("#cta")) { const y = eBack(p(u, 0.1, 0.7)); $("#cta").style.opacity = p(u, 0.1, 0.25); $("#cta").style.transform = `translateY(${(1 - y) * 80}px) scale(${1 + Math.sin(u * 3) * 0.015})`; }
+
+  // entrada: Marc llega andando desde fuera de plano
+  if (s.dataset.enter) { const w = eOut(p(u, 0.02, 0.55)); const step = Math.abs(Math.sin(u * 14)) * 10 * (1 - w); $("#B").style.transform = `translate(${lerp(520, -110, w)}px,${-step}px) rotate(${Math.sin(u * 14) * 2 * (1 - w)}deg)`; }
+
+  // ondas de impacto y sacudida de la puerta en cada golpe
+  [1, 2, 3].forEach((k) => { $(`#ring${k}`).style.opacity = 0; });
+  let shake = 0;
+  if (s.dataset.knock) { const k = parseInt(s.dataset.knock, 10); const q = p(u, 0.18, 0.7); const r = $(`#ring${k}`); r.style.opacity = (1 - q) * 0.9; r.style.transform = `scale(${lerp(.2, 2.4, eOut(q))})`; shake = Math.sin(u * 60) * 6 * (1 - p(u, 0.18, 0.5)); }
+  $("#frame").style.transform = `translateX(${shake}px) rotate(${shake * 0.15}deg)`;
+
+  // vaho de la taza mientras Paula la sostiene
+  const mugOn = (s.dataset.a || "").startsWith("mug");
+  [1, 2, 3].forEach((k) => { const st = $(`#st${k}`); const q = ((t * 0.7 + k * 0.33) % 1); st.style.opacity = mugOn ? (1 - q) * 0.5 : 0; st.style.transform = `translate(${Math.sin(q * 6 + k) * 8}px,${-q * 90}px) scale(${1 + q})`; });
+
+  // chispa en el guiño
+  const sp = $("#spark"); if (s.dataset.b === "wink") { const q = p(u, 0.5, 1.1); sp.style.opacity = Math.sin(q * Math.PI); sp.style.transform = `translate(${knockX}px,0) rotate(${q * 180}deg) scale(${0.6 + Math.sin(q * Math.PI)})`; } else sp.style.opacity = 0;
+
+  // polvo al cerrarse la puerta
+  [1, 2, 3].forEach((k) => { const d = $(`#d${k}`); if (s.dataset.door === "closing" || s.dataset.door === "slam") { const q = p(u, 0.25, 1.0); d.style.opacity = (1 - q) * 0.8; d.style.transform = `translate(${(k - 2) * 60 * q}px,${-q * 80}px) scale(${1 + q * 2.5})`; } else d.style.opacity = 0; });
+
+  // Paula salta en el «Vale. Voy.»
+  if (s.dataset.a === "cheer") { const j = Math.sin(p(u, 0.2, 0.7) * Math.PI) * 60; $("#A").style.transform += ` translateY(${-j}px)`; }
+
+  // cámara: acercarse en los golpes, golpe de zoom en el grito, deriva lenta en las explicaciones
+  let cz = 1, cx = 0, cy = 0;
+  if (s.dataset.knock) { cz = 1.05 + Math.sin(u * 60) * 0.004 * (1 - p(u, 0.18, 0.5)); cx = -120; cy = 40; }
+  else if (s.dataset.door === "slam") { const q = p(u, 0.05, 0.35); cz = 1 + Math.sin(q * Math.PI) * 0.09 + 0.02; cx = Math.sin(u * 55) * 14 * (1 - p(u, 0.05, 0.6)); }
+  else if (s.dataset.door === "opening") { cz = lerp(1.05, 1.0, eOut(p(u, 0, 0.8))); cx = lerp(-120, 0, eOut(p(u, 0, 0.8))); cy = lerp(40, 0, eOut(p(u, 0, 0.8))); }
+  else if (s.dataset.enter) { cz = lerp(1.0, 1.05, eOut(p(u, 0.2, 0.6))); cx = lerp(0, -120, eOut(p(u, 0.2, 0.6))); cy = lerp(0, 40, eOut(p(u, 0.2, 0.6))); }
+  else { const punch = 0.035 * (1 - eOut(p(u, 0, 0.32))); const toward = speaker === "A" ? 45 : -45; cz = 1.01 + Math.sin(t * 0.5) * 0.008 + punch + eOut(p(u, 0, dur)) * 0.02; cx = lerp(0, toward, eOut(p(u, 0, 0.6))) + Math.sin(t * 0.3) * 6; cy = -10 + Math.sin(t * 0.4) * 5; }
+  $("#cam").style.transform = `translate(${cx}px,${cy}px) scale(${cz})`;
+  $("#paper").style.backgroundPosition = `${(t * 12) % 34}px ${(t * 8) % 34}px, 0 0`;
+
+  // confeti en el cierre
+  const isEnd = s.querySelector("#cta") !== null;
+  flakes.forEach((f) => { if (!isEnd) { f.el.style.opacity = 0; return; } const y = ((u * f.v) % 2300) - 300; f.el.style.opacity = p(u, 0.3, 0.6); f.el.style.transform = `translate(${Math.sin(u * 2 + f.ph) * 40}px,${y}px) rotate(${f.r + u * 240}deg)`; });
+  $("#prog b").style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+};
+</script>
+</body></html>

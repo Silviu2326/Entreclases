@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 23/09 · ClasiCoins</title>
+<!--BASE-->
+<style>
+/* Este vídeo lleva su propio motor (abajo): la cartera persiste entre planos y cada plano tiene su propia coreografía. */
+.scene { visibility: hidden; }
+.hl { z-index: 6; }
+.hand { color: var(--plum); }
+.plum .hand, .onphoto .hand { color: var(--lime); }
+
+/* cartera persistente */
+#wallet { position: absolute; right: 80px; top: 250px; z-index: 90; display: flex; align-items: center; gap: 16px; background: #fff; color: var(--plum); border-radius: 999px; padding: 14px 30px 14px 16px; box-shadow: 0 18px 50px #1c0e1f33; font-size: 46px; font-weight: 850; letter-spacing: -0.04em; opacity: 0; }
+#wallet .coin { width: 64px; height: 64px; }
+#wallet .delta { position: absolute; right: 30px; top: -58px; font-size: 40px; font-weight: 850; color: #4f6828; opacity: 0; }
+#wallet .delta.neg { color: #cf2745; }
+
+/* moneda */
+.coin { position: relative; border-radius: 50%; background: var(--plum); box-shadow: inset 0 0 0 5px var(--lime), inset 0 0 0 9px var(--plum), 0 20px 50px #1c0e1f44; display: grid; place-items: center; }
+.coin img { width: 56%; }
+#bigcoin { position: absolute; left: 50%; top: 860px; width: 560px; height: 560px; margin-left: -280px; z-index: 8; transform-style: preserve-3d; }
+#bigcoin .coin { position: absolute; inset: 0; backface-visibility: hidden; }
+#bigcoin .back { transform: rotateY(180deg); }
+#bigcoin .back img { display: none; }
+#bigcoin .back::after { content: "C"; font-size: 260px; font-weight: 850; color: var(--lime); letter-spacing: -0.08em; }
+.shadow { position: absolute; left: 50%; width: 460px; height: 70px; margin-left: -230px; border-radius: 50%; background: #1c0e1f; filter: blur(22px); opacity: .35; }
+
+/* tarjeta de precio (plano 2) */
+.price { position: absolute; left: 140px; top: 820px; width: 800px; background: #fff; border-radius: 40px; padding: 44px 48px; box-shadow: 0 30px 80px #1c0e1f2e; z-index: 7; }
+.price .lbl { font-size: 28px; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+.price .amt { font-size: 150px; font-weight: 850; letter-spacing: -0.07em; line-height: 1; margin-top: 10px; }
+.price .btnw { margin-top: 30px; display: inline-block; background: #2a72e8; color: #fff; font-size: 38px; font-weight: 800; padding: 22px 40px; border-radius: 20px; }
+.stamp { position: absolute; font-size: 170px; font-weight: 900; letter-spacing: -0.06em; color: #cf2745; border: 14px solid #cf2745; border-radius: 30px; padding: 0 30px; line-height: 1.05; z-index: 12; transform: rotate(-14deg); opacity: 0; mix-blend-mode: multiply; }
+
+/* tienda inexistente (plano 4) */
+.store { position: absolute; left: 100px; top: 760px; width: 880px; z-index: 7; display: grid; gap: 22px; }
+.sku { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 30px; padding: 30px 36px; box-shadow: 0 16px 44px #1c0e1f1f; font-size: 40px; font-weight: 800; letter-spacing: -0.04em; }
+.sku span { display: inline-block; background: #2a72e8; color: #fff; font-size: 30px; padding: 16px 28px; border-radius: 16px; }
+.sku .coin { width: 60px; height: 60px; margin-right: 20px; }
+.nope { position: absolute; left: 80px; right: 80px; top: 800px; z-index: 9; text-align: center; font-size: 96px; font-weight: 850; letter-spacing: -0.06em; line-height: .95; opacity: 0; }
+
+/* movimientos (planos 5 y 6) */
+.moves { position: absolute; left: 80px; right: 80px; top: 720px; z-index: 7; display: grid; gap: 22px; }
+.mv { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 30px; padding: 30px 36px; box-shadow: 0 16px 44px #1c0e1f1f; font-size: 40px; font-weight: 700; letter-spacing: -0.035em; opacity: 0; }
+.mv small { display: block; font-size: 26px; font-weight: 550; color: var(--muted); margin-top: 4px; letter-spacing: -0.01em; }
+.mv b { font-size: 54px; font-weight: 850; letter-spacing: -0.05em; color: #4f6828; white-space: nowrap; }
+.mv b.neg { color: #cf2745; }
+.mv b.free { color: var(--plum); background: var(--lime); padding: 4px 18px; border-radius: 14px; font-size: 38px; }
+
+/* el pesado de «¿alguien?» (plano 7) */
+.chat { position: absolute; left: 80px; right: 80px; top: 640px; z-index: 7; display: grid; gap: 18px; justify-items: end; }
+.bub { background: var(--plum); color: var(--paper); font-size: 44px; font-weight: 700; letter-spacing: -0.03em; padding: 24px 36px; border-radius: 34px 34px 8px 34px; opacity: 0; max-width: 760px; }
+.bub .c { display: inline-block; margin-left: 18px; font-size: 30px; font-weight: 850; color: var(--lime); }
+.bub .c.free { color: #b9d84a; }
+.spamwallet { position: absolute; left: 80px; top: 1500px; z-index: 8; display: flex; align-items: center; gap: 18px; font-size: 44px; font-weight: 850; letter-spacing: -0.04em; background: #fff; padding: 18px 34px 18px 18px; border-radius: 999px; box-shadow: 0 16px 44px #1c0e1f1f; }
+.spamwallet .coin { width: 60px; height: 60px; }
+.spamwallet.broke { background: #cf2745; color: #fff; }
+
+/* ranking (plano 8) */
+.rank { position: absolute; left: 80px; right: 80px; top: 660px; z-index: 7; display: grid; gap: 18px; }
+.row { display: flex; align-items: center; gap: 26px; background: #fff; border-radius: 30px; padding: 24px 32px; box-shadow: 0 16px 44px #1c0e1f1f; font-size: 38px; font-weight: 800; letter-spacing: -0.04em; opacity: 0; }
+.row .pos { width: 64px; font-size: 48px; font-weight: 850; color: var(--muted); letter-spacing: -0.06em; }
+.row .av { width: 62px; height: 62px; border: 0; margin: 0; }
+.row .who small { display: block; font-size: 24px; font-weight: 550; color: var(--muted); letter-spacing: -0.01em; }
+.row .pts { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 44px; font-weight: 850; }
+.row .pts .coin { width: 44px; height: 44px; box-shadow: inset 0 0 0 3px var(--lime), inset 0 0 0 6px var(--plum); }
+.row.me { background: var(--plum); color: var(--paper); }
+.row.me .pos, .row.me .who small { color: #cbbfcf; }
+.row.me .av { background: var(--lime); background-image: none; display: grid; place-items: center; font-size: 22px; color: var(--plum); font-weight: 850; }
+
+/* recompensas (plano 9) */
+.locks { position: absolute; left: 80px; right: 80px; top: 720px; z-index: 7; display: grid; gap: 24px; }
+.lock { display: flex; align-items: center; gap: 28px; background: #ffffff14; border: 2px solid #fffefa2e; border-radius: 34px; padding: 34px 38px; font-size: 54px; font-weight: 850; letter-spacing: -0.05em; color: var(--paper); opacity: 0; }
+.lock svg { width: 64px; height: 64px; flex-shrink: 0; }
+.lock .soon { margin-left: auto; font-size: 22px; font-weight: 800; letter-spacing: .12em; color: var(--plum); background: var(--lime); padding: 10px 16px; border-radius: 12px; }
+</style>
+</head><body>
+
+<!-- Cartera que vive fuera de los planos -->
+<div id="wallet"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div><span id="wbal">0</span><div class="delta" id="wdelta">+20</div></div>
+
+<!-- 1 · gancho -->
+<section class="scene plum" data-voice="Te voy a cobrar por publicar en Entreclases." data-min="3" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:520px">Te voy a cobrar por <span class="mark">publicar.</span></h1>
+ <div class="hand pop" data-at="1.7" style="left:560px;top:1180px;font-size:74px;transform:rotate(-5deg)">sí, en serio.</div>
+</section>
+
+<!-- 2 · no con dinero -->
+<section class="scene" data-voice="Tranquilo. No con dinero." data-min="2.7" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">No con <span class="mark">dinero.</span></h1>
+ <div class="price pop" data-at="0.3" data-rot="-1.5">
+  <div class="lbl">PASARELA DE PAGO</div>
+  <div class="amt">4,99 €</div>
+  <div class="btnw">Pagar ahora</div>
+ </div>
+ <div class="stamp" id="stampNo" style="left:300px;top:930px">NO</div>
+</section>
+
+<!-- 3 · la moneda -->
+<section class="scene plum" data-voice="Con ClasiCoins." data-min="2.9" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Con <span class="mark">ClasiCoins.</span></h1>
+ <div id="bigcoin"><div class="coin front"><img src="PUB/brand/entreclase-mark.png" alt=""></div><div class="coin back"></div></div>
+ <div class="shadow" id="coinshadow" style="top:1470px"></div>
+ <div class="hand pop" data-at="1.9" style="left:640px;top:1520px;font-size:66px;transform:rotate(-6deg)">no vale un euro.</div>
+</section>
+
+<!-- 4 · no hay tienda -->
+<section class="scene" data-voice="No se compran, no se venden, no hay tienda. Si buscas el botón de comprar monedas, te vas a hartar." data-min="5.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">No se <span class="mark">compran.</span></h1>
+ <div class="store" id="store">
+  <div class="sku pop" data-at="0.4"><div style="display:flex;align-items:center"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>100 ClasiCoins</div><span>4,99 €</span></div>
+  <div class="sku pop" data-at="0.6"><div style="display:flex;align-items:center"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>500 ClasiCoins</div><span>19,99 €</span></div>
+  <div class="sku pop" data-at="0.8"><div style="display:flex;align-items:center"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>Pack «influencer»</div><span>49,99 €</span></div>
+ </div>
+ <div class="nope" id="nope">Esta pantalla<br>no existe.</div>
+ <div class="hand" id="nopeHand" style="left:300px;top:1130px;font-size:64px;transform:rotate(-4deg);opacity:0">y no va a existir.</div>
+</section>
+
+<!-- 5 · se ganan -->
+<section class="scene" data-voice="Se ganan haciendo cosas. Perfil, veinte. Responder a alguien, dos. Apuntarte antes de abrir, treinta más." data-min="6" data-in="push" data-wallet="show">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Se ganan <span class="mark">haciendo cosas.</span></h1>
+ <div class="moves">
+  <div class="mv" data-at="1.2" data-add="20"><div>Completar tu perfil<small>Una vez, al entrar</small></div><b>+20</b></div>
+  <div class="mv" data-at="2.6" data-add="2"><div>Responder a alguien<small>En su hilo, no en el tuyo</small></div><b>+2</b></div>
+  <div class="mv" data-at="4.0" data-add="30"><div>Estar en la lista antes del 28<small>Solo quien se apunte ahora</small></div><b>+30</b></div>
+ </div>
+ <div class="hand pop" data-at="5.0" style="left:560px;top:1440px;font-size:64px;transform:rotate(-5deg)">sin pagar nada.</div>
+</section>
+
+<!-- 6 · se gastan -->
+<section class="scene" data-voice="Y se gastan creando. Un plan, diez. Un hilo, cinco. El primero, gratis." data-min="4.8" data-in="push" data-wallet="keep">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Se gastan <span class="mark">creando.</span></h1>
+ <div class="moves">
+  <div class="mv" data-at="1.2" data-add="-10"><div>Montar un plan<small>«Café en Benimaclet, jueves a las 6»</small></div><b class="neg">−10</b></div>
+  <div class="mv" data-at="2.4" data-add="-5"><div>Abrir un hilo<small>Una pregunta, una publicación</small></div><b class="neg">−5</b></div>
+  <div class="mv" data-at="3.5" data-add="0"><div>Tu primer hilo<small>Para que empieces sin pensarlo</small></div><b class="free">gratis</b></div>
+ </div>
+</section>
+
+<!-- 7 · el pesado -->
+<section class="scene" data-voice="Así que el típico de «¿alguien?» cinco veces al día… se queda a cero. Lo que no cuesta nada se llena de ruido." data-min="6" data-in="wipe" data-wallet="hide">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl m" style="top:330px">El típico de <span class="mark">«¿alguien?»</span></h1>
+ <div class="chat">
+  <div class="bub" data-at="1.2">¿alguien? <span class="c free">gratis</span></div>
+  <div class="bub" data-at="1.8">¿alguien?? <span class="c">−5</span></div>
+  <div class="bub" data-at="2.4">¿ALGUIEN??? <span class="c">−5</span></div>
+  <div class="bub" data-at="3.6">alguien porfa <span class="c">−5</span></div>
+  <div class="bub" data-at="3.6">a l g u i e n <span class="c">−5</span></div>
+ </div>
+ <div class="spamwallet" id="spamwallet"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div><span id="spambal">20</span></div>
+ <div class="hand" id="spamHand" style="left:520px;top:1500px;font-size:66px;transform:rotate(-5deg);opacity:0">se acabó el ruido.</div>
+</section>
+
+<!-- 8 · ranking -->
+<section class="scene" data-voice="Y sí, habrá ranking." data-min="3.7" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Habrá <span class="mark">ranking.</span></h1>
+ <div class="rank">
+  <div class="row" data-at="0.6"><div class="pos">1</div><div class="av" style="background-position:26% 44%"></div><div class="who">Laia<small>2º Bellas Artes</small></div><div class="pts"><div class="coin"></div>148</div></div>
+  <div class="row" data-at="0.75"><div class="pos">2</div><div class="av" style="background-position:68% 43%"></div><div class="who">Marc<small>3º ADE</small></div><div class="pts"><div class="coin"></div>131</div></div>
+  <div class="row" data-at="0.9"><div class="pos">3</div><div class="av" style="background-position:40% 42%"></div><div class="who">Pau<small>3º Informática</small></div><div class="pts"><div class="coin"></div>122</div></div>
+  <div class="row" data-at="1.05"><div class="pos">4</div><div class="av" style="background-position:88% 50%"></div><div class="who">Sara<small>1º Medicina</small></div><div class="pts"><div class="coin"></div>97</div></div>
+  <div class="row me" id="merow"><div class="pos">5</div><div class="av">TÚ</div><div class="who">Tú<small>Recién llegado</small></div><div class="pts"><div class="coin"></div><span id="mepts">37</span></div></div>
+ </div>
+ <div class="hand pop" data-at="3.0" style="left:600px;top:1440px;font-size:64px;transform:rotate(-5deg)">de momento.</div>
+</section>
+
+<!-- 9 · recompensas -->
+<section class="scene plum" data-voice="Y pronto desbloquean recompensas. Descuentos, experiencias… ya te contaré." data-min="4.8" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Pronto desbloquean <span class="mark">recompensas.</span></h1>
+ <div class="locks">
+  <div class="lock" data-at="1.0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Descuentos<span class="soon">PRÓXIMAMENTE</span></div>
+  <div class="lock" data-at="1.8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Experiencias<span class="soon">PRÓXIMAMENTE</span></div>
+  <div class="lock" data-at="2.6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>?<span class="soon">NI IDEA AÚN</span></div>
+ </div>
+ <div class="hand pop" data-at="3.6" style="left:520px;top:1500px;font-size:64px;transform:rotate(-5deg)">ya te contaré.</div>
+</section>
+
+<!-- 10 · cierre -->
+<section class="scene lime" data-voice="Abrimos el veintiocho en Valencia. Apúntate antes y empiezas con cincuenta en vez de veinte." data-min="5.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="hl" style="top:400px;font-size:300px;line-height:.9;letter-spacing:-0.075em">28/09</div>
+ <div class="words" style="position:absolute;left:80px;top:700px;font-size:80px;font-weight:850;letter-spacing:-0.05em">Valencia.</div>
+ <div class="cta pop" data-at="2.2" style="top:920px">Apúntate antes: 50 en vez de 20</div>
+ <div class="pop" data-at="3.4" style="position:absolute;left:80px;top:1080px;font-size:54px;font-weight:800;letter-spacing:-0.03em">entreclases.com</div>
+ <div class="coin pop" data-at="1.0" data-rot="-10" style="position:absolute;left:80px;top:1260px;width:380px;height:380px"><img src="PUB/brand/entreclase-mark.png" alt=""></div>
+</section>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+// rebote amortiguado, para que las cosas caigan en vez de deslizarse
+const eBounce = (x) => { const n1 = 7.5625, d1 = 2.75; if (x < 1 / d1) return n1 * x * x; if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + .75; if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + .9375; return n1 * (x -= 2.625 / d1) * x + .984375; };
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".hl, .words").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+
+// La cartera: cada .mv con data-add suma en su momento; el saldo se interpola para que el número corra.
+function walletState(t) {
+  const T = window.TIMES; let bal = 0, shown = 0, last = null;
+  scenes.forEach((s, i) => {
+    const mode = s.dataset.wallet; const u = t - T[i].start;
+    if (mode === "show" && u >= 0) shown = 1;
+    if (mode === "hide" && u >= 0) shown = 0;
+    if (u < 0) return;
+    s.querySelectorAll(".mv[data-add]").forEach((mv) => {
+      const at = parseFloat(mv.dataset.at), add = parseInt(mv.dataset.add, 10);
+      if (u >= at + 0.25 && add !== 0) { bal += add; last = { add, at: T[i].start + at + 0.25 }; }
+    });
+  });
+  return { bal, shown, last };
+}
+
+window.render = function (t) {
+  const T = window.TIMES;
+  scenes.forEach((s, i) => {
+    const { start, dur } = T[i]; const u = t - start;
+    const visible = u >= -0.02 && (i === scenes.length - 1 || t < T[i + 1].start + 0.6);
+    s.style.visibility = visible ? "visible" : "hidden"; s.style.zIndex = 10 + i;
+    if (!visible) return;
+
+    // entrada del plano
+    const kind = i === 0 ? "none" : (s.dataset.in || "wipe");
+    const x = eInOut(p(u, -0.02, 0.45));
+    s.style.clipPath = ""; s.style.transform = "";
+    if (kind === "wipe") { s.style.clipPath = `inset(${(1 - x) * 100}% 0 0 0)`; const e = s.querySelector(".edge"); if (e) { e.style.top = `${(1 - x) * 1920}px`; e.style.opacity = x > 0 && x < 1 ? 1 : 0; } }
+    if (kind === "circle") s.style.clipPath = `circle(${x * 2300}px at 540px 1140px)`;
+    if (kind === "push") s.style.transform = `translateX(${(1 - eOut(p(u, -0.02, 0.5))) * 1080}px)`;
+
+    // titulares palabra a palabra y marcador lima
+    let k = 0;
+    s.querySelectorAll(".hl .w > i, .words .w > i").forEach((w) => { const a = 0.25 + k * 0.055; k++; w.style.transform = `translateY(${(1 - eOut(p(u, a, a + 0.38))) * 112}%)`; });
+    const markAt = 0.3 + k * 0.055;
+    s.querySelectorAll(".mark").forEach((m, j) => m.style.setProperty("--m", eOut(p(u, markAt + j * 0.12, markAt + 0.3 + j * 0.12))));
+
+    // .pop: caen con un pequeño rebote
+    let n = 0;
+    s.querySelectorAll(".pop").forEach((el) => {
+      const a = el.dataset.at ? parseFloat(el.dataset.at) : markAt + 0.15 + n * 0.22; n++;
+      const y = eBack(p(u, a, a + 0.5));
+      el.style.opacity = p(u, a, a + 0.12);
+      const base = el.dataset.rot ? `rotate(${el.dataset.rot}deg)` : "";
+      el.style.transform = `${base} translateY(${(1 - y) * 90}px) scale(${lerp(.94, 1, y)})`;
+    });
+    // .mv / .bub / .row / .lock: entran deslizando desde la derecha, con data-at
+    s.querySelectorAll(".mv, .bub, .row:not(.me), .lock").forEach((el) => {
+      const a = parseFloat(el.dataset.at || "0.8"); const y = eOut(p(u, a, a + 0.45));
+      el.style.opacity = p(u, a, a + 0.15);
+      el.style.transform = `translateX(${(1 - y) * 80}px)`;
+      // la cifra da un golpecito al entrar
+      const b = el.querySelector("b"); if (b) { const pr = p(u, a + 0.2, a + 0.55); b.style.transform = `scale(${1 + Math.sin(pr * Math.PI) * .25})`; }
+    });
+
+    // coreografías propias de cada plano
+    if (s.querySelector("#stampNo")) { const st = p(u, 1.25, 1.45); const el = $("#stampNo"); el.style.opacity = st; el.style.transform = `rotate(-14deg) scale(${lerp(2.2, 1, eOut(st))})`; }
+    if (s.querySelector("#bigcoin")) {
+      const drop = eBounce(p(u, 0.1, 1.1)); const spin = u * 140;
+      $("#bigcoin").style.transform = `translateY(${(1 - drop) * -900}px) rotateY(${spin}deg)`;
+      $("#bigcoin").style.perspective = "1400px";
+      $("#coinshadow").style.transform = `scale(${lerp(.3, 1, drop)})`; $("#coinshadow").style.opacity = lerp(0, .35, drop);
+    }
+    if (s.querySelector("#store")) {
+      const gone = eInOut(p(u, 2.3, 2.9));
+      $("#store").style.opacity = 1 - gone; $("#store").style.transform = `scale(${1 - gone * .12}) translateY(${gone * 60}px)`; $("#store").style.filter = `blur(${gone * 14}px)`;
+      const np = eBack(p(u, 2.8, 3.3)); $("#nope").style.opacity = p(u, 2.8, 3.0); $("#nope").style.transform = `translateY(${(1 - np) * 60}px)`;
+      $("#nopeHand").style.opacity = p(u, 3.9, 4.2);
+    }
+    if (s.querySelector("#spamwallet")) {
+      const steps = [[1.2, 20], [2.05, 15], [2.65, 10], [3.25, 5], [3.9, 0]]; let v = 20; steps.forEach(([a, val]) => { if (u >= a) v = val; });
+      $("#spambal").textContent = v; const broke = u >= 3.9; $("#spamwallet").classList.toggle("broke", broke);
+      const sh = broke ? Math.sin(p(u, 3.9, 4.35) * Math.PI * 6) * (1 - p(u, 3.9, 4.35)) * 10 : 0; $("#spamwallet").style.transform = `translateX(${sh}px)`;
+      $("#spamHand").style.opacity = p(u, 4.7, 5.0);
+    }
+    if (s.querySelector("#merow")) {
+      const rise = eOut(p(u, 1.8, 2.5)); const me = $("#merow"); me.style.opacity = p(u, 1.8, 2.0);
+      me.style.transform = `translateY(${(1 - rise) * 260}px)`;
+    }
+    if (s.classList.contains("plum") && s.querySelector(".lock")) {
+      s.querySelectorAll(".lock").forEach((l) => { const a = parseFloat(l.dataset.at) + 0.9; const w = p(u, a, a + 0.5); const sh = Math.sin(w * Math.PI * 5) * (1 - w) * 6; l.querySelector("svg").style.transform = `rotate(${sh}deg)`; });
+    }
+    const bar = s.querySelector(".prog > b"); if (bar) bar.style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+  });
+
+  // cartera persistente
+  const w = walletState(t); const el = $("#wallet");
+  const showIdx = scenes.findIndex((s) => s.dataset.wallet === "show"), hideIdx = scenes.findIndex((s) => s.dataset.wallet === "hide");
+  const inA = eBack(p(t, T[showIdx].start + 0.5, T[showIdx].start + 1.0)), outA = eInOut(p(t, T[hideIdx].start, T[hideIdx].start + 0.4));
+  el.style.opacity = p(t, T[showIdx].start + 0.5, T[showIdx].start + 0.7) * (1 - outA);
+  // el número corre hasta el saldo nuevo y la pastilla da un botecito
+  let disp = w.bal, kick = 0;
+  if (w.last) { const q = p(t, w.last.at, w.last.at + 0.5); disp = Math.round(lerp(w.bal - w.last.add, w.bal, eOut(q))); kick = Math.sin(q * Math.PI) * .08; }
+  $("#wbal").textContent = disp;
+  el.style.transform = `translateY(${(1 - inA) * -60 - outA * 60}px) scale(${1 + kick})`;
+  const d = $("#wdelta"); if (w.last) { const q = p(t, w.last.at, w.last.at + 0.9); d.textContent = (w.last.add > 0 ? "+" : "−") + Math.abs(w.last.add); d.classList.toggle("neg", w.last.add < 0); d.style.opacity = q < .15 ? q / .15 : 1 - p(q, .6, 1); d.style.transform = `translateY(${-eOut(q) * 40}px)`; } else d.style.opacity = 0;
+};
+</script>
+</body></html>

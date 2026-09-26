@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 26/09 · ¿Otra red social?</title>
+<!--BASE-->
+<style>
+/* Formato diálogo: dos personajes fijos abajo, una burbuja por réplica y un icono por idea.
+   Los personajes son propios (trazo simple, cuerpo blanco) con los colores de la marca. */
+:root { --ink:#1c0e1f; --bub:#fff6dc; }
+html.video body { background:#fffefa; }
+#paper { position:absolute; inset:0; background: radial-gradient(#2a172e12 1.4px, transparent 1.6px) 0 0/34px 34px, #fffefa; }
+#paper::after { content:""; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 30%, transparent 50%, #2a172e0d 100%); }
+.scene { visibility:hidden; background:transparent; }
+
+/* cabecera fija */
+#head { position:absolute; left:0; right:0; top:150px; text-align:center; z-index:80; }
+#head img { height:54px; }
+#head .tag { display:inline-block; margin-top:18px; padding:12px 26px; border-radius:999px; background:var(--plum); color:var(--lime); font-size:26px; font-weight:850; letter-spacing:.14em; }
+#prog { position:absolute; left:80px; right:80px; top:100px; height:8px; border-radius:4px; background:#2a172e1f; overflow:hidden; z-index:80; }
+#prog b { display:block; height:100%; background:var(--plum); transform-origin:left; transform:scaleX(0); }
+
+/* personajes */
+.who { position:absolute; bottom:300px; width:440px; height:520px; z-index:60; transform-origin:50% 100%; }
+#A { left:40px; } #B { right:40px; }
+.who svg { width:100%; height:100%; overflow:visible; }
+.who .arm { stroke:var(--ink); stroke-width:14; stroke-linecap:round; fill:none; }
+.who .body { fill:#fff; stroke:var(--ink); stroke-width:12; }
+.who .eye { fill:var(--ink); }
+.who .brow { stroke:var(--ink); stroke-width:9; stroke-linecap:round; fill:none; }
+.who .mouth { fill:var(--ink); }
+.who .band { fill:var(--band); }
+.who .prop { opacity:0; }
+.who .name { position:absolute; left:50%; bottom:-70px; transform:translateX(-50%); font-size:28px; font-weight:850; letter-spacing:.06em; color:var(--plum); opacity:.6; }
+
+/* burbujas */
+.bub { position:absolute; top:760px; width:640px; padding:38px 44px; border-radius:36px; background:var(--bub); border:6px solid var(--ink); font-size:46px; font-weight:750; line-height:1.18; letter-spacing:-0.025em; color:var(--ink); z-index:70; box-shadow:0 20px 50px #1c0e1f1f; opacity:0; }
+.bub.a { left:60px; } .bub.b { right:60px; }
+.bub::after { content:""; position:absolute; bottom:-34px; width:0; height:0; border:28px solid transparent; border-top-color:var(--ink); border-bottom:0; }
+.bub::before { content:""; position:absolute; bottom:-22px; width:0; height:0; border:22px solid transparent; border-top-color:var(--bub); border-bottom:0; z-index:1; }
+.bub.a::after { left:120px; } .bub.a::before { left:126px; }
+.bub.b::after { right:120px; } .bub.b::before { right:126px; }
+.bub .txt { display:block; } .bub .w { padding-bottom:.18em; margin-bottom:-.18em; }
+.bub.big { font-size:56px; }
+.bub.short { width:auto; min-width:260px; }
+
+/* iconos: la zona entre la cabecera y las burbujas */
+.ico { position:absolute; left:0; right:0; top:400px; height:330px; z-index:65; display:flex; justify-content:center; align-items:center; gap:22px; }
+.app { width:120px; height:120px; border-radius:30px; background:var(--c); box-shadow:0 14px 34px #1c0e1f22; opacity:0; }
+.phone { width:200px; height:330px; border-radius:36px; background:var(--ink); padding:12px; position:relative; }
+.phone .scr { position:absolute; inset:12px; border-radius:26px; background:#fff; overflow:hidden; }
+.phone .feed { position:absolute; left:14px; right:14px; top:0; display:grid; gap:10px; }
+.phone .feed i { display:block; height:70px; border-radius:12px; background:linear-gradient(160deg,#e2e5f5,#c9cff3); }
+.phone .feed i:nth-child(2n) { background:linear-gradient(160deg,#f6e9d6,#efd3ad); }
+.phone .feed i:nth-child(3n) { background:linear-gradient(160deg,#eae0ed,#d8c3de); }
+.x { position:absolute; left:50%; top:50%; width:300px; height:300px; margin:-150px 0 0 -150px; opacity:0; }
+.x::before, .x::after { content:""; position:absolute; left:50%; top:50%; width:300px; height:26px; margin:-13px 0 0 -150px; border-radius:13px; background:#cf2745; }
+.x::before { transform:rotate(45deg); } .x::after { transform:rotate(-45deg); }
+.card { width:560px; background:#fff; border-radius:30px; padding:26px 30px; box-shadow:0 20px 50px #1c0e1f22; text-align:left; }
+.card .when { font-size:22px; font-weight:800; letter-spacing:.08em; color:#4f6828; }
+.card h4 { margin:8px 0 0; font-size:38px; font-weight:850; letter-spacing:-0.04em; }
+.card .where { margin-top:6px; font-size:24px; color:var(--muted); }
+.card .foot { display:flex; justify-content:space-between; align-items:center; margin-top:18px; font-size:22px; color:var(--muted); }
+.card .btn { font-size:26px; padding:14px 24px; }
+.mail { display:inline-flex; align-items:center; gap:18px; padding:22px 34px; border-radius:999px; background:#fff; box-shadow:0 20px 50px #1c0e1f22; font-size:40px; font-weight:800; letter-spacing:-0.02em; }
+.mail .ok { width:56px; height:56px; border-radius:50%; background:#4f6828; color:#fff; display:grid; place-items:center; font-size:34px; font-weight:900; transform:scale(0); }
+.word { position:relative; padding:18px 34px; border-radius:999px; background:#fff; box-shadow:0 16px 40px #1c0e1f1f; font-size:42px; font-weight:850; letter-spacing:-0.03em; }
+.word::after { content:""; position:absolute; left:6%; right:6%; top:50%; height:12px; margin-top:-6px; border-radius:6px; background:#cf2745; transform:scaleX(var(--s,0)); transform-origin:left; }
+.coinrow { display:flex; align-items:flex-end; gap:40px; }
+.coinbig { display:grid; place-items:center; border-radius:50%; background:var(--plum); color:var(--lime); font-weight:900; letter-spacing:-0.06em; box-shadow:inset 0 0 0 6px var(--lime), inset 0 0 0 11px var(--plum), 0 20px 50px #1c0e1f33; }
+.coinbig small { display:block; font-size:22px; letter-spacing:.1em; color:#fffefa; opacity:.7; margin-top:-6px; }
+.cal { width:260px; border-radius:30px; background:#fff; overflow:hidden; box-shadow:0 20px 50px #1c0e1f22; text-align:center; }
+.cal .m { background:var(--plum); color:var(--lime); font-size:24px; font-weight:800; letter-spacing:.12em; padding:14px; }
+.cal .d { font-size:130px; font-weight:900; letter-spacing:-0.08em; line-height:1; padding:14px 0 6px; }
+.cal .l { font-size:24px; font-weight:700; color:var(--muted); padding-bottom:18px; }
+
+/* cierre */
+#cta { position:absolute; left:80px; right:80px; top:400px; z-index:66; text-align:center; opacity:0; }
+#cta .l1 { font-size:150px; font-weight:850; letter-spacing:-0.075em; line-height:.9; }
+#cta .l2 { display:inline-block; margin-top:26px; padding:20px 34px; border-radius:20px; background:var(--plum); color:var(--lime); font-size:44px; font-weight:850; letter-spacing:-0.03em; }
+#cta .l3 { margin-top:26px; font-size:60px; font-weight:850; letter-spacing:-0.04em; }
+</style>
+</head><body>
+<div id="paper"></div>
+<div id="prog"><b></b></div>
+<div id="head"><img src="PUB/brand/entreclase-wordmark.png" alt=""><div class="tag">PREGUNTAS INCÓMODAS · 1</div></div>
+
+<!-- Personaje A: la escéptica. Gorro lima. -->
+<div class="who" id="A" style="--band:#e1ff3e">
+ <svg viewBox="0 0 440 520">
+  <path class="body" d="M70 520 V210 Q70 70 220 70 Q370 70 370 210 V520"/>
+  <rect class="band" x="70" y="392" width="300" height="46"/>
+  <path d="M112 118 Q220 20 330 118 Z" fill="#e1ff3e" stroke="#1c0e1f" stroke-width="12" stroke-linejoin="round"/>
+  <circle class="eye" cx="170" cy="230" r="11"/><circle class="eye" cx="270" cy="230" r="11"/>
+  <path class="brow" id="A-browL" d="M140 190 L195 200"/><path class="brow" id="A-browR" d="M300 190 L245 200"/>
+  <ellipse class="mouth" id="A-mouth" cx="220" cy="292" rx="16" ry="6"/>
+  <path class="arm" id="A-armL" d="M75 330 Q10 380 40 450"/><path class="arm" id="A-armR" d="M365 330 Q430 380 400 450"/>
+ </svg>
+ <span class="name">PAULA</span>
+</div>
+<!-- Personaje B: el que ya está dentro. Mechón ciruela. -->
+<div class="who" id="B" style="--band:#2a172e">
+ <svg viewBox="0 0 440 520">
+  <path class="body" d="M70 520 V210 Q70 70 220 70 Q370 70 370 210 V520"/>
+  <rect class="band" x="70" y="392" width="300" height="46"/>
+  <path d="M190 78 Q200 20 236 44 Q252 10 276 58 Q292 30 300 80 Z" fill="#2a172e"/>
+  <circle class="eye" cx="170" cy="230" r="11"/><circle class="eye" cx="270" cy="230" r="11"/>
+  <path class="brow" id="B-browL" d="M140 195 L195 190"/><path class="brow" id="B-browR" d="M300 195 L245 190"/>
+  <ellipse class="mouth" id="B-mouth" cx="220" cy="292" rx="18" ry="6"/>
+  <path class="arm" id="B-armL" d="M75 330 Q10 380 40 450"/><path class="arm" id="B-armR" d="M365 330 Q430 380 400 450"/>
+ </svg>
+ <span class="name">MARC</span>
+</div>
+
+<!-- 1 -->
+<section class="scene" data-speaker="A" data-voice="¿Otra red social? Ya tengo cuatro." data-min="2.4" data-a="shrug" data-b="idle">
+ <div class="ico"><div class="app pop" data-at="0.4" style="--c:linear-gradient(135deg,#f5a54a,#e5476b,#a348c9)"></div><div class="app pop" data-at="0.55" style="--c:#111"></div><div class="app pop" data-at="0.7" style="--c:#25d366"></div><div class="app pop" data-at="0.85" style="--c:#5865f2"></div></div>
+ <div class="bub a"><span class="txt">¿Otra red social? Ya tengo cuatro.</span></div>
+</section>
+<!-- 2 -->
+<section class="scene" data-speaker="B" data-voice="No es para mirar. Es para quedar." data-min="2.3" data-a="idle" data-b="point">
+ <div class="ico"><img class="pop" data-at="0.5" src="PUB/stickers/cafe.svg" style="width:200px"><img class="pop" data-at="0.8" src="PUB/stickers/hola.svg" style="width:200px"></div>
+ <div class="bub b"><span class="txt">No es para mirar. Es para quedar.</span></div>
+</section>
+<!-- 3 -->
+<section class="scene" data-speaker="A" data-voice="Eso dicen todas." data-min="1.5" data-a="doubt" data-b="idle">
+ <div class="bub a short"><span class="txt">Eso dicen todas.</span></div>
+</section>
+<!-- 4 -->
+<section class="scene" data-speaker="B" data-voice="Instagram gana cuando te quedas. Esta gana cuando te vas." data-min="3.6" data-a="idle" data-b="point">
+ <div class="ico"><div class="phone pop" data-at="0.3"><div class="scr"><div class="feed" id="feed"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="x" id="x4"></div></div></div>
+ <div class="bub b"><span class="txt">Instagram gana cuando te quedas. Esta gana cuando te vas.</span></div>
+</section>
+<!-- 5 -->
+<section class="scene" data-speaker="A" data-voice="¿Cómo que cuando me voy?" data-min="1.6" data-a="shrug" data-b="idle">
+ <div class="bub a short"><span class="txt">¿Cómo que cuando me voy?</span></div>
+</section>
+<!-- 6 -->
+<section class="scene" data-speaker="B" data-voice="Ves un plan. Café en Benimaclet, jueves a las seis. Le das a voy. Y cierras el móvil." data-min="5.4" data-a="idle" data-b="point">
+ <div class="ico"><div class="card pop" data-at="0.3"><div class="when">JUEVES · 18:00</div><h4>Café en Benimaclet</h4><div class="where">Caben cuatro</div><div class="foot"><span>Ana, Marc y 1 más</span><span class="btn" id="voy" data-b="Voy ✓" data-at="2.9">Voy</span></div></div></div>
+ <div class="bub b"><span class="txt">Ves un plan. Le das a «voy». Y cierras el móvil.</span></div>
+</section>
+<!-- 7 -->
+<section class="scene" data-speaker="A" data-voice="Y si no conozco a nadie…" data-min="1.7" data-a="sad" data-b="idle">
+ <div class="bub a short"><span class="txt">Y si no conozco a nadie…</span></div>
+</section>
+<!-- 8 -->
+<section class="scene" data-speaker="B" data-voice="Nadie conoce a nadie. Para eso está. Y es solo de tu uni: se entra con el correo de la uni." data-min="5.2" data-a="idle" data-b="cheer">
+ <div class="ico"><div class="mail pop" data-at="0.3">paula@alumni.uv.es<span class="ok" id="ok8">✓</span></div></div>
+ <div class="bub b"><span class="txt">Nadie conoce a nadie. Para eso está. Y es solo de tu uni.</span></div>
+</section>
+<!-- 9 · ráfaga -->
+<section class="scene" data-speaker="A" data-voice="¿Algoritmo?" data-min="1.2" data-a="point" data-b="idle">
+ <div class="ico"><div class="word pop" data-at="0.1" id="w1">Algoritmo</div></div>
+ <div class="bub a short"><span class="txt">¿Algoritmo?</span></div>
+</section>
+<section class="scene" data-speaker="B" data-voice="No." data-min="1" data-a="idle" data-b="no">
+ <div class="ico"><div class="word" id="w1b" style="--s:1">Algoritmo</div></div>
+ <div class="bub b short"><span class="txt">No.</span></div>
+</section>
+<section class="scene" data-speaker="A" data-voice="¿Anuncios?" data-min="1.2" data-a="point" data-b="idle">
+ <div class="ico"><div class="word" style="--s:1">Algoritmo</div><div class="word pop" data-at="0.1">Anuncios</div></div>
+ <div class="bub a short"><span class="txt">¿Anuncios?</span></div>
+</section>
+<section class="scene" data-speaker="B" data-voice="No." data-min="1" data-a="idle" data-b="no">
+ <div class="ico"><div class="word" style="--s:1">Algoritmo</div><div class="word" style="--s:1">Anuncios</div></div>
+ <div class="bub b short"><span class="txt">No.</span></div>
+</section>
+<section class="scene" data-speaker="A" data-voice="¿Muro infinito?" data-min="1.3" data-a="point" data-b="idle">
+ <div class="ico"><div class="word" style="--s:1">Algoritmo</div><div class="word" style="--s:1">Anuncios</div><div class="word pop" data-at="0.1">Muro</div></div>
+ <div class="bub a short"><span class="txt">¿Muro infinito?</span></div>
+</section>
+<section class="scene" data-speaker="B" data-voice="Que no." data-min="1.4" data-a="idle" data-b="no">
+ <div class="ico"><div class="word" style="--s:1">Algoritmo</div><div class="word" style="--s:1">Anuncios</div><div class="word" style="--s:1">Muro</div></div>
+ <div class="bub b short"><span class="txt">Que no.</span></div>
+</section>
+<!-- 10 -->
+<section class="scene" data-speaker="A" data-voice="Vale. ¿Y por qué hoy?" data-min="1.7" data-a="shrug" data-b="idle">
+ <div class="bub a short"><span class="txt">Vale. ¿Y por qué hoy?</span></div>
+</section>
+<!-- 11 -->
+<section class="scene" data-speaker="B" data-voice="Porque abre el lunes veintiocho. Y quien se apunta antes empieza con cincuenta ClasiCoins en vez de veinte." data-min="6" data-a="idle" data-b="point">
+ <div class="ico"><div class="cal pop" data-at="0.3"><div class="m">SEPTIEMBRE</div><div class="d">28</div><div class="l">lunes</div></div><div class="coinrow"><div class="coinbig pop" data-at="2.6" data-max=".55" style="width:150px;height:150px;font-size:56px">20</div><div class="coinbig pop" data-at="3.0" style="width:230px;height:230px;font-size:96px">50<small>HOY</small></div></div></div>
+ <div class="bub b"><span class="txt">Abre el lunes 28. Apúntate antes: 50 ClasiCoins en vez de 20.</span></div>
+</section>
+<!-- 12 -->
+<section class="scene" data-speaker="A" data-voice="¿Y qué es una ClasiCoin?" data-min="1.6" data-a="doubt" data-b="idle">
+ <div class="bub a short"><span class="txt">¿Y qué es una ClasiCoin?</span></div>
+</section>
+<section class="scene" data-speaker="B" data-voice="Mañana te lo cuento." data-min="1.7" data-a="idle" data-b="wink">
+ <div class="bub b short"><span class="txt">Mañana te lo cuento.</span></div>
+</section>
+<!-- 13 · cierre -->
+<section class="scene" data-speaker="B" data-voice="Entreclases punto com. Apúntate hoy." data-min="4.0" data-a="down" data-b="down">
+ <div id="cta"><div class="l1">28/09</div><div class="l2">Apúntate hoy: 50 en vez de 20</div><div class="l3">entreclases.com</div></div>
+</section>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const VOICES = { A: "jQrhxsqzG6CPKo3ll0w9", B: "RwzBDEn5f6FIgpAjH9YN" };
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".txt").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getVoiceIds = () => scenes.map((s) => VOICES[s.dataset.speaker] || VOICES.B);
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+
+// Poses: brazos (izq/der) y cejas para cada personaje. Coordenadas del viewBox 0 0 440 520.
+const POSES = {
+  idle:  { L: "M75 330 Q10 380 40 450", R: "M365 330 Q430 380 400 450", bl: "M140 195 L195 190", br: "M300 195 L245 190" },
+  down:  { L: "M75 330 Q40 420 90 470", R: "M365 330 Q400 420 350 470", bl: "M140 195 L195 190", br: "M300 195 L245 190" },
+  shrug: { L: "M75 330 Q0 300 30 250", R: "M365 330 Q440 300 410 250", bl: "M140 200 L195 185", br: "M300 200 L245 185" },
+  point: { L: "M75 330 Q20 400 60 460", R: "M365 330 Q470 260 500 250", bl: "M140 190 L195 195", br: "M300 185 L245 195" },
+  doubt: { L: "M75 330 Q60 420 170 400", R: "M365 330 Q380 420 270 400", bl: "M140 185 L195 205", br: "M300 205 L245 190" },
+  sad:   { L: "M75 330 Q40 430 100 470", R: "M365 330 Q400 430 340 470", bl: "M140 205 L195 190", br: "M300 205 L245 190" },
+  cheer: { L: "M75 330 Q-10 250 20 170", R: "M365 330 Q450 250 420 170", bl: "M140 190 L195 180", br: "M300 190 L245 180" },
+  no:    { L: "M75 330 Q10 260 60 220", R: "M365 330 Q430 260 380 220", bl: "M140 185 L195 200", br: "M300 185 L245 200" },
+  wink:  { L: "M75 330 Q20 400 60 460", R: "M365 330 Q470 300 470 240", bl: "M140 195 L195 190", br: "M300 205 L245 205" },
+};
+function pose(who, name, u, talking) {
+  const P = POSES[name] || POSES.idle;
+  $(`#${who}-armL`).setAttribute("d", P.L); $(`#${who}-armR`).setAttribute("d", P.R);
+  $(`#${who}-browL`).setAttribute("d", P.bl); $(`#${who}-browR`).setAttribute("d", P.br);
+  const m = $(`#${who}-mouth`);
+  if (talking) { m.setAttribute("ry", 5 + Math.abs(Math.sin(u * 19)) * 13); m.setAttribute("rx", 16 + Math.abs(Math.cos(u * 13)) * 6); }
+  else { m.setAttribute("ry", name === "sad" || name === "doubt" ? 4 : 6); m.setAttribute("rx", 16); }
+}
+// El personaje que habla se inclina un poco hacia el otro; el que escucha respira.
+function stance(who, u, talking, side) {
+  const el = $(`#${who}`); const breathe = Math.sin(u * 2.2 + (side === "A" ? 0 : 1.5)) * 5;
+  const lean = talking ? side === "A" ? 3 : -3 : 0;
+  const hop = talking ? Math.abs(Math.sin(u * 6)) * 6 : 0;
+  el.style.transform = `translateY(${breathe - hop}px) rotate(${lean}deg) scale(${talking ? 1.03 : 1})`;
+}
+
+window.render = function (t) {
+  const T = window.TIMES;
+  let current = 0;
+  scenes.forEach((s, i) => { if (t >= T[i].start) current = i; });
+  scenes.forEach((s, i) => {
+    const { start, dur } = T[i]; const u = t - start;
+    const visible = i === current;
+    s.style.visibility = visible ? "visible" : "hidden"; s.style.zIndex = 10 + i;
+    if (!visible) return;
+    const speaker = s.dataset.speaker;
+    const talking = u > 0.12 && u < dur - 0.35;
+    pose("A", s.dataset.a, u, talking && speaker === "A"); pose("B", s.dataset.b, u, talking && speaker === "B");
+    stance("A", t, talking && speaker === "A", "A"); stance("B", t, talking && speaker === "B", "B");
+
+    // burbuja: salta y escribe palabra a palabra
+    const bub = s.querySelector(".bub");
+    if (bub) { const y = eBack(p(u, 0.02, 0.4)); bub.style.opacity = p(u, 0.02, 0.1); bub.style.transform = `translateY(${(1 - y) * 60}px) scale(${lerp(.85, 1, y)})`;
+      let k = 0; bub.querySelectorAll(".w > i").forEach((w) => { const a = 0.12 + k * 0.05; k++; w.style.transform = `translateY(${(1 - eOut(p(u, a, a + 0.3))) * 112}%)`; }); }
+    let n = 0;
+    s.querySelectorAll(".pop").forEach((el) => { const a = el.dataset.at ? parseFloat(el.dataset.at) : 0.3 + n * 0.15; n++; const y = eBack(p(u, a, a + 0.45)); const max = parseFloat(el.dataset.max || "1"); el.style.opacity = String(Math.min(max, p(u, a, a + 0.12))); el.style.transform = `translateY(${(1 - y) * 80}px) scale(${lerp(.7, 1, y)}) rotate(${(1 - y) * -8}deg)`; });
+    s.querySelectorAll("[data-b]").forEach((b) => { const a = parseFloat(b.dataset.at); if (!b.dataset.a0) b.dataset.a0 = b.textContent; const on = u >= a; b.textContent = on ? b.dataset.b : b.dataset.a0; b.classList.toggle("on", on); const pr = p(u, a - 0.05, a + 0.2); b.style.transform = `scale(${pr > 0 && pr < 1 ? 1 - Math.sin(pr * Math.PI) * .12 : 1})`; });
+
+    // coreografías propias
+    if (s.querySelector("#feed")) { $("#feed").style.transform = `translateY(${-(u * 260) % 820}px)`; const xx = p(u, 2.0, 2.2); $("#x4").style.opacity = xx; $("#x4").style.transform = `scale(${lerp(2, 1, eOut(xx))})`; }
+    if (s.querySelector("#ok8")) { $("#ok8").style.transform = `scale(${eBack(p(u, 2.6, 3.0))})`; }
+    if (s.querySelector("#cta")) { const y = eBack(p(u, 0.1, 0.7)); $("#cta").style.opacity = p(u, 0.1, 0.25); $("#cta").style.transform = `translateY(${(1 - y) * 80}px)`; }
+  });
+  // en la ráfaga, cada «No.» tacha la palabra que acaba de aparecer
+  const cur = scenes[current]; const uc = t - T[current].start;
+  if (cur.dataset.speaker === "B") { const words = cur.querySelectorAll(".word"); if (words.length) words[words.length - 1].style.setProperty("--s", eOut(p(uc, 0.15, 0.45))); }
+  $("#prog b").style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+};
+</script>
+</body></html>

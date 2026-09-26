@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 25/09 · El perfil</title>
+<!--BASE-->
+<style>
+/* Motor propio (abajo). El perfil real de la app, reconstruido pieza a pieza para poder moverlo. */
+:root { --teja:#b0432f; --ink:#1c0e1f; --grey:#8a8a8a; --grey2:#c9c9c9; --grey3:#ededed; }
+.scene { visibility: hidden; }
+.hl { z-index: 6; }
+.hand { color: var(--plum); }
+.plum .hand { color: var(--lime); }
+.cav { font-family: "Caveat", cursive; font-weight: 600; }
+
+/* 1 · la ficha gris */
+.ig { position: absolute; left: 140px; top: 640px; width: 800px; border-radius: 26px; background: #fff; padding: 44px; box-shadow: 0 30px 80px #00000022; color: #333; filter: saturate(0); z-index: 7; }
+.ig-top { display: flex; align-items: center; gap: 32px; }
+.ig-av { width: 150px; height: 150px; border-radius: 50%; background: var(--grey2); flex-shrink: 0; }
+.ig-stats { display: flex; gap: 40px; flex: 1; justify-content: space-around; }
+.ig-stats div { text-align: center; font-size: 26px; color: var(--grey); }
+.ig-stats b { display: block; font-size: 44px; color: #333; letter-spacing: -0.04em; }
+.ig-name { margin-top: 30px; height: 30px; width: 300px; border-radius: 8px; background: var(--grey2); }
+.ig-bio { margin-top: 16px; display: grid; gap: 12px; }
+.ig-bio i { display: block; height: 22px; border-radius: 6px; background: var(--grey3); }
+.ig-bio i:nth-child(2) { width: 82%; } .ig-bio i:nth-child(3) { width: 55%; }
+.ig-count { margin-top: 12px; text-align: right; font-size: 24px; color: var(--grey); font-weight: 700; }
+.ig-hl { margin-top: 30px; display: flex; gap: 22px; }
+.ig-hl span { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--grey2); background: var(--grey3); }
+.ig-btn { margin-top: 30px; height: 64px; border-radius: 14px; background: var(--grey3); display: grid; place-items: center; font-size: 26px; font-weight: 700; color: var(--grey); }
+
+/* 2 · la pared */
+.wall { position: absolute; inset: 0; z-index: 7; }
+.piece { position: absolute; will-change: transform; opacity: 0; }
+.piece img { display: block; width: 100%; height: 100%; }
+.tile { border-radius: 22px; padding: 22px 26px; color: var(--plum); box-shadow: 0 20px 50px #1c0e1f2a; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.tile small { display: block; font-size: 18px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin-bottom: 8px; }
+.chip { border-radius: 999px; padding: 18px 28px; background: #fff; color: var(--plum); font-size: 30px; font-weight: 800; box-shadow: 0 16px 40px #1c0e1f22; white-space: nowrap; }
+.chip.plum { background: var(--plum); color: var(--lime); }
+.av { border-radius: 50%; border: 8px solid #fff; box-shadow: 0 20px 50px #1c0e1f33; background: #dce2ff; overflow: hidden; }
+.hey { font-size: 96px; color: #5c5bb3; white-space: nowrap; }
+
+/* 3 · estantería */
+.shelf { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: grid; gap: 22px; }
+.cats { display: flex; gap: 12px; }
+.cats span { padding: 12px 20px; border-radius: 999px; background: #fff; font-size: 22px; font-weight: 800; color: var(--muted); }
+.cats span.on { background: var(--plum); color: var(--lime); }
+.flip { position: relative; height: 150px; transform-style: preserve-3d; }
+.flip > div { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 22px; padding: 22px 28px; display: flex; align-items: center; gap: 22px; box-shadow: 0 16px 44px #1c0e1f1f; font-size: 34px; font-weight: 800; letter-spacing: -0.03em; }
+.flip .front { background: #fff; color: #7a6f7c; font-family: Georgia, serif; font-style: italic; font-weight: 500; }
+.flip .back { background: var(--plum); color: var(--paper); transform: rotateX(180deg); }
+.flip .k { width: 92px; height: 92px; border-radius: 18px; flex-shrink: 0; background: var(--c, #e9edcd); display: grid; place-items: center; font-size: 22px; font-weight: 900; color: var(--plum); letter-spacing: .05em; }
+.flip .back .k { background: var(--lime); }
+
+/* 4 · pegatinas y 5 · fondos */
+.cover { position: absolute; left: 80px; right: 80px; top: 700px; height: 760px; border-radius: 32px; overflow: hidden; z-index: 7; box-shadow: 0 30px 80px #1c0e1f2e; background: #dce2ff; }
+.bg-papel { background: #f6f1e4; } .bg-cuaderno { background: repeating-linear-gradient(#fbf8ef 0 42px, #cfd8ea 42px 44px); }
+.bg-corcho { background: radial-gradient(#b8894f 1.5px, transparent 1.6px) 0 0/14px 14px, #d9b382; }
+.bg-cielo { background: linear-gradient(180deg, #8fc3ff, #dce9ff); } .bg-turia { background: linear-gradient(160deg, #4d8077, #a2b879); }
+.bg-malvarrosa { background: linear-gradient(180deg, #7fb6d6 0 55%, #ead9b0 55%); } .bg-noche { background: radial-gradient(#fffefa 1px, transparent 1.2px) 0 0/60px 60px, #1c0e1f; }
+.bg-pizarra { background: #2f4f43; } .bg-lima { background: var(--lime); } .bg-terrazo { background: radial-gradient(#d28b9d 8px, transparent 9px) 0 0/90px 90px, radial-gradient(#86bfc2 6px, transparent 7px) 40px 30px/90px 90px, #f3efe6; }
+.stk { position: absolute; width: 170px; height: 170px; z-index: 9; will-change: transform; }
+.stk img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 14px 22px #1c0e1f33); }
+.cursor { position: absolute; width: 90px; z-index: 12; will-change: transform; filter: drop-shadow(0 8px 12px #0004); }
+.bgname { position: absolute; left: 30px; bottom: 30px; z-index: 10; padding: 14px 24px; border-radius: 999px; background: #1c0e1fcc; color: var(--paper); font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+
+/* 6 · bio */
+.block { position: absolute; left: 100px; width: 880px; top: 760px; border-radius: 30px; background: #fff; padding: 36px 40px; box-shadow: 0 24px 70px #1c0e1f22; z-index: 7; }
+.block .lab { font-size: 22px; font-weight: 800; letter-spacing: .12em; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.block .eye { width: 74px; height: 42px; border-radius: 21px; background: #4f6828; position: relative; }
+.block .eye::after { content: ""; position: absolute; top: 5px; left: calc(5px + var(--on, 1) * 32px); width: 32px; height: 32px; border-radius: 50%; background: #fff; }
+.block p { margin-top: 18px; font-size: 40px; line-height: 1.3; letter-spacing: -0.02em; }
+
+/* 7 · estado */
+.status { position: absolute; left: 80px; right: 80px; top: 720px; z-index: 7; display: flex; flex-wrap: wrap; gap: 16px; }
+.status span { padding: 22px 32px; border-radius: 999px; background: #fff; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; box-shadow: 0 16px 40px #1c0e1f1a; transition: none; }
+.status span.on { background: var(--plum); color: var(--lime); }
+
+/* 8 · cara */
+.face { position: absolute; left: 50%; top: 700px; width: 380px; height: 380px; margin-left: -190px; z-index: 8; }
+.face .av { width: 100%; height: 100%; border-width: 10px; }
+.face .ring { position: absolute; inset: -22px; border-radius: 50%; border: 6px dashed var(--lime); }
+.face .lock { position: absolute; right: -10px; bottom: 6px; width: 100px; height: 100px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; box-shadow: 0 12px 30px #0006; }
+.face .lock svg { width: 52px; height: 52px; }
+.tags { position: absolute; left: 80px; right: 80px; top: 1180px; z-index: 8; display: grid; gap: 18px; }
+.tag { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 26px 34px; border-radius: 24px; background: #fff; color: var(--plum); font-size: 42px; font-weight: 800; letter-spacing: -0.03em; opacity: 0; box-shadow: 0 16px 44px #0004; }
+.tag .no { position: absolute; right: 26px; top: -28px; font-size: 84px; font-weight: 900; color: var(--lime); border: 10px solid var(--lime); border-radius: 18px; padding: 0 16px; line-height: 1.05; transform: rotate(-12deg); opacity: 0; }
+.tag .ok { position: absolute; right: 26px; top: -28px; font-size: 84px; font-weight: 900; color: #b9d84a; border: 10px solid #b9d84a; border-radius: 18px; padding: 0 16px; line-height: 1.05; transform: rotate(-8deg); opacity: 0; }
+.tag.good { background: var(--lime); }
+
+/* 9 · la habitación */
+.room { position: absolute; left: 80px; width: 920px; top: 520px; border-radius: 42px; background: #fff; overflow: hidden; box-shadow: 0 50px 140px #1c0e1f55, 0 0 0 2px #ffffff; z-index: 7; transform-origin: 50% 40%; }
+.room .cv { position: relative; height: 380px; background: radial-gradient(#fffefa 1.2px, transparent 1.4px) 0 0/54px 54px, radial-gradient(circle at 20% 110%, #ffb46a66 0%, transparent 50%), radial-gradient(circle at 85% -10%, #6862a677 0%, transparent 55%), #241426; }
+.room .cv::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: linear-gradient(180deg, transparent, #24142699); }
+.room .cv .hey { position: absolute; left: 250px; top: 86px; font-size: 100px; color: var(--lime); text-shadow: 0 6px 30px #e1ff3e55; }
+.room .cv .stk { width: 150px; height: 150px; }
+.room .cv .stk img { filter: drop-shadow(0 16px 24px #00000066); }
+.room .lights { position: absolute; left: -20px; right: -20px; top: 18px; height: 60px; }
+.room .lights i { position: absolute; top: 20px; width: 18px; height: 18px; border-radius: 50%; background: #ffd27a; box-shadow: 0 0 22px 6px #ffd27a88; }
+.room .rav { position: absolute; left: 44px; top: 290px; width: 176px; height: 176px; border: 8px solid #fff; box-shadow: 0 0 0 5px var(--lime), 0 24px 50px #1c0e1f44; background: #dce2ff; z-index: 3; }
+.room .body { padding: 34px 44px 44px; }
+.room .nm { margin-left: 210px; font-size: 54px; font-weight: 850; letter-spacing: -0.05em; line-height: 1; }
+.room .hd { margin-left: 210px; margin-top: 8px; color: var(--muted); font-size: 26px; font-weight: 550; }
+.room .hd b { color: var(--plum); font-weight: 800; }
+.room .chips { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; }
+.room .chips span { padding: 14px 22px; border-radius: 999px; background: #efeee9; font-size: 25px; font-weight: 750; }
+.room .chips span.on { background: var(--plum); color: var(--lime); }
+.room .bio { margin-top: 24px; font-size: 34px; line-height: 1.25; letter-spacing: -0.02em; }
+.room .stats { margin-top: 26px; display: flex; gap: 34px; padding: 22px 0; border-top: 1px solid #e3dce2; border-bottom: 1px solid #e3dce2; }
+.room .stats div { font-size: 22px; color: var(--muted); font-weight: 600; }
+.room .stats b { display: block; font-size: 40px; color: var(--plum); letter-spacing: -0.05em; line-height: 1; margin-bottom: 4px; }
+.room .lab { margin-top: 26px; font-size: 20px; font-weight: 800; letter-spacing: .14em; color: var(--muted); }
+.room .mini { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.room .mini div { position: relative; height: 128px; border-radius: 18px; padding: 14px; display: flex; align-items: flex-end; font-size: 20px; font-weight: 800; line-height: 1.1; color: var(--plum); overflow: hidden; }
+.room .mini div::before { content: attr(data-k); position: absolute; top: 12px; left: 14px; font-size: 13px; font-weight: 900; letter-spacing: .12em; opacity: .55; }
+.room .neon { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 26px; border-radius: 20px; background: var(--plum); color: var(--paper); box-shadow: 0 0 0 3px var(--lime), 0 0 32px #e1ff3e66; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.room .neon small { display: block; font-size: 15px; font-weight: 800; letter-spacing: .14em; color: var(--lime); margin-bottom: 6px; }
+.room .neon .play { width: 56px; height: 56px; border-radius: 50%; background: var(--lime); flex-shrink: 0; display: grid; place-items: center; }
+.room .neon .play::after { content: ""; border-left: 20px solid var(--plum); border-top: 12px solid transparent; border-bottom: 12px solid transparent; margin-left: 5px; }
+.room .badges { margin-top: 18px; display: flex; gap: 12px; }
+.room .badges span { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: var(--lime); font-size: 22px; font-weight: 800; }
+.room .badges svg { width: 22px; height: 22px; }
+.vig { position: absolute; inset: 0; z-index: 5; background: radial-gradient(ellipse at 50% 50%, transparent 55%, #2a172e33 100%); pointer-events: none; }
+.glow { position: absolute; inset: 0; z-index: 6; background: radial-gradient(ellipse at 50% 42%, #ffd9a077 0%, transparent 58%); opacity: 0; }
+</style>
+</head><body>
+
+<!-- 1 · Instagram: una foto y 150 caracteres -->
+<section class="scene" data-voice="Instagram te deja una foto y ciento cincuenta caracteres." data-min="3" data-in="none" style="background:#f2f2f2">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt="" style="filter:saturate(0);opacity:.6"><span></span></div>
+ <h1 class="hl l" style="top:330px;color:#444">Una foto y <span class="mark" style="--mk:#ddd">150 caracteres.</span></h1>
+ <div class="ig" id="ig">
+  <div class="ig-top"><div class="ig-av ig-p"></div><div class="ig-stats"><div class="ig-p"><b>12</b>posts</div><div class="ig-p"><b>340</b>seguidores</div><div class="ig-p"><b>512</b>seguidos</div></div></div>
+  <div class="ig-name ig-p"></div>
+  <div class="ig-bio"><i class="ig-p"></i><i class="ig-p"></i><i class="ig-p"></i></div>
+  <div class="ig-count ig-p" id="igcount">0/150</div>
+  <div class="ig-hl"><span class="ig-p"></span><span class="ig-p"></span><span class="ig-p"></span><span class="ig-p"></span></div>
+  <div class="ig-btn ig-p">Editar perfil</div>
+ </div>
+</section>
+
+<!-- 2 · la pared -->
+<section class="scene" data-voice="Yo te dejo empapelar la pared. Entera." data-min="2.8" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:330px">Empapela <span class="mark">la pared.</span></h1>
+ <div class="wall" id="wall"></div>
+</section>
+
+<!-- 3 · estantería -->
+<section class="scene" data-voice="Lo que escuchas de verdad. No lo que aparentas." data-min="3.6" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Lo que escuchas <span class="mark">de verdad.</span></h1>
+ <div class="shelf">
+  <div class="cats"><span class="on">Música</span><span>Series</span><span>Libros</span><span>Juegos</span></div>
+  <div class="flip" data-at="1.5"><div class="front"><span class="k" style="--c:#e2e5f5">JAZZ</span>Jazz modal de los 60</div><div class="back"><span class="k">08:00</span>Reguetón a las ocho de la mañana</div></div>
+  <div class="flip" data-at="1.75"><div class="front"><span class="k" style="--c:#f6e9d6">CINE</span>Cine iraní en versión original</div><div class="back"><span class="k">×6</span>Los Simpson, sexta vuelta</div></div>
+  <div class="flip" data-at="2.0"><div class="front"><span class="k" style="--c:#e0eee6">LIBRO</span>Ensayo sobre la condición humana</div><div class="back"><span class="k">MAR</span>El mismo libro desde marzo</div></div>
+  <div class="flip" data-at="2.25"><div class="front"><span class="k" style="--c:#eae0ed">AJED.</span>Ajedrez por correspondencia</div><div class="back"><span class="k">KART</span>Mario Kart. Sin vergüenza.</div></div>
+ </div>
+ <div class="hand" id="h3" style="left:560px;top:1520px;font-size:66px;transform:rotate(-5deg);opacity:0">no lo que aparentas.</div>
+</section>
+
+<!-- 4 · pegatinas -->
+<section class="scene" data-voice="Pegatinas. Las arrastras, las giras, las pones donde te dé la gana." data-min="4.4" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px"><span class="mark">Pegatinas.</span></h1>
+ <div class="cover bg-cielo" id="cover4">
+  <div class="cav hey" style="position:absolute;left:330px;top:120px;font-size:110px;color:#5c5bb3;opacity:.9">hola. ei. hey.</div>
+  <div class="stk" id="s-cafe" style="left:60px;top:60px"><img src="PUB/stickers/cafe.svg" alt=""></div>
+  <div class="stk" id="s-hola" style="left:640px;top:40px;opacity:0"><img src="PUB/stickers/hola.svg" alt=""></div>
+  <div class="stk" id="s-cor" style="left:80px;top:480px"><img src="PUB/stickers/corazon.svg" alt=""></div>
+  <div class="stk" id="s-sol" style="left:660px;top:470px"><img src="PUB/stickers/sol.svg" alt=""></div>
+  <div class="stk" id="s-pla" style="left:380px;top:520px;opacity:0"><img src="PUB/stickers/planta.svg" alt=""></div>
+  <svg class="cursor" id="cur4" viewBox="0 0 64 80" style="left:0;top:0"><path d="M14 6l40 34-17 3 10 22-10 4-10-22-13 12z" fill="#fff" stroke="#1c0e1f" stroke-width="4" stroke-linejoin="round"/></svg>
+ </div>
+ <div class="hand" id="h4" style="left:520px;top:1520px;font-size:66px;transform:rotate(-5deg);opacity:0">donde te dé la gana.</div>
+</section>
+
+<!-- 5 · fondos -->
+<section class="scene" data-voice="El fondo, el que quieras. Corcho, cielo, noche, lima. Y mañana, otro." data-min="3.4" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">El fondo, <span class="mark">el que quieras.</span></h1>
+ <div class="cover bg-papel" id="cover5">
+  <div class="cav hey" style="position:absolute;left:330px;top:120px;font-size:110px;color:#5c5bb3;opacity:.9">hola. ei. hey.</div>
+  <div class="stk" style="left:60px;top:60px"><img src="PUB/stickers/cafe.svg" alt=""></div>
+  <div class="stk" style="left:560px;top:430px;transform:rotate(14deg)"><img src="PUB/stickers/corazon.svg" alt=""></div>
+  <div class="stk" style="left:120px;top:470px;transform:rotate(-10deg)"><img src="PUB/stickers/sol.svg" alt=""></div>
+  <div class="bgname" id="bgname">papel</div>
+ </div>
+</section>
+
+<!-- 6 · la bio -->
+<section class="scene" data-voice="¿La bio? Fuera. Nadie la lee. Y lo sabes." data-min="3.0" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">¿La bio? <span class="mark">Fuera.</span></h1>
+ <div class="block" id="bio"><div class="lab">UN POCO DE TI<span class="eye" id="eye"></span></div><p>Apasionado de los viajes, la fotografía y las buenas conversaciones. Amante del café y de las puestas de sol… </p></div>
+ <div class="hand" id="h6" style="left:560px;top:1180px;font-size:74px;transform:rotate(-6deg);opacity:0">nadie la lee.</div>
+</section>
+
+<!-- 7 · estado -->
+<section class="scene" data-voice="Estado: complicado. Como el ochenta por ciento del campus." data-min="4.2" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Estado: <span class="mark">complicado.</span></h1>
+ <div class="status" id="status"><span>Soltero/a</span><span>En pareja</span><span>Conociendo a alguien</span><span>Complicado</span><span>Prefiero no decirlo</span></div>
+ <svg class="cursor" id="cur7" viewBox="0 0 64 80" style="left:0;top:0;position:absolute;z-index:12"><path d="M14 6l40 34-17 3 10 22-10 4-10-22-13 12z" fill="#fff" stroke="#1c0e1f" stroke-width="4" stroke-linejoin="round"/></svg>
+ <div class="hand" id="h7" style="left:440px;top:1280px;font-size:70px;transform:rotate(-5deg);opacity:0">como el 80 % del campus.</div>
+</section>
+
+<!-- 8 · tu cara -->
+<section class="scene plum" data-voice="Y tu cara solo la ve gente de tu uni. Ni Google. Ni tu prima. Ni recursos humanos." data-min="5.4" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Tu cara, <span class="mark">solo tu uni.</span></h1>
+ <div class="face" id="face"><div class="ring" id="ring"></div><div class="av"><img src="PUB/avatars/alex.svg" alt="" style="width:100%;height:100%;display:block"></div><div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="#2a172e" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div></div>
+ <div class="tags">
+  <div class="tag" data-at="1.5" data-no="2.1">Google<div class="no">NO</div></div>
+  <div class="tag" data-at="2.3" data-no="2.9">Tu prima<div class="no">NO</div></div>
+  <div class="tag" data-at="3.1" data-no="3.7">Recursos Humanos<div class="no">NO</div></div>
+  <div class="tag good" data-at="4.1" data-no="4.5">Gente de tu uni<div class="ok">SÍ</div></div>
+ </div>
+</section>
+
+<!-- 9 · la habitación -->
+<section class="scene" data-voice="Un perfil no es una ficha. Es tu habitación." data-min="3.8" data-in="wipe" style="background:#efe6d6">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="glow" id="glow"></div><div class="vig"></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Es tu <span class="mark">habitación.</span></h1>
+ <div class="room" id="room">
+  <div class="cv">
+   <div class="lights"><i style="left:6%"></i><i style="left:22%;top:34px"></i><i style="left:40%;top:14px"></i><i style="left:58%;top:36px"></i><i style="left:76%;top:16px"></i><i style="left:93%;top:32px"></i></div>
+   <div class="cav hey">hola. ei. hey.</div>
+   <div class="stk fl" data-ph="0" style="left:44px;top:60px"><img src="PUB/stickers/cafe.svg" alt=""></div>
+   <div class="stk fl" data-ph="1.3" style="left:700px;top:40px;transform:rotate(8deg)"><img src="PUB/stickers/hola.svg" alt=""></div>
+   <div class="stk fl" data-ph="2.1" style="left:760px;top:200px;transform:rotate(-14deg)"><img src="PUB/stickers/corazon.svg" alt=""></div>
+   <div class="stk fl" data-ph="0.7" style="left:250px;top:210px;transform:rotate(10deg);width:120px;height:120px"><img src="PUB/stickers/sol.svg" alt=""></div>
+   <div class="stk fl" data-ph="2.8" style="left:560px;top:230px;transform:rotate(-6deg);width:100px;height:100px"><img src="PUB/stickers/estrella.svg" alt=""></div>
+  </div>
+  <div class="av rav"><img src="PUB/avatars/alex.svg" alt="" style="width:100%;height:100%;display:block"></div>
+  <div class="body">
+   <div class="nm">Álex Torres</div><div class="hd"><b>@alex-torres</b> · Universitat de València · Tarongers</div>
+   <div class="chips"><span>Economía · 2º</span><span class="on">Complicado</span><span>Café después de clase</span></div>
+   <div class="bio">Y si hay sol, al Turia.</div>
+   <div class="stats"><div><b>3</b>publicaciones</div><div><b>4</b>planes</div><div><b>2</b>grupos</div><div><b>2</b>logros</div></div>
+   <div class="lab">LA ESTANTERÍA</div>
+   <div class="mini"><div data-k="MÚSICA" style="background:linear-gradient(160deg,#e2e5f5,#c9cff3)">Reguetón a las 8</div><div data-k="SERIES" style="background:linear-gradient(160deg,#f6e9d6,#efd3ad)">Los Simpson ×6</div><div data-k="LIBROS" style="background:linear-gradient(160deg,#e0eee6,#bfe0cf)">El libro de marzo</div><div data-k="JUEGOS" style="background:linear-gradient(160deg,#eae0ed,#d8c3de)">Mario Kart</div></div>
+   <div class="lab">EL ESCAPARATE · NEÓN</div>
+   <div class="neon"><div><small>ENLACE O VÍDEO</small>El vídeo que le pongo a todo el mundo</div><div class="play"></div></div>
+   <div class="badges"><span><svg viewBox="0 0 24 24" fill="#2a172e"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7.1L12 17.3 5.7 21l1.7-7.1L2 9.2l7.1-.6z"/></svg> Primer plan</span><span><svg viewBox="0 0 24 24" fill="#2a172e"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7.1L12 17.3 5.7 21l1.7-7.1L2 9.2l7.1-.6z"/></svg> Primer hola</span></div>
+  </div>
+ </div>
+ <div class="hand" id="h9" style="left:660px;top:452px;font-size:76px;transform:rotate(-6deg);opacity:0;z-index:9">es tuya.</div>
+</section>
+
+<!-- 10 · cierre -->
+<section class="scene lime" data-voice="Abrimos el veintiocho en Valencia. Apúntate antes y empiezas con cincuenta en vez de veinte." data-min="5.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="hl" style="top:400px;font-size:300px;line-height:.9;letter-spacing:-0.075em">28/09</div>
+ <div class="words" style="position:absolute;left:80px;top:700px;font-size:80px;font-weight:850;letter-spacing:-0.05em">Valencia.</div>
+ <div class="cta pop" data-at="1.6" style="top:920px">Apúntate antes: 50 en vez de 20</div>
+ <div class="pop" data-at="2.6" style="position:absolute;left:80px;top:1080px;font-size:54px;font-weight:800;letter-spacing:-0.03em">entreclases.com</div>
+ <div class="stk pop" data-at="1.0" data-rot="-10" style="left:110px;top:1260px;width:260px;height:260px"><img src="PUB/stickers/corazon.svg" alt=""></div>
+ <div class="stk pop" data-at="1.25" data-rot="12" style="left:420px;top:1340px;width:220px;height:220px"><img src="PUB/stickers/sol.svg" alt=""></div>
+ <div class="stk pop" data-at="1.5" data-rot="-6" style="left:700px;top:1250px;width:240px;height:240px"><img src="PUB/stickers/hola.svg" alt=""></div>
+</section>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eIn = (x) => x * x * x;
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const eElastic = (x) => x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * (2 * Math.PI) / 3) + 1;
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".hl, .words").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+
+// --- la pared: 26 piezas con posición final en rejilla suelta y llegada desde fuera ---
+const seed = (i) => { const x = Math.sin(i * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const pieces = [
+  { h: '<img src="PUB/stickers/cafe.svg">', w: 190, x: 90, y: 650 }, { h: '<img src="PUB/stickers/corazon.svg">', w: 180, x: 780, y: 710 },
+  { h: '<img src="PUB/stickers/sol.svg">', w: 200, x: 430, y: 640 }, { h: '<img src="PUB/stickers/hola.svg">', w: 190, x: 640, y: 1330 },
+  { h: '<img src="PUB/stickers/planta.svg">', w: 170, x: 120, y: 1380 }, { h: '<img src="PUB/stickers/estrella.svg">', w: 150, x: 860, y: 1090 },
+  { h: '<img src="PUB/stickers/chincheta.svg">', w: 130, x: 330, y: 1490 }, { h: '<img src="PUB/stickers/boli.svg">', w: 160, x: 880, y: 1570 },
+  { h: '<div class="tile" style="background:#e2e5f5"><small>Música</small>Reguetón a las 8</div>', x: 300, y: 810 }, { h: '<div class="tile" style="background:#f6e9d6"><small>Series</small>Los Simpson ×6</div>', x: 90, y: 970 },
+  { h: '<div class="tile" style="background:#e0eee6"><small>Libros</small>El de marzo</div>', x: 640, y: 920 }, { h: '<div class="tile" style="background:#eae0ed"><small>Juegos</small>Mario Kart</div>', x: 430, y: 1170 },
+  { h: '<div class="chip">Tarongers</div>', x: 110, y: 1180 }, { h: '<div class="chip plum">Economía · 2º</div>', x: 700, y: 1210 },
+  { h: '<div class="chip">Complicado</div>', x: 330, y: 1340 }, { h: '<div class="chip plum">Café después de clase</div>', x: 480, y: 1650 },
+  { h: '<div class="cav hey">hola. ei. hey.</div>', x: 300, y: 690 }, { h: '<div class="av" style="width:190px;height:190px"><img src="PUB/avatars/alex.svg"></div>', w: 190, x: 220, y: 1530 },
+  { h: '<div class="av" style="width:150px;height:150px"><img src="PUB/avatars/laia.svg"></div>', w: 150, x: 40, y: 1710 }, { h: '<div class="av" style="width:150px;height:150px"><img src="PUB/avatars/marc.svg"></div>', w: 150, x: 860, y: 1390 },
+  { h: '<div class="tile" style="background:#fff"><small>Logro</small>Primer plan</div>', x: 60, y: 1870 }, { h: '<div class="tile" style="background:var(--lime)"><small>Vitrina</small>Neón</div>', x: 700, y: 1790 },
+  { h: '<div class="chip">Soltero/a</div>', x: 380, y: 1830 }, { h: '<div class="chip plum">50 ClasiCoins</div>', x: 620, y: 1510 },
+  { h: '<img src="PUB/stickers/estrella.svg">', w: 110, x: 20, y: 790 }, { h: '<img src="PUB/stickers/corazon.svg">', w: 120, x: 960, y: 850 },
+];
+const wall = $("#wall");
+const pieceEls = pieces.map((pc, i) => {
+  const el = document.createElement("div"); el.className = "piece"; el.innerHTML = pc.h;
+  if (pc.w) { el.style.width = pc.w + "px"; el.style.height = pc.w + "px"; }
+  el.style.left = pc.x + "px"; el.style.top = pc.y + "px";
+  const ang = seed(i) * Math.PI * 2, r = 1500;
+  el.dataset.sx = Math.cos(ang) * r; el.dataset.sy = Math.sin(ang) * r; el.dataset.rot = (seed(i + 50) - .5) * 24; el.dataset.rot0 = (seed(i + 90) - .5) * 720;
+  el.dataset.delay = 0.05 + seed(i + 200) * 0.7;
+  wall.appendChild(el); return el;
+});
+
+const BGS = [["papel", "bg-papel"], ["corcho", "bg-corcho"], ["cielo", "bg-cielo"], ["turia", "bg-turia"], ["malvarrosa", "bg-malvarrosa"], ["noche", "bg-noche"], ["lima", "bg-lima"], ["terrazo", "bg-terrazo"], ["cuaderno", "bg-cuaderno"], ["pizarra", "bg-pizarra"]];
+
+// bezier path helper for the dragging hand
+const bez = (P, u) => { const [a, b, c, d] = P, k = 1 - u; return { x: k*k*k*a.x + 3*k*k*u*b.x + 3*k*u*u*c.x + u*u*u*d.x, y: k*k*k*a.y + 3*k*k*u*b.y + 3*k*u*u*c.y + u*u*u*d.y }; };
+
+window.render = function (t) {
+  const T = window.TIMES;
+  scenes.forEach((s, i) => {
+    const { start, dur } = T[i]; const u = t - start;
+    const visible = u >= -0.02 && (i === scenes.length - 1 || t < T[i + 1].start + 0.4);
+    s.style.visibility = visible ? "visible" : "hidden"; s.style.zIndex = 10 + i;
+    if (!visible) return;
+
+    const kind = i === 0 ? "none" : (s.dataset.in || "wipe");
+    const x = eInOut(p(u, -0.02, 0.3));
+    s.style.clipPath = ""; s.style.transform = "";
+    if (kind === "wipe") { s.style.clipPath = `inset(${(1 - x) * 100}% 0 0 0)`; const e = s.querySelector(".edge"); if (e) { e.style.top = `${(1 - x) * 1920}px`; e.style.opacity = x > 0 && x < 1 ? 1 : 0; } }
+    if (kind === "circle") s.style.clipPath = `circle(${x * 2300}px at 540px 1140px)`;
+    if (kind === "push") s.style.transform = `translateX(${(1 - eOut(p(u, -0.02, 0.36))) * 1080}px)`;
+
+    let k = 0;
+    s.querySelectorAll(".hl .w > i, .words .w > i").forEach((w) => { const a = 0.12 + k * 0.045; k++; w.style.transform = `translateY(${(1 - eOut(p(u, a, a + 0.32))) * 112}%)`; });
+    const markAt = 0.15 + k * 0.045;
+    s.querySelectorAll(".mark").forEach((m, j) => m.style.setProperty("--m", eOut(p(u, markAt + j * 0.12, markAt + 0.26 + j * 0.12))));
+    let n = 0;
+    s.querySelectorAll(".pop").forEach((el) => {
+      const a = el.dataset.at ? parseFloat(el.dataset.at) : markAt + 0.1 + n * 0.18; n++;
+      const y = eBack(p(u, a, a + 0.42)); el.style.opacity = p(u, a, a + 0.1);
+      el.style.transform = `${el.dataset.rot ? `rotate(${el.dataset.rot}deg)` : ""} translateY(${(1 - y) * 90}px) scale(${lerp(.94, 1, y)})`;
+    });
+    const hand = (id, a) => { const el = s.querySelector(id); if (!el) return; if (!el.dataset.rot0) el.dataset.rot0 = (el.style.transform.match(/rotate\([^)]*\)/) || [""])[0]; el.style.opacity = p(u, a, a + 0.2); el.style.transform = `${el.dataset.rot0} translateY(${(1 - eOut(p(u, a, a + 0.35))) * 26}px)`; };
+
+    // 1 · la ficha gris se monta a golpes, sin gracia, y al final se arruga
+    if (s.querySelector("#ig")) {
+      s.querySelectorAll(".ig-p").forEach((el, j) => { const a = 0.15 + j * 0.09; const on = u >= a; el.style.opacity = on ? 1 : 0; el.style.transform = on ? `translateY(${u < a + 0.08 ? 6 : 0}px)` : "translateY(20px)"; });
+      $("#igcount").textContent = `${Math.min(150, Math.floor(p(u, 1.0, 1.9) * 150))}/150`;
+      const jitter = u > 1.0 && u < 2.0 ? Math.sin(u * 90) * 1.5 : 0;
+      const cr = p(u, dur - 0.5, dur - 0.05);
+      $("#ig").style.transform = `translate(${jitter}px,0) scale(${1 - eIn(cr) * 0.9}) rotate(${eIn(cr) * -40}deg) skew(${eIn(cr) * 25}deg)`;
+      $("#ig").style.filter = `saturate(0) blur(${eIn(cr) * 6}px)`;
+    }
+    // 2 · la pared estalla: cada pieza llega desde fuera con rebote y gira hasta su inclinación
+    if (s.querySelector("#wall")) {
+      pieceEls.forEach((el) => {
+        const a = parseFloat(el.dataset.delay), q = eBack(p(u, a, a + 0.75));
+        el.style.opacity = p(u, a, a + 0.08);
+        const dx = parseFloat(el.dataset.sx) * (1 - q), dy = parseFloat(el.dataset.sy) * (1 - q);
+        const rot = lerp(parseFloat(el.dataset.rot0), parseFloat(el.dataset.rot), q);
+        const breathe = Math.sin(u * 2 + a * 10) * 4;
+        el.style.transform = `translate(${dx}px,${dy + breathe}px) rotate(${rot}deg) scale(${lerp(.4, 1, q)})`;
+      });
+    }
+    // 3 · estantería: las tarjetas giran de lo que aparentas a lo que escuchas
+    if (s.querySelector(".flip")) {
+      s.querySelectorAll(".flip").forEach((f, j) => { const a = 0.4 + j * 0.12; const inn = eOut(p(u, a, a + 0.4)); f.style.opacity = p(u, a, a + 0.1); const fl = eBack(p(u, parseFloat(f.dataset.at), parseFloat(f.dataset.at) + 0.6)); f.style.transform = `translateY(${(1 - inn) * 60}px) rotateX(${fl * 180}deg)`; f.style.perspective = "1200px"; });
+      s.querySelectorAll(".cats span").forEach((c, j) => c.classList.toggle("on", Math.floor(u * 1.6) % 4 === j));
+      hand("#h3", 2.9);
+    }
+    // 4 · el dedo arrastra el corazón, lo suelta con rebote, y gira el sol
+    if (s.querySelector("#cur4")) {
+      const P = [{ x: 120, y: 520 }, { x: 350, y: 200 }, { x: 600, y: 700 }, { x: 560, y: 300 }];
+      const q = eInOut(p(u, 0.4, 1.8)); const pt = bez(P, q);
+      const settle = eElastic(p(u, 1.8, 2.5));
+      const cx = u < 1.8 ? pt.x : lerp(pt.x, 560, 1) + Math.sin(settle * Math.PI) * 6, cy = u < 1.8 ? pt.y : 300;
+      $("#s-cor").style.transform = `translate(${cx - 80}px,${cy - 480}px) rotate(${lerp(0, 18, q) + Math.sin(u * 14) * (q > 0 && q < 1 ? 6 : 0)}deg) scale(${q > 0 && q < 1 ? 1.15 : lerp(1.15, 1, settle)})`;
+      $("#cur4").style.transform = `translate(${cx + 20}px,${cy + 10}px) scale(${q > 0 && q < 1 ? .9 : 1})`;
+      $("#cur4").style.opacity = p(u, 0.2, 0.4) * (1 - p(u, 3.3, 3.6));
+      const spin = p(u, 2.4, 3.1); $("#s-sol").style.transform = `rotate(${eBack(spin) * 200}deg) scale(${1 + Math.sin(spin * Math.PI) * .25})`;
+      const pl = eBack(p(u, 2.8, 3.3)); $("#s-pla").style.opacity = p(u, 2.8, 2.9); $("#s-pla").style.transform = `scale(${pl}) rotate(${lerp(-40, -8, pl)}deg)`;
+      const ho = eBack(p(u, 3.1, 3.6)); $("#s-hola").style.opacity = p(u, 3.1, 3.2); $("#s-hola").style.transform = `scale(${ho}) rotate(${lerp(30, 8, ho)}deg)`;
+      hand("#h4", 3.0);
+    }
+    // 5 · los fondos pasan como en el selector real
+    if (s.querySelector("#cover5")) {
+      const idx = Math.min(BGS.length - 1, Math.floor(p(u, 0.3, 3.0) * BGS.length));
+      const cv = $("#cover5"); cv.className = `cover ${BGS[idx][1]}`; $("#bgname").textContent = BGS[idx][0];
+      const step = p(u, 0.3, 3.0) * BGS.length; const kick = Math.sin((step % 1) * Math.PI) * 0.02;
+      cv.style.transform = `scale(${1 + kick})`;
+    }
+    // 6 · el interruptor se apaga y la bio se cae
+    if (s.querySelector("#bio")) {
+      const off = eOut(p(u, 1.0, 1.25)); $("#eye").style.setProperty("--on", 1 - off); $("#eye").style.background = off > .5 ? "#c9c9c9" : "#4f6828";
+      const fall = p(u, 1.35, 2.1); const y = eIn(fall) * 1400, r = fall * 28;
+      $("#bio").style.transform = `translate(${fall * 120}px,${y}px) rotate(${r}deg)`;
+      hand("#h6", 2.0);
+    }
+    // 7 · el dedo va a «Complicado»
+    if (s.querySelector("#status")) {
+      const chips = [...s.querySelectorAll("#status span")];
+      chips.forEach((c, j) => { const a = 0.3 + j * 0.1; const inn = eBack(p(u, a, a + 0.4)); c.style.opacity = p(u, a, a + 0.1); c.style.transform = `translateY(${(1 - inn) * 40}px)`; });
+      const q = eInOut(p(u, 1.0, 1.9)); const pt = bez([{ x: 900, y: 1500 }, { x: 700, y: 1300 }, { x: 400, y: 1000 }, { x: 250, y: 880 }], q);
+      $("#cur7").style.transform = `translate(${pt.x}px,${pt.y}px) scale(${u > 1.9 && u < 2.1 ? .85 : 1})`; $("#cur7").style.opacity = p(u, 0.9, 1.1) * (1 - p(u, 3.2, 3.5));
+      chips.forEach((c, j) => c.classList.toggle("on", u >= 2.0 ? j === 3 : j === 0));
+      hand("#h7", 2.6);
+    }
+    // 8 · el candado y los tres NO
+    if (s.querySelector("#face")) {
+      const inn = eBack(p(u, 0.3, 0.9)); $("#face").style.transform = `scale(${inn})`; $("#face").style.opacity = p(u, 0.3, 0.4);
+      $("#ring").style.transform = `rotate(${u * 20}deg)`;
+      s.querySelectorAll(".tag").forEach((tg) => { const a = parseFloat(tg.dataset.at); const y = eOut(p(u, a, a + 0.35)); tg.style.opacity = p(u, a, a + 0.1); tg.style.transform = `translateX(${(1 - y) * 80}px)`; const st = p(u, parseFloat(tg.dataset.no), parseFloat(tg.dataset.no) + 0.16); const stamp = tg.querySelector(".no, .ok"); stamp.style.opacity = st; stamp.style.transform = `rotate(${tg.classList.contains("good") ? -8 : -12}deg) scale(${lerp(2.4, 1, eOut(st))})`; });
+    }
+    // 9 · la habitación respira: entra grande y se asienta despacio con luz cálida
+    if (s.querySelector("#room")) {
+      const inn = eOut(p(u, 0.1, 1.6)); const settle = p(u, 0.1, dur);
+      $("#room").style.transform = `scale(${lerp(1.18, 1, inn) - settle * 0.03}) translateY(${(1 - inn) * 60}px)`; $("#room").style.opacity = p(u, 0.1, 0.4);
+      $("#glow").style.opacity = eOut(p(u, 0.6, 2.4));
+      s.querySelectorAll(".room .fl").forEach((f) => { const ph = parseFloat(f.dataset.ph); if (!f.dataset.rot0) f.dataset.rot0 = (f.style.transform.match(/rotate\([^)]*\)/) || ["rotate(0deg)"])[0]; const r = parseFloat(f.dataset.rot0.match(/-?[\d.]+/)[0]); f.style.transform = `translate(${Math.sin(u * 1.1 + ph) * 7}px,${Math.cos(u * 0.9 + ph) * 8}px) rotate(${r + Math.sin(u * 1.3 + ph) * 3}deg)`; });
+      s.querySelectorAll(".room .lights i").forEach((l, j) => { l.style.opacity = 0.6 + Math.sin(u * 3 + j * 1.7) * 0.4; });
+      hand("#h9", 2.4);
+    }
+    const bar = s.querySelector(".prog > b"); if (bar) bar.style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+  });
+};
+</script>
+</body></html>

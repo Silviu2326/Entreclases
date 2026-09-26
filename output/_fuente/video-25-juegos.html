@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 25/09 · Los juegos (dos)</title>
+<!--BASE-->
+<style>
+/* Motor propio (abajo), el mismo esquema que el vídeo de Entre líneas: planos cortos, cortes rápidos. */
+:root { --teja:#b0432f; --ink:#1c0e1f; --night:#241a3d; --rose:#c94a63; }
+.scene { visibility: hidden; }
+.hl { z-index: 6; }
+.hand { color: var(--plum); }
+.plum .hand, .night .hand { color: var(--lime); }
+.scene.night { background: var(--night); color: var(--paper); }
+.night .prog { background: #fffefa33; } .night .prog > b { background: var(--lime); }
+.night .top img.wm { filter: brightness(0) invert(96%) sepia(6%) saturate(250%); }
+.night .mark { color: var(--plum); }
+.num { top: 300px; color: var(--lime); }
+.plum .num, .night .num { color: var(--lime); }
+.cream-num { color: var(--plum); opacity: .12; }
+
+/* portada de cada juego: una foto inclinada como una polaroid */
+.polar { position: absolute; left: 110px; top: 720px; width: 860px; background: #fff; padding: 26px 26px 34px; border-radius: 26px; box-shadow: 0 40px 100px #1c0e1f55; z-index: 7; }
+.polar img { display: block; width: 100%; height: 760px; object-fit: cover; border-radius: 14px; }
+.polar .cap { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; color: var(--plum); }
+.polar .cap b { font-size: 44px; font-weight: 850; letter-spacing: -0.045em; }
+.polar .cap span { font-size: 26px; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+
+/* la lista de los siete */
+.seven { position: absolute; left: 80px; right: 80px; top: 820px; z-index: 7; display: flex; flex-wrap: wrap; gap: 18px; }
+.pill { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; padding: 20px 30px; border-radius: 999px; background: #fffefa1f; color: var(--paper); border: 3px solid #fffefa33; opacity: 0; }
+.pill.on { background: var(--lime); color: var(--plum); border-color: var(--lime); }
+.cream .pill, .scene:not(.plum):not(.night) .pill { background: #fff; color: var(--plum); border-color: #2a172e1a; box-shadow: 0 14px 40px #1c0e1f1a; }
+
+/* la baraja de ¿Me lío? */
+.deck { position: absolute; left: 90px; width: 900px; top: 700px; background: #fff; border-radius: 40px; padding: 40px 44px 44px; box-shadow: 0 30px 80px #1c0e1f2e; z-index: 7; color: var(--plum); }
+.deck .who { display: flex; align-items: center; gap: 28px; }
+.deck .who img { width: 190px; height: 190px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 10px 30px #1c0e1f22; }
+.deck .who b { display: block; font-size: 56px; font-weight: 850; letter-spacing: -0.05em; line-height: 1; }
+.deck .who span { display: block; margin-top: 12px; font-size: 28px; font-weight: 700; color: var(--muted); letter-spacing: -0.01em; }
+.deck .say { margin-top: 30px; font-family: "Caveat", cursive; font-weight: 600; font-size: 54px; color: var(--teja); line-height: 1; }
+.deck .acts { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.deck .act { text-align: center; font-size: 34px; font-weight: 850; letter-spacing: -0.03em; padding: 26px 10px; border-radius: 22px; border: 4px solid #2a172e1f; color: var(--plum); transition: none; }
+.deck .act.hot { border-color: var(--plum); transform: scale(1.04); }
+.deck .act.on { background: var(--plum); color: var(--lime); border-color: var(--plum); }
+.deck .pass { margin-top: 18px; text-align: center; font-size: 26px; font-weight: 700; color: var(--muted); letter-spacing: .06em; }
+.lock { position: absolute; left: 90px; width: 900px; top: 700px; background: #fff; color: var(--plum); border-radius: 40px; padding: 44px; box-shadow: 0 30px 80px #0005; z-index: 7; opacity: 0; }
+.lock .k { font-size: 24px; font-weight: 800; letter-spacing: .12em; color: var(--muted); }
+.lock h4 { margin-top: 12px; font-size: 64px; font-weight: 850; letter-spacing: -0.05em; line-height: 1; }
+.lock p { margin-top: 18px; font-size: 32px; line-height: 1.3; color: #3b2f3e; letter-spacing: -0.02em; }
+.match { position: absolute; left: 90px; width: 900px; top: 700px; background: var(--lime); color: var(--plum); border-radius: 40px; padding: 44px; box-shadow: 0 30px 80px #0006; z-index: 8; opacity: 0; text-align: center; }
+.match .avs2 { display: flex; justify-content: center; }
+.match .avs2 img { width: 200px; height: 200px; border-radius: 50%; border: 10px solid var(--lime); box-shadow: 0 12px 30px #1c0e1f33; }
+.match .avs2 img + img { margin-left: -40px; }
+.match h4 { margin-top: 20px; font-size: 84px; font-weight: 850; letter-spacing: -0.06em; line-height: .95; }
+.match p { margin-top: 14px; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
+.sets { position: absolute; left: 90px; width: 900px; top: 700px; background: #fff; color: var(--plum); border-radius: 40px; padding: 20px 44px; box-shadow: 0 30px 80px #1c0e1f2e; z-index: 7; }
+.sets .row { display: flex; align-items: center; justify-content: space-between; gap: 24px; font-size: 38px; font-weight: 800; letter-spacing: -0.035em; padding: 30px 0; border-bottom: 3px solid #2a172e12; }
+.sets .row:last-child { border-bottom: 0; }
+.sets .row small { font-size: 28px; font-weight: 700; color: var(--muted); }
+.toggle { width: 120px; height: 66px; border-radius: 33px; background: #2a172e22; position: relative; flex-shrink: 0; }
+.toggle::after { content: ""; position: absolute; top: 7px; left: 7px; width: 52px; height: 52px; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px #0003; transform: translateX(calc(var(--on, 0) * 54px)); }
+.toggle.on { background: #4f6828; }
+
+/* la cita: etiquetas tachadas, chat con reloj, decisión */
+.nots { position: absolute; left: 80px; right: 80px; top: 760px; z-index: 7; display: grid; gap: 22px; }
+.not { position: relative; display: inline-flex; align-items: center; gap: 22px; justify-self: start; font-size: 60px; font-weight: 850; letter-spacing: -0.045em; padding: 22px 38px; border-radius: 26px; background: #fffefa14; border: 3px solid #fffefa2e; color: var(--paper); opacity: 0; }
+.not::after { content: ""; position: absolute; left: 24px; right: 24px; top: 50%; height: 8px; border-radius: 4px; background: var(--lime); transform: scaleX(var(--x, 0)) rotate(-2deg); transform-origin: left center; }
+.chat { position: absolute; left: 90px; width: 900px; top: 690px; height: 1060px; background: #fff; border-radius: 40px; box-shadow: 0 30px 80px #1c0e1f2e; z-index: 7; color: var(--plum); overflow: hidden; }
+.chat .head { display: flex; align-items: center; gap: 22px; padding: 30px 36px; border-bottom: 3px solid #2a172e12; }
+.chat .dot { width: 64px; height: 64px; border-radius: 50%; background: #f2a53a; flex-shrink: 0; }
+.chat .head b { font-size: 44px; font-weight: 850; letter-spacing: -0.045em; }
+.chat .head small { display: block; font-size: 24px; font-weight: 700; color: var(--muted); margin-top: 4px; }
+.ring { margin-left: auto; position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+.ring svg { width: 120px; height: 120px; transform: rotate(-90deg); }
+.ring span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 26px; font-weight: 850; letter-spacing: -0.03em; line-height: 1; text-align: center; }
+.chat .body { padding: 30px 36px; display: grid; gap: 18px; align-content: start; }
+.ice { justify-self: center; background: #fbf3d6; color: #6b4b12; border-radius: 22px; padding: 20px 28px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; text-align: center; max-width: 760px; opacity: 0; }
+.ice small { display: block; font-size: 20px; letter-spacing: .12em; font-weight: 800; margin-bottom: 6px; }
+.bub { max-width: 640px; padding: 22px 30px; border-radius: 28px; font-size: 34px; line-height: 1.22; letter-spacing: -0.02em; font-weight: 600; opacity: 0; }
+.bub.them { justify-self: start; background: #f0ecf2; border-bottom-left-radius: 8px; }
+.bub.me { justify-self: end; background: var(--plum); color: var(--paper); border-bottom-right-radius: 8px; }
+.chat .input { position: absolute; left: 36px; right: 36px; bottom: 30px; height: 84px; border-radius: 42px; border: 3px solid #2a172e1f; display: flex; align-items: center; padding: 0 30px; font-size: 28px; color: var(--muted); }
+.decide { position: absolute; left: 90px; width: 900px; top: 700px; z-index: 7; display: grid; gap: 18px; }
+.decide .k { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 26px; font-weight: 800; letter-spacing: .12em; padding: 0 10px 6px; }
+.opt { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #fff; border-radius: 28px; padding: 26px 34px; box-shadow: 0 16px 44px #1c0e1f1a; border: 4px solid transparent; color: var(--plum); opacity: 0; }
+.opt b { display: block; font-size: 42px; font-weight: 850; letter-spacing: -0.045em; line-height: 1; }
+.opt span { display: block; margin-top: 8px; font-size: 26px; font-weight: 600; color: var(--muted); letter-spacing: -0.01em; }
+.opt i { width: 46px; height: 46px; border-radius: 50%; border: 4px solid #2a172e2e; flex-shrink: 0; }
+.opt.on { border-color: var(--plum); }
+.opt.on i { background: var(--plum); border-color: var(--plum); box-shadow: inset 0 0 0 8px #fff; }
+.end { position: absolute; left: 90px; width: 900px; top: 700px; background: #fff; color: var(--plum); border-radius: 40px; padding: 44px; box-shadow: 0 30px 80px #0005; z-index: 7; opacity: 0; text-align: center; }
+.end h4 { font-size: 66px; font-weight: 850; letter-spacing: -0.05em; line-height: 1; }
+.end p { margin-top: 18px; font-size: 34px; line-height: 1.3; color: #3b2f3e; letter-spacing: -0.02em; }
+.end.close { background: #f0ecf2; }
+.end.close h4 { font-size: 58px; }
+.end.close p { font-family: Georgia, "Times New Roman", serif; }
+
+/* cierre */
+.last .pill { opacity: 1; }
+.other { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: flex; flex-wrap: wrap; gap: 18px; }
+.other .pill { font-size: 40px; padding: 24px 34px; }
+</style>
+</head><body>
+
+<!-- 1 -->
+<section class="scene plum" data-voice="Entreclases tiene siete juegos. Hoy solo te cuento dos." data-min="3.4" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:420px">Siete <span class="mark">juegos.</span></h1>
+ <div class="seven" id="seven">
+  <span class="pill" data-at="0.6">Sin dar la cara</span><span class="pill" data-at="0.7">La cita empieza hablando</span><span class="pill" data-at="0.8">¿Me lío?</span><span class="pill" data-at="0.9">Dos verdades y una trola</span><span class="pill" data-at="1.0">Defiende lo indefendible</span><span class="pill" data-at="1.1">Hay hueco</span><span class="pill" data-at="1.2">El jurado del campus</span>
+ </div>
+ <div class="hand" id="hdos" style="left:600px;top:1500px;font-size:84px;transform:rotate(-6deg);opacity:0">hoy, dos.</div>
+</section>
+
+<!-- 2 -->
+<section class="scene plum" data-voice="Los dos mejores. Según yo. Y aquí mando yo." data-min="3.0" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:520px">Los dos <span class="mark">mejores.</span></h1>
+ <div class="hand pop" data-at="1.2" style="left:560px;top:1000px;font-size:84px;transform:rotate(-6deg)">según yo.</div>
+ <div class="hand pop" data-at="2.2" style="left:180px;top:1240px;font-size:70px;transform:rotate(-4deg)">aquí mando yo.</div>
+</section>
+
+<!-- 3 -->
+<section class="scene" data-voice="Uno. ¿Me lío?" data-min="2.6" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:330px">¿Me <span class="mark">lío?</span></h1>
+ <div class="polar pop" data-at="0.5" data-rot="-2.5"><img src="PUB/images/games/me-lio.png" alt=""><div class="cap"><b>¿Me lío?</b><span>SOLO SI ES MUTUO</span></div></div>
+ <div class="hand pop" data-at="1.6" style="left:640px;top:1660px;font-size:60px;transform:rotate(-5deg)">+18. lo siento.</div>
+</section>
+
+<!-- 4 -->
+<section class="scene" data-voice="Hay alguien del campus que te hace gracia. Y nunca se lo vas a decir. Lo sabemos." data-min="4.4" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Nunca se lo vas a <span class="mark">decir.</span></h1>
+ <div class="deck pop" data-at="0.4" data-rot="-1">
+  <div class="who"><img src="PUB/avatars/laia.svg" alt=""><div><b>Laia</b><span>Derecho · 3º</span></div></div>
+  <div class="say">«Café sí. Madrugar no.»</div>
+  <div class="acts"><div class="act">Un café</div><div class="act">Una cita</div><div class="act">Me lío</div></div>
+  <div class="pass">PASAR</div>
+ </div>
+ <div class="hand" id="hsab" style="left:600px;top:1560px;font-size:70px;transform:rotate(-5deg);opacity:0">lo sabemos.</div>
+</section>
+
+<!-- 5 -->
+<section class="scene" data-voice="Aquí lo eliges en privado. Un café, una cita, o me lío. Y nadie lo ve." data-min="5.0" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">En <span class="mark">privado.</span></h1>
+ <div class="deck" id="deck2" style="opacity:1;transform:rotate(-1deg)">
+  <div class="who"><img src="PUB/avatars/laia.svg" alt=""><div><b>Laia</b><span>Derecho · 3º</span></div></div>
+  <div class="say">«Café sí. Madrugar no.»</div>
+  <div class="acts"><div class="act" id="a1">Un café</div><div class="act" id="a2">Una cita</div><div class="act" id="a3">Me lío</div></div>
+  <div class="pass">PASAR</div>
+ </div>
+ <div class="hand" id="hnadie" style="left:520px;top:1560px;font-size:70px;transform:rotate(-5deg);opacity:0">nadie lo ve.</div>
+</section>
+
+<!-- 6 -->
+<section class="scene plum" data-voice="Solo sale a la luz si es mutuo. Si no, aquí no ha pasado nada." data-min="4.8" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Solo si es <span class="mark">mutuo.</span></h1>
+ <div class="lock" id="lock"><div class="k">TU ELECCIÓN</div><h4>Guardada en secreto.</h4><p>Solo saldría a la luz si Laia también elige una cita.</p></div>
+ <div class="match" id="match"><div class="avs2"><img src="PUB/avatars/marc.svg" alt=""><img src="PUB/avatars/laia.svg" alt=""></div><h4>¡Hay coincidencia!</h4><p>A los dos os apetece una cita.</p></div>
+ <div class="hand" id="hnada" style="left:300px;top:1500px;font-size:66px;transform:rotate(-5deg);opacity:0">si no, no ha pasado nada.</div>
+</section>
+
+<!-- 7 -->
+<section class="scene" data-voice="Y tu curso no te ve. Viene así de serie. De nada." data-min="3.8" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Tu curso <span class="mark">no te ve.</span></h1>
+ <div class="sets pop" data-at="0.3">
+  <div class="row"><span>Me ve<br><small>Mi carrera</small></span></div>
+  <div class="row"><span>Ocultarme de mi curso</span><div class="toggle" id="t1"></div></div>
+  <div class="row"><span>Ocultarme de mis grupos</span><div class="toggle" id="t2"></div></div>
+ </div>
+ <div class="hand" id="hnada2" style="left:660px;top:1400px;font-size:80px;transform:rotate(-6deg);opacity:0">de nada.</div>
+</section>
+
+<!-- 8 -->
+<section class="scene night" data-voice="Dos. La cita empieza hablando." data-min="2.8" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">La cita empieza <span class="mark">hablando.</span></h1>
+ <div class="polar pop" data-at="0.5" data-rot="2"><img src="PUB/images/games/la-cita-empieza-hablando.png" alt=""><div class="cap"><b>La cita empieza hablando</b><span>48 H</span></div></div>
+</section>
+
+<!-- 9 -->
+<section class="scene night" data-voice="Los jueves a las siete y media te presentamos a alguien. Sin foto. Sin nombre. Sin carrera." data-min="4.6" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Jueves, <span class="mark">19:30.</span></h1>
+ <div class="nots">
+  <div class="not" data-at="1.6" data-x="2.0">Foto</div>
+  <div class="not" data-at="2.1" data-x="2.5">Nombre</div>
+  <div class="not" data-at="2.6" data-x="3.0">Carrera</div>
+ </div>
+ <div class="hand" id="hpal" style="left:520px;top:1400px;font-size:70px;transform:rotate(-5deg);opacity:0">solo palabras.</div>
+</section>
+
+<!-- 10 -->
+<section class="scene" data-voice="Cuarenta y ocho horas de chat con un alias. Mandarina veintisiete, por ejemplo. Muy sexy, lo sé." data-min="5.8" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">48 horas. <span class="mark">Un alias.</span></h1>
+ <div class="chat pop" data-at="0.3">
+  <div class="head"><div class="dot"></div><div><b>Mandarina 27</b><small>ronda del jueves</small></div>
+   <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#2a172e1a" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="#2a172e" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="14"/></svg><span>47 h<br>12 m</span></div>
+  </div>
+  <div class="body">
+   <div class="ice" data-at="0.9"><small>ROMPEHIELOS</small>¿Ventana o pasillo, y por qué?</div>
+   <div class="bub them" data-at="1.9">Pasillo. Me gusta poder escaparme.</div>
+   <div class="bub me" data-at="3.0">Ventana. Me gusta juzgar desde arriba.</div>
+   <div class="bub them" data-at="4.1">Vale, esto va a ir bien.</div>
+  </div>
+  <div class="input">Escribe tu mensaje…</div>
+ </div>
+ <div class="hand" id="hsexy" style="left:520px;top:1500px;font-size:66px;transform:rotate(-5deg);opacity:0">muy sexy, lo sé.</div>
+</section>
+
+<!-- 11 -->
+<section class="scene" data-voice="Luego decides en privado. Revelaros, quedar, un día más, o dejarlo aquí." data-min="5.4" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Y <span class="mark">decides.</span></h1>
+ <div class="decide">
+  <div class="k"><span>EN PRIVADO</span><span>24 H PARA DECIDIR</span></div>
+  <div class="opt" data-at="1.4" data-on="99"><div><b>Revelar perfiles</b><span>Quiero saber quién eres.</span></div><i></i></div>
+  <div class="opt" data-at="1.9" data-on="3.6"><div><b>Quedar</b><span>Revelarnos y vernos.</span></div><i></i></div>
+  <div class="opt" data-at="2.4" data-on="99"><div><b>Un día más</b><span>24 horas más en anónimo.</span></div><i></i></div>
+  <div class="opt" data-at="2.9" data-on="99"><div><b>Dejarlo aquí</b><span>Ha estado bien, pero no sigo.</span></div><i></i></div>
+ </div>
+ <div class="hand" id="hpriv" style="left:560px;top:1560px;font-size:66px;transform:rotate(-5deg);opacity:0">nadie ve tu respuesta.</div>
+</section>
+
+<!-- 12 -->
+<section class="scene night" data-voice="Si queréis lo mismo, os veis la cara. Si no, nadie recibe un no. Elegante." data-min="5.4" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Nadie recibe un <span class="mark">no.</span></h1>
+ <div class="end" id="yes"><div class="avs2" style="display:flex;justify-content:center"><img src="PUB/avatars/nico.svg" alt="" style="width:170px;height:170px;border-radius:50%;border:8px solid #fff;box-shadow:0 12px 30px #1c0e1f33"><img src="PUB/avatars/paula.svg" alt="" style="width:170px;height:170px;border-radius:50%;border:8px solid #fff;margin-left:-34px;box-shadow:0 12px 30px #1c0e1f33"></div><h4 style="margin-top:22px">Hay coincidencia.</h4><p>Ya podéis veros.</p></div>
+ <div class="end close" id="no"><h4>Esta conversación termina aquí.</h4><p>Gracias por hablar.</p></div>
+ <div class="hand" id="heleg" style="left:640px;top:1400px;font-size:84px;transform:rotate(-6deg);opacity:0">elegante.</div>
+</section>
+
+<!-- 13 -->
+<section class="scene" data-voice="Los otros cinco, otro día. Que ya se están quejando." data-min="4.0" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Los otros <span class="mark">cinco.</span></h1>
+ <div class="other">
+  <span class="pill pop" data-at="0.5" data-rot="-2">Sin dar la cara</span><span class="pill pop" data-at="0.65" data-rot="1.5">Dos verdades y una trola</span><span class="pill pop" data-at="0.8" data-rot="-1">Defiende lo indefendible</span><span class="pill pop" data-at="0.95" data-rot="2">Hay hueco</span><span class="pill pop" data-at="1.1" data-rot="-1.5">El jurado del campus</span>
+ </div>
+ <div class="hand" id="hquej" style="left:420px;top:1300px;font-size:66px;transform:rotate(-5deg);opacity:0">otro día. que se quejan.</div>
+</section>
+
+<!-- 14 -->
+<section class="scene lime last" data-voice="Los siete ya se pueden probar en la demo, sin cuenta. Y el veintiocho abrimos en Valencia." data-min="5.0" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="hl" style="top:400px;font-size:300px;line-height:.9;letter-spacing:-0.075em">28/09</div>
+ <div class="words" style="position:absolute;left:80px;top:700px;font-size:80px;font-weight:850;letter-spacing:-0.05em">Valencia.</div>
+ <div class="cta pop" data-at="0.8" style="top:920px">Pruébalos hoy en la demo</div>
+ <div class="pop" data-at="1.8" style="position:absolute;left:80px;top:1080px;font-size:54px;font-weight:800;letter-spacing:-0.03em">entreclases.com</div>
+ <img class="pop" data-at="1.2" data-rot="-5" src="PUB/images/games/me-lio.png" alt="" style="position:absolute;left:80px;top:1220px;width:360px;height:360px;object-fit:cover;border-radius:28px;box-shadow:0 20px 60px #1c0e1f33">
+ <img class="pop" data-at="1.45" data-rot="4" src="PUB/images/games/la-cita-empieza-hablando.png" alt="" style="position:absolute;left:480px;top:1270px;width:360px;height:360px;object-fit:cover;border-radius:28px;box-shadow:0 20px 60px #1c0e1f33">
+ <div class="hand pop" data-at="2.8" style="left:120px;top:1660px;font-size:64px;transform:rotate(-4deg)">sin cuenta. sin excusas.</div>
+</section>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".hl, .words").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+
+const CHOSEN = new Set(["¿Me lío?", "La cita empieza hablando"]);
+
+window.render = function (t) {
+  const T = window.TIMES;
+  scenes.forEach((s, i) => {
+    const { start, dur } = T[i]; const u = t - start;
+    const visible = u >= -0.02 && (i === scenes.length - 1 || t < T[i + 1].start + 0.4);
+    s.style.visibility = visible ? "visible" : "hidden"; s.style.zIndex = 10 + i;
+    if (!visible) return;
+
+    const kind = i === 0 ? "none" : (s.dataset.in || "wipe");
+    const x = eInOut(p(u, -0.02, 0.3));
+    s.style.clipPath = ""; s.style.transform = "";
+    if (kind === "wipe") { s.style.clipPath = `inset(${(1 - x) * 100}% 0 0 0)`; const e = s.querySelector(".edge"); if (e) { e.style.top = `${(1 - x) * 1920}px`; e.style.opacity = x > 0 && x < 1 ? 1 : 0; } }
+    if (kind === "circle") s.style.clipPath = `circle(${x * 2300}px at 540px 1140px)`;
+    if (kind === "push") s.style.transform = `translateX(${(1 - eOut(p(u, -0.02, 0.36))) * 1080}px)`;
+
+    let k = 0;
+    s.querySelectorAll(".hl .w > i, .words .w > i").forEach((w) => { const a = 0.12 + k * 0.045; k++; w.style.transform = `translateY(${(1 - eOut(p(u, a, a + 0.32))) * 112}%)`; });
+    const markAt = 0.15 + k * 0.045;
+    s.querySelectorAll(".mark").forEach((m, j) => m.style.setProperty("--m", eOut(p(u, markAt + j * 0.12, markAt + 0.26 + j * 0.12))));
+
+    let n = 0;
+    s.querySelectorAll(".pop").forEach((el) => {
+      const a = el.dataset.at ? parseFloat(el.dataset.at) : markAt + 0.1 + n * 0.18; n++;
+      const y = eBack(p(u, a, a + 0.42));
+      el.style.opacity = p(u, a, a + 0.1);
+      const base = el.dataset.rot ? `rotate(${el.dataset.rot}deg)` : "";
+      el.style.transform = `${base} translateY(${(1 - y) * 90}px) scale(${lerp(.94, 1, y)})`;
+    });
+    // piezas que entran deslizando desde la derecha: .pill (lista), .opt, .ice, .bub
+    s.querySelectorAll(".seven .pill, .opt, .ice, .bub").forEach((el) => {
+      const a = parseFloat(el.dataset.at || "0.6"); const y = eOut(p(u, a, a + 0.38));
+      el.style.opacity = p(u, a, a + 0.12);
+      el.style.transform = `translateX(${(1 - y) * 80}px)`;
+    });
+    const hand = (id, a) => { const el = s.querySelector(id); if (!el) return; if (!el.dataset.rot0) el.dataset.rot0 = (el.style.transform.match(/rotate\([^)]*\)/) || [""])[0]; el.style.opacity = p(u, a, a + 0.2); el.style.transform = `${el.dataset.rot0} translateY(${(1 - eOut(p(u, a, a + 0.35))) * 26}px)`; };
+
+    // 1: los siete, y a los dos segundos solo quedan encendidos los dos elegidos
+    if (s.querySelector("#seven")) {
+      s.querySelectorAll("#seven .pill").forEach((el) => {
+        const chosen = CHOSEN.has(el.textContent.trim());
+        el.classList.toggle("on", chosen && u >= 2.0);
+        if (!chosen) el.style.opacity = String(Math.min(parseFloat(el.style.opacity || "0"), lerp(1, 0.28, eOut(p(u, 2.0, 2.4)))));
+      });
+      hand("#hdos", 2.2);
+    }
+    if (s.querySelector("#hsab")) hand("#hsab", 2.9);
+
+    // 5: los tres gestos se iluminan al nombrarlos y queda «Una cita»
+    if (s.querySelector("#a1")) {
+      const hot = (id, a, b) => { const el = $(id); el.classList.toggle("hot", u >= a && u < b); };
+      hot("#a1", 1.3, 1.9); hot("#a2", 1.9, 2.5); hot("#a3", 2.5, 3.1);
+      $("#a2").classList.toggle("on", u >= 3.3);
+      const pr = p(u, 3.3, 3.55); $("#a2").style.transform = `scale(${pr > 0 && pr < 1 ? 1 - Math.sin(pr * Math.PI) * .08 : 1})`;
+      hand("#hnadie", 3.9);
+    }
+
+    // 6: guardado en secreto → coincidencia
+    if (s.querySelector("#lock")) {
+      const a = 0.4; const y = eBack(p(u, a, a + 0.45));
+      $("#lock").style.opacity = p(u, a, a + 0.1) * (1 - p(u, 2.0, 2.2));
+      $("#lock").style.transform = `translateY(${(1 - y) * 120}px) scale(${lerp(.9, 1, y)})`;
+      const b = 2.05; const z = eBack(p(u, b, b + 0.5));
+      $("#match").style.opacity = p(u, b, b + 0.1);
+      $("#match").style.transform = `rotate(-1.5deg) translateY(${(1 - z) * 140}px) scale(${lerp(.86, 1, z)})`;
+      hand("#hnada", 3.3);
+    }
+
+    // 7: los dos interruptores ya vienen activados
+    if (s.querySelector("#t1")) {
+      const on1 = eOut(p(u, 0.9, 1.2)), on2 = eOut(p(u, 1.15, 1.45));
+      $("#t1").style.setProperty("--on", on1); $("#t1").classList.toggle("on", u >= 1.05);
+      $("#t2").style.setProperty("--on", on2); $("#t2").classList.toggle("on", u >= 1.3);
+      hand("#hnada2", 2.5);
+    }
+
+    // 9: foto, nombre y carrera, tachados
+    if (s.querySelector(".not")) {
+      s.querySelectorAll(".not").forEach((el) => {
+        const a = parseFloat(el.dataset.at); const y = eBack(p(u, a, a + 0.4));
+        el.style.opacity = p(u, a, a + 0.1); el.style.transform = `translateY(${(1 - y) * 60}px)`;
+        el.style.setProperty("--x", eOut(p(u, parseFloat(el.dataset.x), parseFloat(el.dataset.x) + 0.3)));
+      });
+      hand("#hpal", 3.5);
+    }
+    if (s.querySelector("#hsexy")) hand("#hsexy", 4.5);
+
+    // 11: la decisión, y se marca «Quedar»
+    if (s.querySelector(".opt")) {
+      s.querySelectorAll(".opt").forEach((el) => {
+        const a = parseFloat(el.dataset.on); el.classList.toggle("on", u >= a);
+        const pr = p(u, a, a + 0.25); el.style.transform += ` scale(${pr > 0 && pr < 1 ? 1 - Math.sin(pr * Math.PI) * .06 : 1})`;
+      });
+      hand("#hpriv", 4.2);
+    }
+
+    // 12: coincidencia → cierre neutro
+    if (s.querySelector("#yes")) {
+      const a = 0.5; const y = eBack(p(u, a, a + 0.45));
+      $("#yes").style.opacity = p(u, a, a + 0.1) * (1 - p(u, 2.5, 2.7));
+      $("#yes").style.transform = `translateY(${(1 - y) * 120}px) scale(${lerp(.9, 1, y)})`;
+      const b = 2.6; const z = eBack(p(u, b, b + 0.5));
+      $("#no").style.opacity = p(u, b, b + 0.1);
+      $("#no").style.transform = `translateY(${(1 - z) * 120}px) scale(${lerp(.9, 1, z)})`;
+      hand("#heleg", 4.0);
+    }
+    if (s.querySelector("#hquej")) hand("#hquej", 2.0);
+
+    const bar = s.querySelector(".prog > b"); if (bar) bar.style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+  });
+};
+</script>
+</body></html>

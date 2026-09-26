@@ -19,9 +19,14 @@ STYLE = float(os.environ.get("VOZ_STYLE", "0.35")); STAB = float(os.environ.get(
 # Aire antes y después de cada frase. Bajarlos aprieta el ritmo.
 LEAD = float(os.environ.get("VOZ_LEAD", "0.35")); TAIL = float(os.environ.get("VOZ_TAIL", "0.55"))
 
-def tts(text):
+LANG = os.environ.get("VOZ_LANG", "")  # "es" fuerza el idioma: evita que una palabra suelta se lea a la inglesa
+
+def tts(text, voice=VOICE, prev="", nxt=""):
     vdir = HERE / "voz"; vdir.mkdir(exist_ok=True)
     key = text if (STYLE, STAB) == (0.35, 0.45) else f"{text}|{STYLE}|{STAB}"
+    if voice != VOICE: key += f"|{voice}"  # diálogos: cada plano puede traer su propia voz
+    if LANG: key += f"|{LANG}"
+    if prev or nxt: key += f"|ctx:{prev[:40]}|{nxt[:40]}"
     f = vdir / (hashlib.sha1(key.encode()).hexdigest()[:12] + ".mp3")
     if not f.exists() and os.environ.get("SIN_VOZ"):
         # Sin clave: duración estimada para revisar la imagen; el mp3 se genera al render final.
@@ -29,7 +34,10 @@ def tts(text):
     if not f.exists():
         body = {"text": text, "model_id": "eleven_multilingual_v2",
                 "voice_settings": {"stability": STAB, "similarity_boost": 0.8, "style": STYLE, "use_speaker_boost": True}}
-        req = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE}?output_format=mp3_44100_128",
+        if LANG: body["language_code"] = LANG
+        if prev: body["previous_text"] = prev
+        if nxt: body["next_text"] = nxt
+        req = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{voice}?output_format=mp3_44100_128",
             data=json.dumps(body).encode(), headers={"xi-api-key": os.environ["XI_KEY"], "content-type": "application/json", "accept": "audio/mpeg"})
         with urllib.request.urlopen(req) as r: f.write_bytes(r.read())
     # ElevenLabs deja silencio en los bordes; sin él, las frases se encadenan como en una conversación.
@@ -54,18 +62,28 @@ with sync_playwright() as pw:
     pg = b.new_page(viewport={"width": 1080, "height": 1920})
     pg.goto(built.as_uri()); pg.evaluate("document.fonts.ready"); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(300)
     voices, mins = pg.evaluate("getVoices()"), pg.evaluate("getMinDurations()")
-    clips, times, t = [], [], 0.0
+    ids = pg.evaluate("window.getVoiceIds ? getVoiceIds() : null") or [None] * len(voices)
+    clips, times, t, vdurs = [], [], 0.0, []
     for i, (text, mn) in enumerate(zip(voices, mins)):
         lead = LEAD
         if text:
-            f, d = tts(text)
+            short = len(text) < 14
+            f, d = tts(text, ids[i] or VOICE, voices[i - 1] if short and i > 0 else "", voices[i + 1] if short and i + 1 < len(voices) else "")
             if f: clips.append((f, t + lead))
-            dur = max(mn, lead + d + TAIL)
+            dur = max(mn, lead + d + TAIL); vdurs.append(round(d, 3))
         else:
-            dur = mn
+            dur = mn; vdurs.append(0)
         if i == len(voices) - 1: dur += 1.2
         times.append({"start": round(t, 3), "dur": round(dur, 3)}); t += dur
     total = round(t, 3)
+    (HERE / f".voz-{pathlib.Path(name).stem}.json").write_text(json.dumps(vdurs), encoding="utf-8")
+    # efectos: nombre@segundos dentro del plano; el archivo vive en sfx/<nombre>.mp3
+    sfx = []
+    for i, spec in enumerate(pg.evaluate("window.getSfx ? getSfx() : []") or []):
+        for item in filter(None, (spec or "").split(",")):
+            sname, _, at = item.strip().partition("@")
+            f = HERE / "sfx" / f"{sname}.mp3"
+            if f.exists(): sfx.append((f, times[i]["start"] + float(at or 0)))
     pg.evaluate(f"window.TIMES = {json.dumps(times)}; window.TOTAL = {total}")
     print(name, "duración", total, "s")
     if only:
@@ -84,14 +102,38 @@ with sync_playwright() as pw:
 built.unlink()
 
 dest.parent.mkdir(parents=True, exist_ok=True)
+MUSIC = os.environ.get("MUSICA", ""); MUSIC_DB = float(os.environ.get("MUSICA_DB", "-20")); SFX_DB = float(os.environ.get("SFX_DB", "-6"))
 cmd = ["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", str(frames / "f%05d.jpg")]
 for f, _ in clips: cmd += ["-i", str(f)]
+for f, _ in sfx: cmd += ["-i", str(f)]
+music_index = None
+if MUSIC and (HERE / MUSIC).exists():
+    # en bucle pero acotada a la duración del vídeo: sin el -t, ffmpeg no termina nunca
+    music_index = 1 + len(clips) + len(sfx); cmd += ["-stream_loop", "-1", "-t", str(total), "-i", str(HERE / MUSIC)]
+parts, mix_in = [], []
 if clips:
-    parts = [f"[{k + 1}]atempo={TEMPO},adelay={int(at * 1000)}:all=1[a{k}]" for k, (_, at) in enumerate(clips)]
-    mix = "".join(f"[a{k}]" for k in range(len(clips)))
-    fc = ";".join(parts) + f";{mix}amix=inputs={len(clips)}:normalize=0,apad,atrim=0:{total},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100[a]"
-else:  # revisión sin voz: pista muda para que el archivo sea válido en cualquier reproductor
-    fc = f"anullsrc=r=44100:cl=stereo,atrim=0:{total}[a]"
+    parts += [f"[{k + 1}]atempo={TEMPO},adelay={int(at * 1000)}:all=1[a{k}]" for k, (_, at) in enumerate(clips)]
+    parts.append("".join(f"[a{k}]" for k in range(len(clips))) + f"amix=inputs={len(clips)}:normalize=0,apad,atrim=0:{total}[voz]")
+else:
+    parts.append(f"anullsrc=r=44100:cl=stereo,atrim=0:{total}[voz]")
+if sfx:
+    base = 1 + len(clips)
+    parts += [f"[{base + k}]volume={SFX_DB}dB,adelay={int(at * 1000)}:all=1[s{k}]" for k, (_, at) in enumerate(sfx)]
+    parts.append("".join(f"[s{k}]" for k in range(len(sfx))) + f"amix=inputs={len(sfx)}:normalize=0,apad,atrim=0:{total}[sfx]")
+    mix_in.append("[sfx]")
+if music_index is not None:
+    # la música baja sola cuando hay voz (sidechain) y vuelve despacio en los silencios
+    parts.append("[voz]asplit[voz1][vozsc]")
+    parts.append(f"[{music_index}]atrim=0:{total},volume={MUSIC_DB}dB,afade=t=in:d=0.4,afade=t=out:st={max(0, total - 1.5)}:d=1.5[mus0]")
+    parts.append("[mus0][vozsc]sidechaincompress=threshold=0.04:ratio=6:attack=30:release=600[mus]")
+    mix_in = ["[voz1]", "[mus]"] + mix_in
+else:
+    mix_in = ["[voz]"] + mix_in
+if len(mix_in) > 1:
+    parts.append("".join(mix_in) + f"amix=inputs={len(mix_in)}:normalize=0,apad,atrim=0:{total},aformat=channel_layouts=stereo,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100[a]")
+else:
+    parts.append(f"{mix_in[0]}loudnorm=I=-14:TP=-1.5:LRA=11,aresample=44100[a]")
+fc = ";".join(parts)
 cmd += ["-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(dest)]
 subprocess.run(cmd, check=True)

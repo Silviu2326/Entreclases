@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es" class="video"><head><meta charset="utf-8"><title>TikTok 24/09 · Entre líneas</title>
+<!--BASE-->
+<style>
+/* Motor propio (abajo). Catorce planos cortos: el ritmo lo marcan los cortes, no las pausas. */
+:root { --teja:#b0432f; --ink:#1c0e1f; }
+.scene { visibility: hidden; }
+.hl { z-index: 6; }
+.hand { color: var(--plum); }
+.plum .hand { color: var(--lime); }
+.serif { font-family: Georgia, "Times New Roman", serif; }
+.big { position: absolute; left: 80px; width: 920px; font-size: 200px; font-weight: 850; letter-spacing: -0.08em; line-height: .88; z-index: 6; }
+
+.wallet { position: absolute; right: 80px; top: 250px; z-index: 9; display: flex; align-items: center; gap: 16px; background: #fff; color: var(--plum); border-radius: 999px; padding: 14px 30px 14px 16px; box-shadow: 0 18px 50px #1c0e1f33; font-size: 46px; font-weight: 850; letter-spacing: -0.04em; }
+.coin { position: relative; border-radius: 50%; background: var(--plum); box-shadow: inset 0 0 0 5px var(--lime), inset 0 0 0 9px var(--plum), 0 12px 30px #1c0e1f33; display: grid; place-items: center; flex-shrink: 0; }
+.coin img { width: 56%; }
+.wallet .coin { width: 64px; height: 64px; }
+
+.pricetag { position: absolute; left: 50%; top: 820px; width: 760px; margin-left: -380px; background: #fff; border-radius: 40px; padding: 54px 48px 50px; box-shadow: 0 30px 80px #1c0e1f2e; z-index: 7; text-align: center; }
+.pricetag .lbl { font-size: 28px; font-weight: 800; letter-spacing: .12em; color: var(--muted); }
+.pricetag .amt { font-size: 300px; font-weight: 850; letter-spacing: -0.09em; line-height: .9; margin-top: 10px; }
+.pricetag .unit { display: inline-flex; align-items: center; gap: 14px; font-size: 40px; font-weight: 800; margin-top: 16px; letter-spacing: -0.03em; }
+.pricetag .unit .coin { width: 48px; height: 48px; }
+
+.stage3d { position: absolute; left: 0; right: 0; top: 560px; height: 1300px; perspective: 1600px; z-index: 7; }
+.paper { position: absolute; left: 90px; width: 900px; top: 0; background: #fbf8f0; color: var(--ink); padding: 54px 56px 60px; box-shadow: 0 40px 110px #1c0e1f55; transform-origin: 50% 0; border-top: 6px solid var(--ink); }
+.paper .mast { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 3px solid var(--ink); padding-bottom: 22px; }
+.paper .mast img { height: 110px; }
+.paper .mast small { font-size: 22px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teja); }
+.paper .kicker { margin-top: 30px; font-size: 24px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--teja); }
+.paper h2 { font-size: 92px; line-height: .98; letter-spacing: -0.03em; margin-top: 12px; font-weight: 700; }
+.paper .std { margin-top: 26px; font-size: 30px; line-height: 1.35; color: #3b2f3e; }
+.paper .cols { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.paper .cols div { height: 14px; background: #1c0e1f1a; border-radius: 7px; margin-bottom: 14px; }
+.paper .cols div:nth-child(odd) { width: 92%; }
+.fold { position: absolute; inset: 0; background: linear-gradient(180deg, #1c0e1f00 0%, #1c0e1f55 100%); pointer-events: none; }
+/* la mancha de café que NO lleva */
+.stain { position: absolute; width: 300px; height: 300px; border-radius: 50%; border: 26px solid #6b3f1f66; box-shadow: inset 0 0 0 10px #6b3f1f22; z-index: 9; opacity: 0; }
+.stain::after { content: ""; position: absolute; inset: -10px; border-radius: 50%; border: 6px solid #6b3f1f33; }
+
+.form { position: absolute; left: 80px; right: 80px; top: 700px; background: #fff; border-radius: 36px; padding: 40px 44px; box-shadow: 0 26px 70px #1c0e1f22; z-index: 7; }
+.form .lab { font-size: 24px; font-weight: 800; letter-spacing: .1em; color: var(--muted); margin-top: 26px; }
+.form .lab:first-child { margin-top: 0; }
+.form .fld { margin-top: 10px; font-size: 40px; font-weight: 700; letter-spacing: -0.03em; min-height: 58px; border-bottom: 3px solid #2a172e22; padding-bottom: 10px; }
+.form .fld.big2 { font-size: 46px; font-weight: 800; letter-spacing: -0.045em; min-height: 120px; }
+.caret { display: inline-block; width: 4px; height: 44px; background: var(--teja); vertical-align: -6px; margin-left: 4px; }
+.chips { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+.chip { font-size: 28px; font-weight: 750; padding: 14px 22px; border-radius: 999px; border: 3px solid #2a172e22; color: var(--muted); }
+.chip.on { background: var(--plum); color: var(--lime); border-color: var(--plum); }
+.sendbtn { margin-top: 34px; display: inline-block; font-size: 32px; font-weight: 850; padding: 20px 34px; border-radius: 18px; background: var(--teja); color: #fff; letter-spacing: -0.02em; }
+
+.flow { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: grid; gap: 20px; }
+.step { display: flex; align-items: center; gap: 24px; background: #fff; border-radius: 30px; padding: 26px 32px; box-shadow: 0 16px 44px #1c0e1f1f; font-size: 40px; font-weight: 800; letter-spacing: -0.04em; opacity: 0; }
+.step i { width: 26px; height: 26px; border-radius: 50%; background: var(--acc, #2a172e33); flex-shrink: 0; }
+.reject { position: absolute; left: 80px; right: 80px; top: 720px; z-index: 8; background: #fbe9e6; color: #8f2a1c; border-radius: 36px; padding: 40px 44px; box-shadow: 0 26px 70px #8f2a1c33; opacity: 0; }
+.reject .st { font-size: 26px; font-weight: 800; letter-spacing: .12em; }
+.reject h4 { font-size: 92px; font-weight: 850; letter-spacing: -0.06em; line-height: .95; margin-top: 8px; }
+.reject .why { margin-top: 26px; font-size: 40px; line-height: 1.25; letter-spacing: -0.02em; font-weight: 600; min-height: 110px; }
+
+.slots { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.slot { background: #fff; border-radius: 30px; padding: 26px 30px; box-shadow: 0 16px 44px #1c0e1f1f; min-height: 190px; opacity: 0; }
+.slot .k { font-size: 20px; font-weight: 800; letter-spacing: .12em; color: var(--teja); }
+.slot h5 { margin-top: 10px; font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 700; }
+.seventh { position: absolute; left: 80px; right: 80px; top: 760px; z-index: 8; background: var(--plum); color: var(--paper); border-radius: 30px; padding: 30px 34px; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; opacity: 0; display: flex; justify-content: space-between; align-items: center; }
+.seventh span { font-size: 26px; font-weight: 800; letter-spacing: .1em; color: var(--lime); }
+
+.consent { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; background: #fff; border-radius: 36px; padding: 40px 44px; box-shadow: 0 26px 70px #1c0e1f22; }
+.consent .row { display: flex; align-items: center; justify-content: space-between; gap: 24px; font-size: 38px; font-weight: 800; letter-spacing: -0.035em; }
+.toggle { width: 120px; height: 66px; border-radius: 33px; background: #2a172e22; position: relative; flex-shrink: 0; }
+.toggle::after { content: ""; position: absolute; top: 7px; left: 7px; width: 52px; height: 52px; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px #0003; transform: translateX(calc(var(--on, 0) * 54px)); }
+.toggle.on { background: #4f6828; }
+.quote { margin-top: 34px; font-size: 44px; line-height: 1.3; color: var(--ink); letter-spacing: -0.02em; position: relative; }
+.quote .bad { position: relative; display: inline-block; }
+.quote .bad::after { content: ""; position: absolute; left: -22px; top: -14px; width: 46px; height: 74px; border: 5px solid var(--teja); border-radius: 50%; transform: rotate(-12deg) scale(var(--c, 0)); }
+
+.wall { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: grid; gap: 20px; }
+.tcard { position: relative; background: #fff; border-radius: 30px; padding: 30px 36px; box-shadow: 0 16px 44px #1c0e1f1f; font-family: Georgia, "Times New Roman", serif; font-size: 46px; letter-spacing: -0.02em; opacity: 0; }
+.tcard .no { position: absolute; right: 26px; top: -26px; font-size: 80px; font-weight: 900; font-family: Inter, sans-serif; color: var(--teja); border: 9px solid var(--teja); border-radius: 18px; padding: 0 16px; line-height: 1.05; transform: rotate(-12deg); opacity: 0; }
+.tcard.good { position: absolute; left: 80px; right: 80px; top: 760px; font-size: 62px; padding: 40px 44px; box-shadow: 0 26px 70px #1c0e1f22; }
+.tcard.good small { display: block; font-family: Inter, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: .12em; color: var(--teja); margin-bottom: 10px; }
+.tcard .ok { position: absolute; right: 26px; top: -30px; font-size: 90px; font-weight: 900; font-family: Inter, sans-serif; color: #4f6828; border: 10px solid #4f6828; border-radius: 20px; padding: 0 18px; line-height: 1.05; transform: rotate(-10deg); opacity: 0; }
+.buy { position: absolute; left: 80px; right: 80px; top: 700px; z-index: 7; display: grid; gap: 22px; }
+.offer { position: relative; display: flex; align-items: center; justify-content: space-between; background: #fff; color: var(--plum); border-radius: 30px; padding: 30px 36px; box-shadow: 0 16px 44px #0004; font-size: 44px; font-weight: 800; letter-spacing: -0.04em; opacity: 0; }
+.offer .btnw { display: inline-flex; align-items: center; gap: 14px; background: #2a72e8; color: #fff; font-size: 30px; padding: 16px 26px; border-radius: 16px; }
+.offer .btnw .coin { width: 40px; height: 40px; }
+.offer .no { position: absolute; right: 30px; top: -30px; font-size: 90px; font-weight: 900; color: var(--lime); border: 10px solid var(--lime); border-radius: 20px; padding: 0 18px; line-height: 1.05; transform: rotate(-12deg); opacity: 0; }
+</style>
+</head><body>
+
+<!-- 1 -->
+<section class="scene plum" data-voice="Ayer te dije que te iba a cobrar por publicar." data-min="2.2" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="wallet pop" data-at="0.2"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>37</div>
+ <h1 class="hl xl" style="top:520px">Ayer: te cobro por <span class="mark">publicar.</span></h1>
+</section>
+
+<!-- 2 -->
+<section class="scene plum" data-voice="Hoy vengo a contradecirme." data-min="1.9" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl xl" style="top:520px">Hoy me <span class="mark">contradigo.</span></h1>
+ <div class="hand pop" data-at="0.9" style="left:600px;top:1100px;font-size:80px;transform:rotate(-6deg)">soy así.</div>
+</section>
+
+<!-- 3 -->
+<section class="scene" data-voice="Hay un sitio donde publicar es gratis. Yo también flipé." data-min="3.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Publicar <span class="mark">gratis.</span></h1>
+ <div class="pricetag pop" data-at="0.6" data-rot="-1.5">
+  <div class="lbl">PRECIO POR PIEZA</div>
+  <div class="amt" id="zero">0</div>
+  <div class="unit"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>ClasiCoins</div>
+ </div>
+ <div class="hand pop" data-at="1.9" style="left:520px;top:1560px;font-size:66px;transform:rotate(-5deg)">yo también flipé.</div>
+</section>
+
+<!-- 4 -->
+<section class="scene plum" data-voice="Se llama Entre líneas. Y es un periódico." data-min="2.7" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Un <span class="mark">periódico.</span></h1>
+ <div class="stage3d">
+  <div class="paper" id="paper">
+   <div class="mast"><img src="PUB/images/entre-lineas-logo.png" alt=""><small>Nº 1 · Valencia</small></div>
+   <div class="kicker">Vida de campus</div>
+   <h2 class="serif">¿Esta silla está libre?</h2>
+   <p class="std serif">Puedes compartir clase durante meses sin saber el nombre de quien se sienta al lado. Una pregunta, un plan o un trabajo compartido pueden cambiar eso.</p>
+   <div class="cols"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+   <div class="fold" id="fold"></div>
+  </div>
+ </div>
+</section>
+
+<!-- 5 -->
+<section class="scene" data-voice="Sí. En dos mil veintiséis. Como el del bar, sin manchas de café." data-min="3.8" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="big" style="top:560px">2026.</div>
+ <div class="hand pop" data-at="0.7" style="left:620px;top:820px;font-size:80px;transform:rotate(-6deg)">sí.</div>
+ <div class="stain" id="stain" style="left:560px;top:1040px"></div>
+ <div class="hand" id="hstain" style="left:160px;top:1400px;font-size:66px;transform:rotate(-4deg);opacity:0">sin manchas de café.</div>
+</section>
+
+<!-- 6 -->
+<section class="scene" data-voice="Lo escribís vosotros. Una historia, tu plan, tu proyecto, el drama de tu grupo de prácticas." data-min="5.4" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Lo escribís <span class="mark">vosotros.</span></h1>
+ <div class="form pop" data-at="0.3">
+  <div class="lab">SECCIÓN</div>
+  <div class="chips"><span class="chip" id="ch0">Vida de campus</span><span class="chip">Planes</span><span class="chip">Proyectos</span><span class="chip">Apuntes</span></div>
+  <div class="lab">TITULAR</div>
+  <div class="fld big2" id="typed"></div>
+  <div class="lab">ENTRADILLA</div>
+  <div class="fld" id="typed2"></div>
+  <div class="sendbtn" id="sendbtn">Enviar a revisión</div>
+ </div>
+</section>
+
+<!-- 7 -->
+<section class="scene" data-voice="Lo lee un editor de carne y hueso." data-min="2.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Un editor <span class="mark">humano.</span></h1>
+ <div class="flow">
+  <div class="step" data-at="0.4" style="--acc:#2a172e55"><i></i>Borrador</div>
+  <div class="step" data-at="0.7" style="--acc:#a36534"><i></i>En revisión</div>
+  <div class="step" data-at="1.0" style="--acc:#4f6828"><i></i>Aceptada</div>
+ </div>
+ <div class="hand pop" data-at="1.3" style="left:560px;top:1300px;font-size:64px;transform:rotate(-5deg)">de verdad. respira.</div>
+</section>
+
+<!-- 8 -->
+<section class="scene" data-voice="Y puede decirte que no. Lo sé. Duele." data-min="2.5" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Puede decir <span class="mark">no.</span></h1>
+ <div class="reject" id="rej"><div class="st">ESTADO</div><h4>Rechazada.</h4><div class="why" id="why"></div></div>
+ <div class="hand" id="hduele" style="left:640px;top:1380px;font-size:74px;transform:rotate(-6deg);opacity:0">duele.</div>
+</section>
+
+<!-- 9 -->
+<section class="scene" data-voice="Pero con motivo. Que no somos monstruos." data-min="2.9" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Con <span class="mark">motivo.</span></h1>
+ <div class="reject" id="rej2" style="opacity:1"><div class="st">ESTADO</div><h4>Rechazada.</h4><div class="why" id="why2"></div></div>
+ <div class="hand" id="hmon" style="left:420px;top:1380px;font-size:66px;transform:rotate(-5deg);opacity:0">no somos monstruos.</div>
+</section>
+
+<!-- 10 -->
+<section class="scene" data-voice="Titulares que veo venir. Lo sé. Lo veo venir." data-min="3.5" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Titulares que <span class="mark">veo venir.</span></h1>
+ <div class="wall">
+  <div class="tcard" data-at="0.35" data-no="0.9" data-rot="-2">«¿alguien?»<div class="no">NO</div></div>
+  <div class="tcard" data-at="0.55" data-no="1.3" data-rot="1.5">«hola??»<div class="no">NO</div></div>
+  <div class="tcard" data-at="0.75" data-no="1.8" data-rot="-1">«Vendo Cálculo I. Poco uso.»<div class="no">NO</div></div>
+  <div class="tcard" data-at="0.95" data-no="2.3" data-rot="2">«Mi TFG, en llamas. Ayuda.»<div class="no">NO</div></div>
+ </div>
+ <div class="hand" id="hveo" style="left:560px;top:1580px;font-size:66px;transform:rotate(-5deg);opacity:0">lo veo venir.</div>
+</section>
+
+<!-- 11 -->
+<section class="scene" data-voice="Y luego llega uno así. Y se te pasa todo." data-min="3.4" data-in="none">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Y luego llega <span class="mark">uno así.</span></h1>
+ <div class="tcard good" id="good" data-rot="-1.5"><small>PLANES</small>«El jueves sí existe.»<div class="ok">SÍ</div></div>
+ <div class="hand" id="hpasa" style="left:520px;top:1400px;font-size:70px;transform:rotate(-5deg);opacity:0">y se te pasa todo.</div>
+</section>
+
+<!-- 12 -->
+<section class="scene" data-voice="Nadie te toca una coma. Ni esa. Sí, esa. La que está mal." data-min="4.3" data-in="push">
+ <div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">Ni una <span class="mark">coma.</span></h1>
+ <div class="consent pop" data-at="0.3">
+  <div class="row"><span>Autorizo esta versión</span><div class="toggle" id="tgl"></div></div>
+  <div class="quote serif">«El grupo lleva tres semanas diciendo "el jueves". Este jueves<span class="bad" id="bad">,</span> fui yo solo. Había café.»</div>
+ </div>
+ <div class="hand" id="hesa" style="left:600px;top:1240px;font-size:74px;transform:rotate(-6deg);opacity:0">esa.</div>
+ <div class="hand" id="hmal" style="left:440px;top:1360px;font-size:64px;transform:rotate(-4deg);opacity:0">sí, está mal. es tuya.</div>
+</section>
+
+<!-- 13 -->
+<section class="scene plum" data-voice="¿Comprar la portada? No. Ni con ClasiCoins, ni con euros, ni con una paella al editor. Lo hemos probado." data-min="5.6" data-in="circle">
+ <div class="prog"><b></b></div>
+ <div class="top"><img class="wm" src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <h1 class="hl l" style="top:330px">La portada <span class="mark">no se compra.</span></h1>
+ <div class="buy">
+  <div class="offer" data-at="0.3" data-no="1.7">500 ClasiCoins<div class="btnw"><div class="coin"><img src="PUB/brand/entreclase-mark.png" alt=""></div>Comprar</div><div class="no">NO</div></div>
+  <div class="offer" data-at="0.45" data-no="2.5">20 euros<div class="btnw">Pagar</div><div class="no">NO</div></div>
+  <div class="offer" data-at="0.6" data-no="3.5">Una paella<div class="btnw">Invitar</div><div class="no">NO</div></div>
+ </div>
+ <div class="hand" id="hprob" style="left:480px;top:1420px;font-size:66px;transform:rotate(-5deg);opacity:0">lo hemos probado.</div>
+</section>
+
+<!-- 14 -->
+<section class="scene lime" data-voice="Abrimos el veintiocho. El primer número ya está escrito. El segundo lo escribes tú. Sin faltas, porfa." data-min="5.2" data-in="wipe">
+ <div class="edge"></div><div class="prog"><b></b></div>
+ <div class="top"><img src="PUB/brand/entreclase-wordmark.png" alt=""><span></span></div>
+ <div class="hl" style="top:400px;font-size:300px;line-height:.9;letter-spacing:-0.075em">28/09</div>
+ <div class="words" style="position:absolute;left:80px;top:700px;font-size:80px;font-weight:850;letter-spacing:-0.05em">Valencia.</div>
+ <div class="cta pop" data-at="1.6" style="top:920px">El segundo número lo escribes tú</div>
+ <div class="pop" data-at="2.6" style="position:absolute;left:80px;top:1080px;font-size:54px;font-weight:800;letter-spacing:-0.03em">entreclases.com</div>
+ <img class="pop" data-at="0.8" data-rot="-6" src="PUB/images/entre-lineas-logo.png" alt="" style="position:absolute;left:80px;top:1300px;width:620px">
+ <div class="hand pop" data-at="3.3" style="left:560px;top:1600px;font-size:64px;transform:rotate(-5deg)">sin faltas, porfa.</div>
+</section>
+
+<script>
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eInOut = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const eBack = (x) => { const c1 = 1.55, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const $ = (s) => document.querySelector(s);
+
+const scenes = [...document.querySelectorAll(".scene")];
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const i = document.createElement("i"); i.textContent = part; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+  };
+  walk(el);
+}
+scenes.forEach((s) => s.querySelectorAll(".hl, .words, .big").forEach(splitWords));
+window.getVoices = () => scenes.map((s) => s.dataset.voice || "");
+window.getMinDurations = () => scenes.map((s) => parseFloat(s.dataset.min || "2.4"));
+
+const type = (text, u, a, cps = 26) => text.slice(0, Math.max(0, Math.floor((u - a) * cps)));
+const TITLE = "Mi grupo de prácticas: un drama en tres actos";
+const LEAD = "Acto uno: nadie contesta.";
+const WHY = "«\"Porfa\" no es un titular. Cuéntame qué pasó y lo miramos.»";
+
+window.render = function (t) {
+  const T = window.TIMES;
+  scenes.forEach((s, i) => {
+    const { start, dur } = T[i]; const u = t - start;
+    const visible = u >= -0.02 && (i === scenes.length - 1 || t < T[i + 1].start + 0.4);
+    s.style.visibility = visible ? "visible" : "hidden"; s.style.zIndex = 10 + i;
+    if (!visible) return;
+
+    const kind = i === 0 ? "none" : (s.dataset.in || "wipe");
+    const x = eInOut(p(u, -0.02, 0.3));
+    s.style.clipPath = ""; s.style.transform = "";
+    if (kind === "wipe") { s.style.clipPath = `inset(${(1 - x) * 100}% 0 0 0)`; const e = s.querySelector(".edge"); if (e) { e.style.top = `${(1 - x) * 1920}px`; e.style.opacity = x > 0 && x < 1 ? 1 : 0; } }
+    if (kind === "circle") s.style.clipPath = `circle(${x * 2300}px at 540px 1140px)`;
+    if (kind === "push") s.style.transform = `translateX(${(1 - eOut(p(u, -0.02, 0.36))) * 1080}px)`;
+
+    let k = 0;
+    s.querySelectorAll(".hl .w > i, .words .w > i, .big .w > i").forEach((w) => { const a = 0.12 + k * 0.045; k++; w.style.transform = `translateY(${(1 - eOut(p(u, a, a + 0.32))) * 112}%)`; });
+    const markAt = 0.15 + k * 0.045;
+    s.querySelectorAll(".mark").forEach((m, j) => m.style.setProperty("--m", eOut(p(u, markAt + j * 0.12, markAt + 0.26 + j * 0.12))));
+
+    let n = 0;
+    s.querySelectorAll(".pop").forEach((el) => {
+      const a = el.dataset.at ? parseFloat(el.dataset.at) : markAt + 0.1 + n * 0.18; n++;
+      const y = eBack(p(u, a, a + 0.42));
+      el.style.opacity = p(u, a, a + 0.1);
+      const base = el.dataset.rot ? `rotate(${el.dataset.rot}deg)` : "";
+      el.style.transform = `${base} translateY(${(1 - y) * 90}px) scale(${lerp(.94, 1, y)})`;
+    });
+    s.querySelectorAll(".step, .slot[data-at], .offer").forEach((el) => {
+      const a = parseFloat(el.dataset.at || "0.6"); const y = eOut(p(u, a, a + 0.38));
+      el.style.opacity = p(u, a, a + 0.12);
+      el.style.transform = `translateX(${(1 - y) * 80}px)`;
+    });
+    // notas a mano con momento fijo: conservan su giro y suben un poco al aparecer
+    const hand = (id, a) => { const el = s.querySelector(id); if (!el) return; if (!el.dataset.rot0) el.dataset.rot0 = (el.style.transform.match(/rotate\([^)]*\)/) || [""])[0]; el.style.opacity = p(u, a, a + 0.2); el.style.transform = `${el.dataset.rot0} translateY(${(1 - eOut(p(u, a, a + 0.35))) * 26}px)`; };
+
+    if (s.querySelector("#zero")) { const q = p(u, 0.95, 1.4); $("#zero").style.transform = `scale(${1 + Math.sin(q * Math.PI) * .18})`; }
+
+    if (s.querySelector("#paper")) {
+      const un = eBack(p(u, 0.25, 1.2)); const rise = eOut(p(u, 0.15, 0.8));
+      $("#paper").style.transform = `translateY(${(1 - rise) * 500}px) rotateX(${lerp(-88, 0, un)}deg)`;
+      $("#paper").style.opacity = p(u, 0.15, 0.35);
+      $("#fold").style.opacity = 1 - un;
+    }
+    if (s.querySelector("#stain")) {
+      const a = 1.7; const d = eBack(p(u, a, a + 0.5));
+      $("#stain").style.opacity = p(u, a, a + 0.1) * (1 - eInOut(p(u, a + 1.0, a + 1.4)));
+      $("#stain").style.transform = `scale(${lerp(1.8, 1, d)}) rotate(${lerp(-30, 8, d)}deg)`;
+      hand("#hstain", a + 0.9);
+    }
+
+    if (s.querySelector("#typed")) {
+      $("#ch0").classList.toggle("on", u >= 0.7);
+      const tt = type(TITLE, u, 1.0), done1 = tt.length >= TITLE.length;
+      const ll = done1 ? type(LEAD, u, 1.0 + TITLE.length / 26 + 0.2, 28) : "";
+      const done2 = ll.length >= LEAD.length;
+      const blink = Math.floor(u * 3) % 2 === 0;
+      $("#typed").innerHTML = tt + (u >= 0.8 && !done1 && blink ? '<span class="caret"></span>' : "");
+      $("#typed2").innerHTML = ll + (done1 && !done2 && blink ? '<span class="caret"></span>' : "");
+      const sendAt = 1.0 + TITLE.length / 26 + 0.2 + LEAD.length / 28 + 0.4;
+      const pr = p(u, sendAt, sendAt + 0.25); $("#sendbtn").style.transform = `scale(${pr > 0 && pr < 1 ? 1 - Math.sin(pr * Math.PI) * .1 : 1})`;
+      $("#sendbtn").textContent = u >= sendAt + 0.15 ? "Enviada ✓" : "Enviar a revisión";
+      $("#sendbtn").style.background = u >= sendAt + 0.15 ? "#4f6828" : "";
+    }
+
+    if (s.querySelector("#rej")) {
+      const a = 0.5; const y = eBack(p(u, a, a + 0.45));
+      $("#rej").style.opacity = p(u, a, a + 0.1); $("#rej").style.transform = `translateY(${(1 - y) * 120}px) scale(${lerp(.9, 1, y)})`;
+      hand("#hduele", 1.6);
+    }
+    if (s.querySelector("#why2")) { $("#why2").textContent = type(WHY, u, 0.5, 30); hand("#hmon", 2.0); }
+
+    if (s.querySelector("#tgl")) {
+      const on = eOut(p(u, 0.6, 0.9)); $("#tgl").style.setProperty("--on", on); $("#tgl").classList.toggle("on", u >= 0.75);
+      $("#bad").style.setProperty("--c", eBack(p(u, 2.0, 2.4)));
+      hand("#hesa", 2.1); hand("#hmal", 3.0);
+    }
+
+    if (s.querySelector(".wall")) {
+      s.querySelectorAll(".tcard").forEach((c) => {
+        const a = parseFloat(c.dataset.at); const y = eBack(p(u, a, a + 0.4));
+        c.style.opacity = p(u, a, a + 0.1); c.style.transform = `rotate(${c.dataset.rot}deg) translateY(${(1 - y) * 80}px)`;
+        const st = p(u, parseFloat(c.dataset.no), parseFloat(c.dataset.no) + 0.16); const no = c.querySelector(".no");
+        no.style.opacity = st; no.style.transform = `rotate(-12deg) scale(${lerp(2.4, 1, eOut(st))})`;
+      });
+      hand("#hveo", 2.6);
+    }
+    if (s.querySelector("#good")) {
+      const y = eBack(p(u, 0.4, 0.9)); const g = $("#good");
+      g.style.opacity = p(u, 0.4, 0.5); g.style.transform = `rotate(-1.5deg) translateY(${(1 - y) * 120}px) scale(${lerp(.92, 1, y)})`;
+      const st = p(u, 1.5, 1.7); const ok = g.querySelector(".ok"); ok.style.opacity = st; ok.style.transform = `rotate(-10deg) scale(${lerp(2.4, 1, eOut(st))})`;
+      hand("#hpasa", 2.2);
+    }
+    if (s.querySelector(".offer")) {
+      s.querySelectorAll(".offer").forEach((o) => { const a = parseFloat(o.dataset.no); const st = p(u, a, a + 0.18); const no = o.querySelector(".no"); no.style.opacity = st; no.style.transform = `rotate(-12deg) scale(${lerp(2.4, 1, eOut(st))})`; });
+      hand("#hprob", 4.3);
+    }
+
+    const bar = s.querySelector(".prog > b"); if (bar) bar.style.transform = `scaleX(${clamp(t / window.TOTAL)})`;
+  });
+};
+</script>
+</body></html>
