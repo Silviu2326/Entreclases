@@ -203,3 +203,35 @@
 .st-desk-card-copy > span { font-size:14px; }
 .st-desk-card-action { font-size:13px; }
 .st-desk-compact .st-desk-card-copy > span { font-size:13px; }
+/* La portada Estudiante ocupa el ancho de trabajo completo. */
+.u-page-student{max-width:1600px}
+.u-page-student > main{max-width:none}
+
+/* La ilustración comparte la cabecera con acciones, como en la referencia. */
+@media(min-width:1500px){
+ .u-page.u-page-student{max-width:none;padding-left:68px;padding-right:18px}
+ .sd-hero{min-height:225px;overflow:visible;padding-right:350px}
+ .sd-art{width:330px;height:330px;right:-4px;bottom:-135px}
+ .sd-scribble{right:245px;top:55px}
+ .sd-search,.sd-quick{position:relative;z-index:2;width:calc(100% - 300px)}
+}
+@media(max-width:1499px) and (min-width:1101px){
+ .u-page.u-page-student{max-width:none}
+ .sd-hero{overflow:visible}
+ .sd-art{bottom:-80px}
+ .sd-search,.sd-quick{position:relative;z-index:2}
+}
+
+
+/* Las herramientas inferiores no pueden ensanchar la portada en móvil. */
+.st-hub{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}
+.st-hub>.lc-center,.st-hub>.lc-tools-wrap{min-width:0}
+@media(max-width:740px){
+ .u-page.u-page-student{max-width:100%;min-width:0;padding-inline:17px}
+ .sd-layout,.sd-main,.sd-work-grid,.sd-panel{min-width:0;max-width:100%}
+ .sd-hero{min-height:auto;padding:5px 2px 22px;overflow:hidden}
+ .sd-art{display:none}
+ .sd-search,.sd-quick{width:100%;max-width:100%}
+ .sd-quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sd-day-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

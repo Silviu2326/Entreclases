@@ -24,7 +24,7 @@ export function SubjectsWorkspace({onStudy}:{onStudy?:(id:string)=>void}){
  };
  if(!ready)return <section className="sw-workspace" aria-busy="true"><p>{t("Preparando tus asignaturas…","Preparant les teues assignatures…")}</p></section>;
  const list=state.subjects.filter(s=>!!s.archived===showArchived);
- return <section className="sw-workspace" aria-labelledby="sw-title">
+ return <section id="student-subjects" className="sw-workspace" aria-labelledby="sw-title">
   <div className="sw-heading"><div><span className="sw-kicker">{t("DURANTE TODO EL CURSO","DURANT TOT EL CURS")}</span><h2 id="sw-title">{t("Lo que estás aprendiendo.","El que estàs aprenent.")}</h2><p>{t("Sigue las clases, resuelve dudas y avanza en tus trabajos.","Segueix les classes, resol dubtes i avança en els treballs.")}</p></div><button type="button" className="sw-add" onClick={()=>begin()}><Plus/><span>{t("Añadir asignatura","Afegir assignatura")}</span></button></div>
   {state.subjects.some(s=>s.archived)&&<button className="lc-text-button" type="button" onClick={()=>setShowArchived(!showArchived)}><Archive size={15}/>{showArchived?t("Volver al curso actual","Tornar al curs actual"):t("Ver archivo de cursos","Vore arxiu de cursos")}</button>}
   {list.length?<div className="sw-grid">{list.map((subject,index)=>{

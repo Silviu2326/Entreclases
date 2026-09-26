@@ -6,18 +6,19 @@ import { ArrowRight, BookOpenCheck, CalendarRange, Calculator, Check, ClipboardC
 import { languageIndex, toolBySlug, toolPath, type ToolGroup, type ToolKind } from "@/lib/community/student/catalog";
 import { tools } from "./catalog";
 import { LearningCenter } from "./learning-center";
+import { StudentDashboard } from "./student-dashboard";
 import { matches, useCommunity } from "../context";
 import "./student.css";
 import "./student-hub.css";
 
 const artwork: Record<ToolKind, typeof Calculator> = { notes: BookOpenCheck, exam: ClipboardCheck, grades: Calculator, calendar: CalendarRange, teamwork: Users, libraries: Landmark };
 const deskCopy: Record<ToolKind, { body: readonly [string, string]; action: readonly [string, string] }> = {
-  notes: { body: ["Tus apuntes, explicados a tu manera.", "Els teus apunts, explicats a la teua manera."], action: ["Abrir el tutor", "Obrir el tutor"] },
-  exam: { body: ["Ponte a prueba antes del día del examen.", "Posa’t a prova abans del dia de l’examen."], action: ["Preparar un test", "Preparar un test"] },
-  grades: { body: ["Haz números. Sal de dudas.", "Fes números. Ix de dubtes."], action: ["Calcular mi nota", "Calcular la meua nota"] },
-  calendar: { body: ["Clases, entregas y huecos para ti.", "Classes, entregues i estones per a tu."], action: ["Organizar mi semana", "Organitzar la meua setmana"] },
-  teamwork: { body: ["Quién hace qué. Sin perseguir a nadie.", "Qui fa què. Sense perseguir ningú."], action: ["Organizar un trabajo", "Organitzar un treball"] },
-  libraries: { body: ["Encuentra tu rincón en las bibliotecas de Valencia.", "Troba el teu racó a les biblioteques de València."], action: ["Buscar un sitio", "Buscar un lloc"] },
+  notes: { body: ["Pregunta por ese párrafo que no entiendes y pide otra explicación.", "Pregunta pel paràgraf que no entens i demana una altra explicació."], action: ["Abrir el tutor", "Obrir el tutor"] },
+  exam: { body: ["Haz un test con tus apuntes y descubre qué te falta repasar.", "Fes un test amb els teus apunts i descobrix què et falta repassar."], action: ["Preparar un test", "Preparar un test"] },
+  grades: { body: ["Mete tus notas y calcula qué necesitas en el final.", "Fica les teues notes i calcula què necessites en el final."], action: ["Calcular mi nota", "Calcular la meua nota"] },
+  calendar: { body: ["Pon exámenes y entregas en orden. Lo de hoy, primero.", "Posa exàmens i entregues en ordre. El de hui, primer."], action: ["Organizar mi semana", "Organitzar la meua setmana"] },
+  teamwork: { body: ["Deja claro quién hace qué y para cuándo.", "Deixa clar qui fa què i per a quan."], action: ["Organizar un trabajo", "Organitzar un treball"] },
+  libraries: { body: ["Encuentra biblioteca, mira el horario y elige dónde estudiar.", "Troba biblioteca, mira l’horari i tria on estudiar."], action: ["Buscar un sitio", "Buscar un lloc"] },
 };
 const filters: ReadonlyArray<{ id: ToolGroup | "all"; label: readonly [string, string] }> = [
   { id: "all", label: ["Todo", "Tot"] }, { id: "study", label: ["Estudiar", "Estudiar"] },
@@ -70,10 +71,7 @@ function StudentDesk() {
   const organize = listed.filter(tool=>tool.group==="organize");
   const campus = listed.filter(tool=>tool.group==="campus");
   return <div className="st-hub">
-    <header className="st-desk-heading" hidden={focused}>
-      <div><h2>{language ? "La teua taula." : "Tu mesa."}<em>{language ? "Al teu ritme." : "A tu ritmo."}</em></h2><p>{language ? "Apunts més clars. La setmana en ordre. I un poc d’aire." : "Apuntes más claros. La semana en orden. Y un poco de aire."}</p></div>
-      <span className="st-desk-note" aria-hidden="true">{language ? "vinga," : "vamos,"}<br/>{language ? "a poc a poc" : "poco a poco"}<svg viewBox="0 0 100 30"><path d="M4 21Q26 -1 26 17T48 19Q69 6 96 6"/></svg></span>
-    </header>
+    {!focused&&<StudentDashboard search={search} onSearch={setSearch}/>}
     <LearningCenter onFocusChange={setFocused}/>
     <div className="lc-tools-wrap" hidden={focused}>
     <div className="st-desk-toolbar">
@@ -82,19 +80,17 @@ function StudentDesk() {
     </div>
     <p className="sr-only" role="status">{listed.length} {language?"ferramentes disponibles":"herramientas disponibles"}</p>
     <div id="student-tools" className="st-desk-tools">
-      {study.length>0&&<section className="st-desk-section" aria-labelledby="desk-study"><div className="st-desk-section-heading"><h3 id="desk-study">{language?"Anem amb eixe tema.":"Vamos con ese tema."}</h3><p>{language?"Entendre’l primer. Memoritzar-lo després.":"Entenderlo primero. Memorizarlo después."}</p></div><div className="st-desk-study">{study.map(renderCard)}</div></section>}
-      {organize.length>0&&<section className="st-desk-section" aria-labelledby="desk-organize"><div className="st-desk-section-heading"><h3 id="desk-organize">{language?"Que no se t’ajunte tot.":"Que no se te junte todo."}</h3></div><div className="st-desk-organize">{organize.map(renderCard)}</div></section>}
+      {study.length>0&&<section className="st-desk-section" aria-labelledby="desk-study"><div className="st-desk-section-heading"><h3 id="desk-study">{language?"Quan llegir no és prou.":"Cuando leerlo no basta."}</h3><p>{language?"Pregunta als teus apunts o posa’t a prova abans de l’examen.":"Pregunta a tus apuntes o ponte a prueba antes del examen."}</p></div><div className="st-desk-study">{study.map(renderCard)}</div></section>}
+      {organize.length>0&&<section className="st-desk-section" aria-labelledby="desk-organize"><div className="st-desk-section-heading"><h3 id="desk-organize">{language?"Perquè no et caiga tot alhora.":"Para que no te pille todo a la vez."}</h3></div><div className="st-desk-organize">{organize.map(renderCard)}</div></section>}
       {campus.length>0&&<section className="st-desk-campus" aria-label={language?"Llocs per a estudiar":"Sitios para estudiar"}>{campus.map(renderCard)}</section>}
       {listed.length===0&&<div className="st-desk-empty"><Search aria-hidden="true"/><h3>{language?"No trobem eixa ferramenta.":"No encontramos esa herramienta."}</h3><p>{language?"Prova amb «apunts», «notes» o «setmana».":"Prueba con «apuntes», «notas» o «semana»."}</p><button type="button" className="st-button" onClick={()=>{setSearch("");setFilter("all");}}>{language?"Vore totes les ferramentes":"Ver todas las herramientas"}<ArrowRight/></button></div>}
     </div>
     </div>
-    <p className="st-desk-signoff" hidden={focused}>{language?"Un pas cada vegada també compta.":"Un paso cada vez también cuenta."}<Heart aria-hidden="true"/></p>
+    <p className="st-desk-signoff" hidden={focused}>{language?"Tria una cosa. Comença per ací.":"Elige una cosa. Empieza por ahí."}<Heart aria-hidden="true"/></p>
   </div>;
 }
 
 export function StudentHub() {
   const { locale } = useCommunity();
-  return <Suspense fallback={<p className="st-muted" role="status">{locale === "va" ? "Preparant la teua taula…" : "Preparando tu mesa…"}</p>}><StudentDesk/></Suspense>;
+  return <Suspense fallback={<p className="st-muted" role="status">{locale === "va" ? "Carregant Estudiant…" : "Cargando Estudiante…"}</p>}><StudentDesk/></Suspense>;
 }
-
-
