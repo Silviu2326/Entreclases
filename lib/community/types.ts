@@ -26,6 +26,8 @@ export type Plan = { id: string; creator_id: string; title: string; description:
 export type PlanMember = { plan_id: string; user_id: string };
 export type Note = { id: string; author_id: string; title: string; subject: string; description: string; campus: string; file_name: string; file_path: string; file_size: number; created_at: string };
 export type Thread = { id: string; user_a: string; user_b: string; created_at: string };
+/* Una amistad por pareja: equester_id la pidió; queda pending hasta que la otra persona la acepta. */
+export type Friendship = { requester_id: string; addressee_id: string; status: "pending" | "accepted"; created_at: string; accepted_at?: string | null };
 /* A piece in somebody's showcase. `media_url` is never stored: the repository signs it per read. */
 export type ShowcaseItem = { id: string; owner_id: string; kind: ShowcaseKind; title: string; body: string; url?: string | null; media_path?: string | null; media_kind?: ShowcaseMediaKind | null; media_url?: string; audience: ShowcaseAudience; viewers: string[]; position: number; created_at: string };
 export type ShowcaseInput = { kind: ShowcaseKind; title: string; body: string; url?: string; audience: ShowcaseAudience; viewers: string[] };
@@ -34,8 +36,8 @@ export type ShowcasePatch = Partial<Pick<ShowcaseItem, "title" | "body" | "audie
 export type Sticker = StickerPlacement & { id: string; owner_id: string; path: string; url?: string; created_at: string };
 /* `media_url` is never stored: the repository fills it with a short-lived signed link. */
 export type Message = { id: string; thread_id: string; sender_id: string; body: string; media_path?: string | null; media_kind?: "image" | "video" | null; media_url?: string; created_at: string };
-export type CommunityData = { wallet: CoinWallet; profiles: Profile[]; posts: Post[]; comments: Comment[]; likes: Like[]; signals: Signal[]; groups: Group[]; groupMembers: GroupMember[]; plans: Plan[]; planMembers: PlanMember[]; notes: Note[]; threads: Thread[]; showcase: ShowcaseItem[]; stickers: Sticker[] };
-export const emptyCommunity = (): CommunityData => ({ wallet: emptyWallet(), profiles: [], posts: [], comments: [], likes: [], signals: [], groups: [], groupMembers: [], plans: [], planMembers: [], notes: [], threads: [], showcase: [], stickers: [] });
+export type CommunityData = { wallet: CoinWallet; profiles: Profile[]; posts: Post[]; comments: Comment[]; likes: Like[]; signals: Signal[]; groups: Group[]; groupMembers: GroupMember[]; plans: Plan[]; planMembers: PlanMember[]; notes: Note[]; threads: Thread[]; friendships: Friendship[]; showcase: ShowcaseItem[]; stickers: Sticker[] };
+export const emptyCommunity = (): CommunityData => ({ wallet: emptyWallet(), profiles: [], posts: [], comments: [], likes: [], signals: [], groups: [], groupMembers: [], plans: [], planMembers: [], notes: [], threads: [], friendships: [], showcase: [], stickers: [] });
 export type PlanInput = Pick<Plan, "title" | "description" | "place" | "meeting_point" | "starts_at" | "capacity">;
 export type GroupInput = Pick<Group, "name" | "description" | "category" | "campus" | "is_private">;
 export type NoteInput = Pick<Note, "title" | "subject" | "description" | "campus">;
@@ -64,6 +66,8 @@ export interface CommunityRepository {
   openThread(peerId: string): Promise<string>;
   messages(threadId: string): Promise<Message[]>;
   sendMessage(threadId: string, body: string, file?: File): Promise<void>;
+  /* true pide la amistad o acepta la recibida; false la rechaza, la cancela o la deshace. */
+  setFriend(peerId: string, befriend: boolean): Promise<void>;
   saveShowcaseFrame(frame: ShowcaseFrame): Promise<Profile>;
   addShowcaseItem(input: ShowcaseInput, file?: File): Promise<ShowcaseItem>;
   updateShowcaseItem(id: string, patch: ShowcasePatch): Promise<ShowcaseItem>;

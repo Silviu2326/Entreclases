@@ -14,10 +14,13 @@ const {CommunityContext}=load('components/community/context');
 const {StudioProvider}=load('components/community/studio-context');
 const {createDemoRepository,demoUserId}=load('lib/community/demo');
 const {communityCopy}=load('lib/community/copy');
-const screens=[['home','Home'],['projects/screen','ProjectScreen'],['magazine','Magazine'],['feed','Feed'],['plans','Plans'],['groups','Groups'],['campus','Campus'],['people-profile','People'],['people-profile','MyProfile'],['messages','Messages'],['unicoins','Unicoins']];
+const screens=[['home','Home'],['projects/screen','ProjectScreen'],['magazine','Magazine'],['feed','Feed'],['plans','Plans'],['groups','Groups'],['campus','Campus'],['people','People'],['people-profile','MyProfile'],['messages','Messages'],['unicoins','Unicoins']];
 test('Every community screen renders in both languages with the actual UI primitives',async()=>{
  for(const locale of ['es','va']){const repo=createDemoRepository(locale),data=await repo.read(),me=data.profiles.find(p=>p.user_id===demoUserId);const context={locale,c:communityCopy(locale),demo:true,member:{id:me.user_id,name:me.name,university:me.university,email:''},data,me,repo,busy:false,feedback:null,query:'',view:'home',project:'hub',groupId:null,threadId:null,go(){},run:async()=>true,refresh:async()=>{}};
   for(const [file,name] of screens){const Component=load('components/community/'+file)[name];const html=renderToStaticMarkup(React.createElement(CommunityContext.Provider,{value:context},React.createElement(StudioProvider,null,React.createElement(Component))));assert.ok(html.length>100,`${name} rendered`);assert.ok(!html.includes('[object Object]'),`${name} has valid text`);if(name==='Unicoins'){assert.match(html,locale==='va'?/No es compren/:/No se compran/);assert.match(html,/ClasiCoins/);}}
+  // El perfil de otra persona: con un amigo se ven sus planes; con alguien por descubrir, el candado.
+  const {People}=load('components/community/people');const profile=personId=>renderToStaticMarkup(React.createElement(CommunityContext.Provider,{value:{...context,view:'people',personId}},React.createElement(StudioProvider,null,React.createElement(People))));
+  assert.match(profile('demo-marc'),locale==='va'?/Els plans de Marc/:/Los planes de Marc/);assert.match(profile('demo-laia'),locale==='va'?/Afegir a la teua gent/:/Añadir a tu gente/);
   const {IconAction}=load('components/community/controls');const button=renderToStaticMarkup(React.createElement(IconAction,{label:'Enviar',type:'submit'},React.createElement('span',null,'→')));assert.match(button,/type="submit"/);assert.match(button,/aria-label="Enviar"/);
   repo.dispose();
  }

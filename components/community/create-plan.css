@@ -1,0 +1,72 @@
+/* «Montar un plan»: cabecera ciruela, cuatro pasos numerados y el pago siempre a la vista abajo. */
+.u-dialog.u-dialog-plan { width:min(620px,calc(100vw - 32px)); padding:0 28px; border-radius:22px; animation:pl-dialog-in .28s cubic-bezier(.2,.9,.3,1.1); }
+.u-dialog-plan .u-dialog-heading { position:relative; overflow:hidden; margin:0 -28px 26px; padding:30px 28px 32px; background:#2a172e; color:#fffefa; }
+.u-dialog-plan .u-dialog-heading::before { content:""; position:absolute; right:-40px; bottom:-70px; width:190px; height:190px; border-radius:50%; background:#e1ff3e; opacity:.95; }
+.u-dialog-plan .u-dialog-heading::after { content:""; position:absolute; right:70px; top:-60px; width:130px; height:130px; border:1px solid #ffffff33; border-radius:50%; }
+.u-dialog-plan .u-dialog-heading > div { position:relative; z-index:1; max-width:78%; }
+.u-dialog-plan h2 { color:#fffefa; font-size:31px; }
+.u-dialog-plan .u-dialog-heading p { color:#d8cddb; font-size:13px; }
+.u-dialog-plan .u-dialog-heading > .u-icon-button { position:relative; z-index:1; color:#2a172e; background:#fffefa; border-radius:50%; margin:-6px -8px 0 0; box-shadow:0 4px 14px -4px #2a172e80; transition:transform .15s ease, background .15s ease; }
+.u-dialog-plan .u-dialog-heading > .u-icon-button:hover { background:#2a172e; color:#e1ff3e; transform:rotate(90deg); }
+
+.pl-form { gap:26px; }
+.pl-step { position:relative; display:grid; gap:12px; min-width:0; margin:0; padding:0 0 0 42px; border:0; }
+.pl-step::before { content:""; position:absolute; left:13px; top:34px; bottom:-20px; width:1px; background:#e3dce2; }
+.pl-num { position:absolute; left:0; top:-2px; display:grid; place-items:center; width:27px; height:27px; border-radius:50%; background:#e1ff3e; color:#2a172e; font-size:12px; font-weight:800; box-shadow:0 0 0 4px #fffefa; }
+.pl-step > label, .pl-step > legend { float:left; width:100%; padding:0; color:#2a172e; font-family:var(--font-display); font-size:15px; font-weight:750; letter-spacing:-.02em; }
+
+.pl-big { width:100%; padding:4px 0 8px; border:0; border-bottom:2px solid #e3dce2; border-radius:0; background:transparent; color:#2a172e; font-family:var(--font-display); font-size:23px; letter-spacing:-.03em; outline:none; transition:border-color .2s ease; }
+.pl-big::placeholder { color:#b9adbb; }
+.pl-big:focus { border-color:#2a172e; }
+
+.pl-places { display:flex; flex-wrap:wrap; gap:8px; }
+.pl-place { --kind:#f2f7c9; position:relative; display:inline-flex; align-items:center; gap:7px; padding:6px 13px 6px 6px; border:1px solid #e3dce2; border-radius:999px; background:#fffefa; font-size:12px; font-weight:650; cursor:pointer; user-select:none; transition:background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+.pl-place[data-kind="cafe"] { --kind:#f6e2c8; }
+.pl-place[data-kind="restaurant"] { --kind:#ffd9cf; }
+.pl-place[data-kind="library"] { --kind:#dfe6ff; }
+.pl-place[data-kind="nightlife"] { --kind:#eadcff; }
+.pl-place[data-kind="culture"] { --kind:#ffe1ee; }
+.pl-place[data-kind="outdoors"] { --kind:#dcf1d0; }
+.pl-place:hover { border-color:#b9a9bd; transform:translateY(-1px); }
+.pl-place input { position:absolute; inset:0; margin:0; opacity:0; cursor:pointer; }
+.pl-place-icon { display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--kind); font-size:12px; transition:background .15s ease; }
+.pl-place:has(input:checked) { border-color:#2a172e; background:#2a172e; color:#fffefa; box-shadow:0 8px 18px -10px #2a172e; }
+.pl-place:has(input:checked) .pl-place-icon { background:#e1ff3e; color:#2a172e; }
+.pl-place:has(input:focus-visible), .pl-chip:focus-visible, .pl-stepper:focus-visible { outline:3px solid #71568c; outline-offset:2px; }
+
+.pl-quick { display:flex; flex-wrap:wrap; gap:8px; }
+.pl-chip { display:grid; gap:1px; min-width:86px; padding:8px 14px; border:1px dashed #cdbfd0; border-radius:14px; background:transparent; color:#2a172e; font:inherit; text-align:left; line-height:1.25; cursor:pointer; transition:background .15s ease, border-color .15s ease, transform .15s ease; }
+.pl-chip strong { font-size:12px; }
+.pl-chip span { color:#8a7e8c; font-size:11px; font-variant-numeric:tabular-nums; }
+.pl-chip:hover { border-style:solid; border-color:#b9a9bd; transform:translateY(-1px); }
+.pl-chip[aria-pressed="true"] { border:1px solid #2a172e; background:#e1ff3e; }
+.pl-chip[aria-pressed="true"] span { color:#2a172e; }
+
+.pl-capacity { display:flex; align-items:center; gap:8px; }
+.pl-stepper { display:grid; place-items:center; width:40px; height:40px; padding:0; border:1px solid #ddd4de; border-radius:50%; background:#fffefa; color:#2a172e; cursor:pointer; transition:background .15s ease, color .15s ease, transform .1s ease; }
+.pl-stepper svg { width:17px; height:17px; }
+.pl-stepper:hover:not(:disabled) { background:#2a172e; color:#fffefa; }
+.pl-stepper:active:not(:disabled) { transform:scale(.92); }
+.pl-stepper:disabled { opacity:.35; cursor:default; }
+.pl-capacity input { width:62px; padding:0; border:0; background:transparent; color:#2a172e; font-family:var(--font-display); font-size:27px; font-weight:750; text-align:center; font-variant-numeric:tabular-nums; -moz-appearance:textfield; appearance:textfield; }
+.pl-capacity input::-webkit-inner-spin-button, .pl-capacity input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+.pl-capacity input:focus-visible { outline:3px solid #71568c; outline-offset:2px; border-radius:8px; }
+.pl-capacity p { display:flex; align-items:center; gap:6px; margin-left:8px; color:#8a7e8c; font-size:12px; }
+.pl-capacity p svg { width:15px; height:15px; }
+
+.pl-cost { display:grid; gap:10px; }
+.pl-cost .u-coin-terms { font-size:11px; }
+.pl-footer { position:sticky; bottom:0; z-index:2; margin:-8px -28px 0; padding:14px 28px 22px; border-top:1px solid #efe9ef; background:#fffefa; box-shadow:0 -12px 24px -18px #2a172e40; }
+.community-surface .pl-footer .u-button { width:100%; min-height:52px; border-radius:999px; font-size:14px; justify-content:center; }
+.community-surface .pl-footer .u-button:not(:disabled):hover { background:#3d2443; }
+
+@keyframes pl-dialog-in { from { opacity:0; transform:translate(-50%,-46%) scale(.98); } }
+@media (prefers-reduced-motion:reduce) { .u-dialog-plan { animation:none; } .pl-place, .pl-chip, .pl-stepper { transition:none; } }
+@media (max-width:560px) {
+  .u-dialog.u-dialog-plan { padding:0 20px; }
+  .u-dialog-plan .u-dialog-heading { margin:0 -20px 22px; padding:24px 20px 26px; }
+  .u-dialog-plan h2 { font-size:26px; }
+  .u-dialog-plan .u-dialog-heading::before { width:130px; height:130px; bottom:-60px; right:-40px; }
+  .pl-step { padding-left:36px; }
+  .pl-footer { margin:0 -20px; padding:16px 20px 20px; }
+}

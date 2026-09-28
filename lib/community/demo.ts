@@ -1,13 +1,14 @@
 import { createDemoWallet } from "./demo-unicoins";
 import { emptyWallet } from "./unicoins";
 import type { Locale } from "../i18n/routes";
-import type { CommunityRepository, CommunityData, Message, Profile, RelationshipStatus, ShowcaseItem, Sticker } from "./types";
+import type { CommunityRepository, CommunityData, Friendship, Message, Profile, RelationshipStatus, ShowcaseItem, Sticker } from "./types";
 import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
 import { showcaseFrames, showcaseLimits, type ShowcaseFrame } from "./showcase";
 import { builtinStickerUrl, builtinStickers, defaultSpace, stickerLimits, validatePlacement, validateSpace, type ProfileSpace } from "./space";
 import { localTaste, type Taste } from "./tastes";
 import { faceLimits, type FaceKind } from "./images";
 import { demoAnswer, demoNoteStudy } from "./study";
+import { friendState } from "./friends";
 
 export const demoUserId = "demo-alex";
 export function createDemoRepository(locale: Locale): CommunityRepository {
@@ -115,7 +116,9 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
    {id:"sc-marc-note",owner_id:"demo-marc",kind:"note",title:l("Pachanga de los viernes","Patxanga dels divendres"),body:l("18:30, pistas de Tarongers. Se juega a lo que salga.","18:30, pistes de Tarongers. Es juga al que isca."),audience:"everyone",viewers:[],position:0,created_at:ago(15)},
    {id:"sc-aina-media",owner_id:"demo-aina",kind:"media",title:l("Albufera, jueves pasado","Albufera, dijous passat"),body:"",media_path:"/images/campus.webp",media_kind:"image",media_url:"/images/campus.webp",audience:"everyone",viewers:[],position:0,created_at:ago(48)},
   ] as ShowcaseItem[],
-  threads:[{id:"thread-paula",user_a:demoUserId,user_b:"demo-paula",created_at:ago(1)}]
+  threads:[{id:"thread-paula",user_a:demoUserId,user_b:"demo-paula",created_at:ago(1)}],
+  // Paula y Marc ya son amigos de Álex; Nico le ha pedido amistad; Laia y Aina están por descubrir.
+  friendships:[{requester_id:"demo-paula",addressee_id:demoUserId,status:"accepted",created_at:ago(200),accepted_at:ago(190)},{requester_id:demoUserId,addressee_id:"demo-marc",status:"accepted",created_at:ago(150),accepted_at:ago(140)},{requester_id:"demo-nico",addressee_id:demoUserId,status:"pending",created_at:ago(3)}]
  };
  const frameById:Record<string,ShowcaseFrame>={[demoUserId]:"madera","demo-paula":"cristal","demo-marc":"cristal","demo-laia":"madera","demo-nico":"neon","demo-aina":"neon"};
  data.profiles.forEach(p=>{p.showcase_frame=frameById[p.user_id]??"madera";});
@@ -133,7 +136,7 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
   const campusOf=(who:string)=>data.profiles.find(p=>p.user_id===who)?.campus;
   return (piece:ShowcaseItem)=>piece.owner_id===viewer||piece.audience==="everyone"
    ||(piece.audience==="campus"&&campusOf(piece.owner_id)===campusOf(viewer))
-   ||(piece.audience==="contacts"&&data.threads.some(t=>(t.user_a===piece.owner_id&&t.user_b===viewer)||(t.user_b===piece.owner_id&&t.user_a===viewer)))
+   ||(piece.audience==="contacts"&&(data.threads.some(t=>(t.user_a===piece.owner_id&&t.user_b===viewer)||(t.user_b===piece.owner_id&&t.user_a===viewer))||friendState(data,viewer,piece.owner_id)==="friends"))
    ||(piece.audience==="chosen"&&piece.viewers.includes(viewer));
  };
  return {
@@ -177,6 +180,7 @@ export function createDemoRepository(locale: Locale): CommunityRepository {
   async askNote(noteId,question){requireText(question,3,400);if(!studied.has(noteId))throw{message:"STUDY_NOT_READY"};await new Promise(done=>setTimeout(done,600));return demoAnswer(locale);},
   async removeNote(note){if(note.author_id!==demoUserId)throw{code:"validation"};data.notes=data.notes.filter(n=>n.id!==note.id);files.delete(note.file_path);},
   async openThread(peerId){if(peerId===demoUserId||!data.profiles.some(p=>p.user_id===peerId))throw{message:"PEER_UNAVAILABLE"};let thread=data.threads.find(t=>t.user_a===peerId||t.user_b===peerId);if(!thread){thread={id:id(),user_a:demoUserId,user_b:peerId,created_at:stamp()};data.threads.unshift(thread);}return thread.id;},
+  async setFriend(peerId,befriend){if(peerId===demoUserId||!data.profiles.some(p=>p.user_id===peerId))throw{message:"PEER_UNAVAILABLE"};const mine=(f:Friendship)=>(f.requester_id===demoUserId&&f.addressee_id===peerId)||(f.requester_id===peerId&&f.addressee_id===demoUserId);if(!befriend){data.friendships=data.friendships.filter(f=>!mine(f));return;}const row=data.friendships.find(mine);if(!row)data.friendships.push({requester_id:demoUserId,addressee_id:peerId,status:"pending",created_at:stamp()});else if(row.status==="pending"&&row.addressee_id===demoUserId){row.status="accepted";row.accepted_at=stamp();}},
   async messages(threadId){return structuredClone(chats.filter(m=>m.thread_id===threadId));},
   // In the demo a file never leaves the browser: it is shown from an object URL for this visit only.
   async sendMessage(threadId,body,file){const media=file?validateChatMedia(file):null;requireText(body,media?0:1,2000);if(!data.threads.some(t=>t.id===threadId))throw{code:"validation"};chats.push({id:id(),thread_id:threadId,sender_id:demoUserId,body:body.trim(),...(file&&media?{media_path:file.name,media_kind:media.kind,media_url:URL.createObjectURL(file)}:{}),created_at:stamp()});},

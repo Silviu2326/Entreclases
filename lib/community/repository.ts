@@ -1,6 +1,6 @@
 import type { CoinWallet } from "./unicoins";
 import { getAuthClient } from "../auth/client";
-import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Message, type ShowcaseItem, type Sticker } from "./types";
+import { emptyCommunity, type CommunityRepository, type Profile, type Post, type Comment, type Like, type Signal, type Plan, type PlanMember, type Group, type GroupMember, type Note, type Thread, type Friendship, type Message, type ShowcaseItem, type Sticker } from "./types";
 import { requireText, showcaseMedia, validateChatMedia, validateGroup, validatePdf, validatePlan, validateProfile, validateShowcase } from "./validation";
 import { isStoredPiece, showcaseFrames } from "./showcase";
 import { builtinStickerUrl, builtinStickers, isStoredSticker, stickerLimits, validatePlacement, validateSpace, type BuiltinSticker } from "./space";
@@ -126,8 +126,10 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    data.signals=await related<Signal>("universe_post_signals","post_id",data.posts.map(p=>p.id),"post_id","user_id").catch(()=>[]);
    // Same for the showcase: the rows that come back are exactly the ones this member may see.
    data.showcase=showcaseColumns?await (async()=>{try{const rows=check(await client.from("universe_showcase").select("*").order("position").order("created_at",{ascending:false}).limit(400));return await signPieces((rows??[]) as ShowcaseItem[]);}catch{return [];}})():[];
+   // Las amistades llegan con su migración: sin ella la app carga igual, solo que sin amigos.
+   data.friendships=await (async()=>{const result=await client.from("universe_friendships").select("*").limit(1000);return result.error?[]:(result.data??[]) as Friendship[];})();
    data.stickers=spaceColumns?await (async()=>{try{const rows=check(await client.from("universe_stickers").select("*").order("z").order("created_at").limit(2400));return await signStickers((rows??[]) as Sticker[]);}catch{return [];}})():[];
-   const referenced=new Set([userId,...data.posts.map(p=>p.author_id),...data.comments.map(p=>p.author_id),...data.plans.map(p=>p.creator_id),...planMembers.map(p=>p.user_id),...groupMembers.map(p=>p.user_id),...data.notes.map(n=>n.author_id),...data.threads.flatMap(t=>[t.user_a,t.user_b])]);
+   const referenced=new Set([userId,...data.posts.map(p=>p.author_id),...data.comments.map(p=>p.author_id),...data.plans.map(p=>p.creator_id),...planMembers.map(p=>p.user_id),...groupMembers.map(p=>p.user_id),...data.notes.map(n=>n.author_id),...data.threads.flatMap(t=>[t.user_a,t.user_b]),...data.friendships.flatMap(f=>[f.requester_id,f.addressee_id])]);
    data.profiles.forEach(p=>referenced.delete(p.user_id));const missing=[...referenced];
    for(let i=0;i<missing.length;i+=200){const result=check(await client.from("universe_profiles").select("*").in("user_id",missing.slice(i,i+200)));data.profiles.push(...await signFaces(withTastes(result as Profile[])));}
    return data;
@@ -187,6 +189,7 @@ export function createCommunityRepository(userId: string): CommunityRepository {
    const result=await client.from("universe_notes").delete().eq("id",note.id).eq("author_id",userId);
    if(result.error) throw {code:"note_cleanup"};
   },
+  async setFriend(peerId,befriend) { const result=await client.rpc("universe_set_friendship",{peer_uuid:peerId,befriend});if(result.error){if(["PGRST202","42883"].includes(result.error.code))throw {code:"friends_missing"};throw result.error;} },
   async openThread(peerId) { return check(await client.rpc("universe_open_thread",{peer_uuid:peerId})) as string; },
   async messages(threadId) {
    const rows=(check(await client.from("universe_messages").select("*").eq("thread_id",threadId).order("created_at",{ascending:false}).order("id",{ascending:false}).limit(100))??[]).reverse() as Message[];

@@ -105,7 +105,10 @@
 .ex-game-other > svg { width:16px; height:16px; transition:transform .2s ease; }
 .ex-game-other:hover > svg { transform:translate(2px,-2px); }
 
-.ex-filters { display:flex; align-items:center; flex-wrap:wrap; gap:16px 24px; padding:0 0 21px; margin-bottom:22px; border-bottom:1px solid var(--ex-line); }
+.ex-filters { display:flex; align-items:center; flex-wrap:wrap; gap:12px 10px; padding:0 0 21px; margin-bottom:22px; border-bottom:1px solid var(--ex-line); }
+#ex-plans .ex-filters > [role="status"] { padding:5px 12px; border-radius:999px; background:#2a172e0d; color:var(--ex-plum); font-weight:700; font-variant-numeric:tabular-nums; }
+#ex-plans .ex-filters .ex-to-map { margin-left:6px; }
+.ex-filters label.pk-toggle { display:inline-flex; gap:10px; font-size:13px; color:var(--ex-plum); }
 .ex-filters label { display:grid; gap:5px; font-size:10px; color:#766b7b; }
 .ex-filters select { background:transparent; color:var(--ex-plum); font-size:12px; font-weight:600; border:0; border-bottom:1px solid #c6b8cb; padding:8px 20px 8px 0; max-width:240px; min-height:36px; }
 .ex-filters .ex-check { display:flex; align-items:center; gap:8px; font-size:12px; }

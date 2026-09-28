@@ -265,3 +265,48 @@ video.ck-media { object-fit:contain; }
 .ch-communities-list>button>svg{width:14px;height:14px;flex:0 0 14px;margin-left:auto;transform:rotate(-45deg);color:var(--u-muted)}
 @media(max-width:900px){.ch-communities-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.ch-communities{padding:18px}.ch-communities-heading{align-items:flex-start;flex-direction:column}.ch-communities-heading>button{align-self:flex-start}.ch-communities-list{grid-template-columns:1fr}}
+
+/* En ancho: comunidades y conversaciones a la izquierda, una encima de otra; el foro a la derecha
+   ocupa las dos filas. Sin esto, el chat esperaba a que acabara el foro y caía al final de la página. */
+@media (min-width:1121px) {
+  /* La fila del chat es la flexible: la altura de más que pide el foro va ahí, no entre las comunidades y el chat. */
+  .u-charlas { grid-template-rows:auto auto 1fr auto; }
+  .u-charlas > .ch-communities { grid-column:1; grid-row:2; }
+  .u-charlas > .u-charlas-forum { grid-column:2; grid-row:2 / span 2; }
+  .u-charlas > .u-charlas-dock { grid-column:1; grid-row:3; align-self:start; }
+}
+/* El foro en la columna de la derecha: más ancho y pensado para una columna estrecha.
+   El cuadro de publicar apila sus controles, los filtros son píldoras y el orden, un selector segmentado. */
+@media (min-width:1121px) {
+  .u-charlas { grid-template-columns:minmax(0,1fr) clamp(370px,30vw,430px); }
+
+  .u-charlas-forum .u-composer { margin-bottom:22px; padding:16px 16px 14px; }
+  .u-charlas-forum .u-composer-body { gap:10px; }
+  .u-charlas-forum .u-composer textarea { min-height:66px; padding:9px 4px; font-size:14px; line-height:1.5; }
+  .u-charlas-forum .u-composer-footer { flex-direction:column; align-items:stretch; gap:10px; padding-top:12px; border-top:1.5px dashed #e3d9e6; }
+  .u-charlas-forum .u-composer-footer > div { display:flex; align-items:center; gap:8px; }
+  .u-charlas-forum .u-composer-footer .u-chips { flex:none; flex-wrap:nowrap; gap:2px; margin:0; padding:3px; border-radius:999px; background:#f1ebf3; }
+  .u-charlas-forum .u-composer-footer .u-chip { min-height:30px; padding:5px 12px; border:0; border-radius:999px; background:transparent; color:#6f6372; font-size:11px; font-weight:700; box-shadow:none; }
+  .u-charlas-forum .u-composer-footer .u-chip.active { background:var(--ch-ink); color:var(--ch-lime); }
+  .u-charlas-forum .u-composer-footer .u-field { flex:1; min-width:0; }
+  .u-charlas-forum .u-composer-footer select.u-input { width:100%; max-width:none; height:36px; min-height:36px; padding:0 30px 0 13px; border:1.5px solid #ddd1e2; border-radius:999px; background-color:var(--ch-cream); color:var(--ch-ink); font-size:11px; font-weight:650; text-overflow:ellipsis; }
+  .u-charlas-forum .u-composer-footer > .u-button { width:100%; min-height:44px; border-radius:999px; justify-content:center; font-size:12.5px; }
+  .u-charlas-forum .u-composer-footer > .u-button:disabled { opacity:1; background:#e9e3eb; color:#9c8fa0; }
+  .u-charlas-forum .u-composer > .u-coin-terms, .u-charlas-forum .u-composer > .u-coin-spend { margin-top:10px; font-size:11px; line-height:1.5; text-align:center; }
+
+  .u-charlas-forum .u-forum-bar { gap:12px; margin:0 0 18px; }
+  .u-charlas-forum .u-forum-communities { padding:2px 2px 8px; -webkit-mask-image:linear-gradient(to right,#000 82%,transparent); mask-image:linear-gradient(to right,#000 82%,transparent); }
+  .u-charlas-forum .u-forum-chip { min-height:36px; padding:7px 13px; font-size:11.5px; }
+  .u-charlas-forum .u-forum-filters { display:grid; gap:10px; }
+  .u-charlas-forum .u-forum-filters > .u-chips:first-child { gap:6px; }
+  .u-charlas-forum .u-forum-filters > .u-chips:first-child .u-chip { min-height:32px; padding:6px 12px; border:1.5px solid #ddd1e2; border-radius:999px; background:var(--ch-cream); color:#5c4561; font-size:11.5px; box-shadow:none; }
+  .u-charlas-forum .u-forum-filters > .u-chips:first-child .u-chip:hover { border-color:var(--ch-ink); }
+  .u-charlas-forum .u-forum-filters > .u-chips:first-child .u-chip.active { border-color:var(--ch-ink); background:var(--ch-ink); color:var(--ch-lime); }
+  .u-charlas-forum .u-forum-filters > .u-chips + .u-chips { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; padding:3px; border:0; border-radius:999px; background:#e9e1ec; }
+  .u-charlas-forum .u-forum-filters > .u-chips + .u-chips .u-chip { min-height:32px; padding:5px 8px; border:0; border-radius:999px; background:transparent; color:#6f6372; font-size:11.5px; box-shadow:none; }
+  .u-charlas-forum .u-forum-filters > .u-chips + .u-chips .u-chip.active { background:var(--ch-cream); color:var(--ch-ink); box-shadow:0 1px 4px #2a172e26; }
+  .u-charlas-forum .u-forum-count { width:auto; margin:0; text-align:right; }
+
+  .u-charlas-forum .u-post-actions { flex-wrap:nowrap; }
+  .u-charlas-forum .u-post-actions > button { white-space:nowrap; }
+}

@@ -7,7 +7,7 @@ import type { GameKind } from "@/lib/community/games/types";
 import type { ProjectRoute } from "@/lib/community/studio/sections";
 import type { communityCopy } from "@/lib/community/copy";
 import type { PlaceKind, PlanPeriod } from "@/lib/community/places";
-export type GoOptions={groupId?:string;threadId?:string;stay?:boolean;place?:string;anchor?:string;period?:PlanPeriod;kind?:PlaceKind};
+export type GoOptions={groupId?:string;threadId?:string;personId?:string;stay?:boolean;place?:string;anchor?:string;period?:PlanPeriod;kind?:PlaceKind};
 export type CommunityContextValue={
  locale:Locale; c:ReturnType<typeof communityCopy>; demo:boolean; member:UniversityMember; data:CommunityData; me:Profile;
  repo:CommunityRepository; feedback:{text:string;error:boolean}|null; busy:boolean; query:string; view:View; game:GameKind|null; groupId:string|null; threadId:string|null;
@@ -17,6 +17,8 @@ export type CommunityContextValue={
  place:string|null;
  /* El periodo (?when=) y el tipo de sitio (?kind=) de los planes con que se llega: viajan igual que `place` entre Inicio y Explorar. */
  period:PlanPeriod|null; kind:PlaceKind|null;
+ /* El perfil abierto en Gente (?person=): sin él, Gente enseña la lista. */
+ personId:string|null;
  /* `stay` keeps the scroll and the focus where they are: for moves inside the screen you are already on.
     `anchor` is the id of the section to land on, so Inicio y Explorar puedan enviarse a un punto concreto. */
  go:(view:View,options?:GoOptions)=>void;

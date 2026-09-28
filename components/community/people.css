@@ -1,0 +1,131 @@
+/* Gente: solicitudes, tu gente, gente por descubrir y el perfil de cada cual. */
+.pe-hub { display:grid; gap:44px; padding-bottom:20px; }
+.pe-kicker { color:#6c5a72; font-size:10px; font-weight:800; letter-spacing:.14em; }
+.pe-section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:18px; }
+.pe-hub h2 { display:flex; align-items:center; gap:10px; margin-top:4px; font-size:clamp(23px,2.1vw,28px); letter-spacing:-.05em; }
+.pe-count { display:grid; place-items:center; min-width:26px; height:26px; padding:0 8px; border-radius:999px; background:#e1ff3e; color:#2a172e; font-family:"Inter",Arial,sans-serif; font-size:12px; font-weight:800; letter-spacing:0; }
+
+/* Solicitudes: la tarjeta ciruela, igual que «Mis planes» en Inicio. */
+.pe-requests { position:relative; overflow:hidden; padding:22px; border-radius:24px; background:#2a172e; color:#fffefa; box-shadow:0 22px 44px -24px #2a172eb0; isolation:isolate; }
+.pe-requests::before { content:""; position:absolute; z-index:-1; right:-50px; top:-80px; width:200px; height:200px; border-radius:50%; background:#e1ff3e; opacity:.14; }
+.pe-requests .pe-kicker { color:#e1ff3e; }
+.pe-requests h2 { color:#fffefa; margin-bottom:16px; }
+.pe-request-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr)); gap:10px; }
+.pe-request { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 10px 10px 12px; border:1px solid #ffffff24; border-radius:18px; background:#ffffff0f; }
+.pe-request-who { display:flex; align-items:center; gap:11px; min-width:0; color:inherit; text-align:left; }
+.pe-request-who span { display:grid; min-width:0; }
+.pe-request-who strong { font-size:14px; }
+.pe-request-who small { overflow:hidden; color:#d8cddb; font-size:11px; white-space:nowrap; text-overflow:ellipsis; }
+.pe-request-who:hover strong { text-decoration:underline; text-underline-offset:3px; }
+.community-surface .pe-requests .u-button { background:#e1ff3e; color:#2a172e; }
+.community-surface .pe-requests .u-button.u-secondary { background:#ffffff14; color:#fffefa; border-color:#ffffff30; }
+.pe-friend-choice { display:inline-flex; gap:6px; flex:none; }
+
+/* Tu gente: una fila que se desliza, con la cara grande. */
+.pe-friend-row { display:flex; gap:14px; overflow-x:auto; padding:4px 2px 12px; scroll-snap-type:x proximity; scrollbar-width:thin; }
+.pe-friend { position:relative; flex:0 0 188px; scroll-snap-align:start; border:1px solid #e3dce2; border-radius:20px; background:#fffefa; transition:transform .2s ease, box-shadow .2s ease; }
+.pe-friend:hover { transform:translateY(-3px); box-shadow:0 18px 32px -20px #2a172e70; }
+.pe-friend-open { display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; padding:0 12px 16px; color:inherit; text-align:center; }
+.pe-friend-cover { position:relative; align-self:stretch; height:62px; margin:0 -12px -34px; overflow:hidden; border-radius:19px 19px 0 0; background:var(--avatar-bg); }
+.pe-friend-cover img, .pe-card-cover img { width:100%; height:100%; object-fit:cover; }
+.pe-friend .u-avatar-large { position:relative; margin-bottom:6px; box-shadow:0 0 0 4px #fffefa; }
+.pe-friend-open strong { font-size:14px; letter-spacing:-.02em; }
+.pe-friend-open small { display:inline-flex; align-items:center; gap:4px; color:#7a6d7d; font-size:11px; }
+.pe-friend-open small svg { width:12px; height:12px; color:#6b8a2c; }
+.pe-friend > .u-icon-button { position:absolute; top:8px; right:8px; width:32px; height:32px; border-radius:50%; background:#fffefae6; color:#2a172e; box-shadow:0 3px 10px #2a172e22; }
+.pe-friend > .u-icon-button:hover { background:#2a172e; color:#e1ff3e; }
+.pe-friends-empty { display:flex; align-items:center; gap:14px; padding:20px 22px; border:1px dashed #d4c8d6; border-radius:18px; color:#6f6372; font-size:13px; }
+.pe-friends-empty svg { flex:none; width:26px; height:26px; color:#8a6f93; }
+
+/* Por descubrir: filtros de píldora y fichas con portada. */
+.pe-filters { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.pe-filter-count { margin-left:auto; padding:5px 12px; border-radius:999px; background:#2a172e0d; color:#2a172e; font-size:11px; font-weight:700; }
+.pe-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr)); gap:18px; }
+.pe-card { display:flex; flex-direction:column; overflow:hidden; border:1px solid #e3dce2; border-radius:22px; background:#fffefa; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.pe-card:hover { transform:translateY(-3px); border-color:#cfc3d2; box-shadow:0 22px 40px -24px #2a172e80; }
+.pe-card-open { display:flex; flex-direction:column; align-items:center; gap:3px; padding:0 18px 12px; color:inherit; text-align:center; }
+.pe-card-cover { align-self:stretch; height:86px; margin:0 -18px -40px; overflow:hidden; background:var(--avatar-bg); }
+.pe-card .u-avatar-large { position:relative; margin-bottom:8px; box-shadow:0 0 0 5px #fffefa; }
+.pe-card-open > strong { font-family:var(--font-display); font-size:18px; letter-spacing:-.03em; }
+.pe-card-open > small { color:#6f6372; font-size:12px; }
+.pe-card-campus { display:inline-flex; align-items:center; gap:4px; margin-top:2px; color:#8a7e8c; font-size:11px; }
+.pe-card-campus svg { width:12px; height:12px; }
+.pe-card-open > p { display:-webkit-box; overflow:hidden; margin:10px 0 4px; color:#4f4452; font-size:12px; line-height:1.5; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.pe-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-top:6px; }
+.pe-tags span { padding:3px 9px; border-radius:999px; background:#f1edf1; color:#5c4561; font-size:10px; font-weight:650; }
+.pe-card > .u-common-badge, .pe-card > :not(.pe-card-open):not(footer) { margin:0 16px 8px; align-self:center; }
+.pe-card > footer { display:flex; align-items:center; gap:8px; margin-top:auto; padding:12px 14px 14px; border-top:1px solid #efe9ef; }
+.pe-card > footer > .u-button, .pe-card > footer > .pe-friend-choice { flex:1; }
+.pe-card > footer .pe-friend-choice .u-button:first-child { flex:1; }
+.pe-card > footer > .u-icon-button { flex:none; width:42px; height:42px; border:1px solid #e3dce2; border-radius:50%; }
+.pe-card > footer > .u-icon-button:hover { background:#2a172e; color:#e1ff3e; }
+
+/* El botón de amistad cambia de texto al pasar por encima cuando ya sois amigos. */
+.pe-friend-on .pe-when-hover { display:none; }
+.pe-friend-on:hover .pe-when-idle { display:none; }
+.pe-friend-on:hover .pe-when-hover { display:inline; }
+.community-surface .u-button.pe-friend-on { border-color:#b9d36a; background:#f3fbd6; color:#3f5a14; }
+.community-surface .u-button.pe-friend-on:hover { border-color:#e5b9a8; background:#fff3ed; color:#9b3b1d; }
+.community-surface .u-button.pe-friend-sent { color:#6f6372; border-style:dashed; }
+
+/* El perfil de otra persona. */
+.pe-back { display:inline-flex; align-items:center; gap:8px; width:fit-content; margin-bottom:14px; padding:8px 14px 8px 10px; border:1px solid #e3dce2; border-radius:999px; background:#fffefa; color:#2a172e; font-size:12px; font-weight:700; transition:background .15s ease, transform .15s ease; }
+.pe-back:hover { background:#f1edf1; transform:translateX(-2px); }
+.pe-back svg { width:16px; height:16px; }
+.pe-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
+.pe-status { display:inline-flex; align-items:center; gap:7px; width:fit-content; margin:10px 0 4px; padding:6px 12px; border-radius:999px; background:#f1edf1; color:#5c4561; font-size:12px; font-weight:650; }
+.pe-status svg { width:15px; height:15px; }
+.pe-status-friends { background:#eef8cf; color:#3f5a14; }
+.pe-status-received { background:#2a172e; color:#e1ff3e; }
+.pe-together { padding:24px; }
+.pe-together > header h2 { margin-top:4px; font-size:24px; letter-spacing:-.05em; }
+.community-surface .pe-together h3 { font-family:"Inter",Arial,sans-serif; margin:22px 0 10px; color:#6f6372; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.pe-plan-list { display:grid; gap:10px; }
+.pe-plan { display:grid; grid-template-columns:54px minmax(0,1fr) auto; align-items:center; gap:14px; padding:10px 12px 10px 10px; border:1px solid #e9e2e9; border-radius:16px; background:#fffefa; }
+.pe-plan > time { display:flex; flex-direction:column; align-items:center; justify-content:center; height:56px; border-radius:12px; background:#2a172e; color:#fffefa; line-height:1; }
+.pe-plan > time strong { font-family:var(--font-display); font-size:22px; font-weight:800; }
+.pe-plan > time span { margin-top:4px; color:#e1ff3e; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.pe-plan-main { display:grid; gap:3px; min-width:0; color:inherit; text-align:left; }
+.pe-plan-main strong { font-size:14px; letter-spacing:-.02em; }
+.pe-plan-main:hover strong { text-decoration:underline; text-underline-offset:3px; }
+.pe-plan-main small { display:flex; align-items:center; gap:4px; overflow:hidden; color:#7a6d7d; font-size:11px; white-space:nowrap; text-overflow:ellipsis; }
+.pe-plan-main small svg { flex:none; width:12px; height:12px; }
+.pe-together-empty { margin-top:14px; color:#6f6372; font-size:13px; }
+.pe-together-empty button { display:inline-flex; align-items:center; gap:5px; margin-left:4px; color:#2a172e; font-weight:750; text-decoration:underline; text-underline-offset:4px; }
+.pe-together-empty svg { width:14px; height:14px; }
+.pe-groups { display:flex; flex-wrap:wrap; gap:8px; }
+.pe-groups button { display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border:1px solid #e3dce2; border-radius:999px; font-size:12px; font-weight:650; }
+.pe-groups button:hover { background:#f1edf1; }
+.pe-groups svg { width:15px; height:15px; color:#8a6f93; }
+.pe-locked { display:flex; align-items:center; gap:18px; padding:22px 24px; border-style:dashed; background:repeating-linear-gradient(-45deg,#fffefa 0 12px,#faf7fa 12px 24px); }
+.pe-locked-icon { display:grid; place-items:center; flex:none; width:48px; height:48px; border-radius:50%; background:#2a172e; color:#e1ff3e; }
+.pe-locked-icon svg { width:20px; height:20px; }
+.pe-locked > div { flex:1; min-width:0; }
+.pe-locked h2 { font-size:19px; letter-spacing:-.04em; }
+.pe-locked p { margin-top:4px; color:#6f6372; font-size:13px; line-height:1.5; }
+.pe-profile-missing { display:grid; gap:10px; }
+
+/* Invitar a un plan. */
+.pe-invite { display:grid; gap:18px; }
+.pe-invite fieldset { display:grid; gap:8px; margin:0; padding:0; border:0; min-width:0; }
+.pe-invite legend { margin-bottom:8px; font-size:13px; font-weight:750; }
+.pe-invite-option { position:relative; display:flex; align-items:center; gap:12px; padding:12px 44px 12px 14px; border:1px solid #e3dce2; border-radius:16px; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+.pe-invite-option:hover { border-color:#b9a9bd; }
+.pe-invite-option input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+.pe-invite-option span { display:grid; gap:2px; min-width:0; }
+.pe-invite-option strong { font-size:14px; }
+.pe-invite-option small { color:#7a6d7d; font-size:11px; }
+.pe-invite-check { position:absolute; right:14px; width:18px; height:18px; padding:3px; border-radius:50%; color:transparent; border:1px solid #d4c8d6; }
+.pe-invite-option:has(input:checked) { border-color:#2a172e; background:#f7f3f8; }
+.pe-invite-option:has(input:checked) .pe-invite-check { border-color:#2a172e; background:#e1ff3e; color:#2a172e; }
+.pe-invite-option:has(input:focus-visible) { outline:3px solid #71568c; outline-offset:2px; }
+.pe-invite-note { display:grid; gap:7px; font-size:12px; font-weight:600; color:#4e5546; }
+
+@media (prefers-reduced-motion:reduce) { .pe-friend, .pe-card, .pe-back { transition:none; } }
+@media (max-width:760px) {
+  .pe-actions { justify-content:flex-start; }
+  .pe-plan { grid-template-columns:48px minmax(0,1fr); }
+  .pe-plan > :last-child { grid-column:1 / -1; }
+  .pe-locked { flex-direction:column; align-items:flex-start; }
+  .pe-request { flex-wrap:wrap; }
+}

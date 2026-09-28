@@ -52,6 +52,7 @@ const messages = {
  audienceEveryoneHelp: ["Cualquier cuenta verificada de Entreclases.", "Qualsevol compte verificat d’Entreclases."], audienceCampusHelp: ["Quien tenga tu mismo campus en el perfil.", "Qui tinga el teu mateix campus al perfil."], audienceContactsHelp: ["Gente con la que tienes una conversación privada abierta.", "Gent amb qui tens una conversa privada oberta."], audienceChosenHelp: ["Elige a quién. Nadie más lo ve, ni sabe que existe.", "Tria a qui. Ningú més ho veu, ni sap que existix."], audienceOnlyMeHelp: ["Guardado en tu escaparate, a la vista de nadie.", "Guardat al teu aparador, a la vista de ningú."],
  showcaseChoosePeople: ["Elige personas", "Tria persones"], showcaseChosenCount: ["personas elegidas", "persones triades"], showcaseNoPeople: ["Todavía no hay nadie a quien elegir.", "Encara no hi ha ningú a qui triar."],
  showcasePlay: ["Reproducir", "Reproduir"], showcaseOpen: ["Abrir", "Obrir"], showcaseOpenFile: ["Abrir el PDF", "Obrir el PDF"], showcaseRemove: ["Quitar del escaparate", "Llevar de l’aparador"], showcaseRemoveTitle: ["¿Quitar esta pieza?", "Llevar esta peça?"], showcaseRemoveBody: ["Desaparece del escaparate y, si lleva archivo, el archivo también.", "Desapareix de l’aparador i, si porta fitxer, el fitxer també."], showcaseAdded: ["Ya está en el escaparate.", "Ja està a l’aparador."], showcaseFrameSaved: ["Acabado cambiado.", "Acabat canviat."],
+ friendsMissing: ["Las amistades llegan con la próxima actualización del servidor.", "Les amistats arriben amb la pròxima actualització del servidor."],
  showcaseMissing: ["El escaparate llega con la próxima actualización del servidor.", "L’aparador arriba amb la pròxima actualització del servidor."], showcaseYoutubeNote: ["Se carga desde YouTube al pulsar, no antes.", "Es carrega des de YouTube en prémer, no abans."], showcaseDemoNote: ["En la demo, lo que subas se queda en esta pestaña.", "En la demo, el que puges es queda en esta pestanya."],
 
  wizStep: ["Paso", "Pas"], wizOf: ["de", "de"], wizNext: ["Seguir", "Seguir"], wizBack: ["Atrás", "Arrere"], wizDone: ["Guardar y salir", "Guardar i eixir"], wizEnter: ["pulsa Intro ↵", "prem Retorn ↵"], wizLeave: ["Salir sin guardar", "Eixir sense guardar"], wizSaved: ["Perfil guardado.", "Perfil guardat."],
@@ -88,6 +89,7 @@ export function communityError(error: unknown, locale: Locale) {
  if(raw.code === "invalid_media") return c("mediaError");
  if(raw.code === "invalid_image") return c("photoError");
  if(raw.code === "faces_missing") return c("facesMissing");
+ if(raw.code === "friends_missing") return c("friendsMissing");
  if(raw.code === "showcase_missing") return c("showcaseMissing");
  if(raw.code === "space_missing") return c("spaceMissing");
  if(message.includes("STICKER_LIMIT")) return c("stickerLimit");
